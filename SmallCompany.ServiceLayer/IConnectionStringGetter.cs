@@ -2,6 +2,6 @@
 {
     public interface IConnectionStringGetter
     {
-        public void GetConnectionString();
+        public string ConnectionString { get; }
     }
 }
