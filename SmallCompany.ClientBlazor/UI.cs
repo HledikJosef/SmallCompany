@@ -1,9 +1,17 @@
 ﻿using SmallCompany.ClientBlazor.Data;
+using SmallCompany.ServiceLayer;
 
 namespace SmallCompany.ClientBlazor
 {
     public class UI
     {
+        private readonly IConnectionStringGetter connectionStringGetter;
+
+        public UI(IConnectionStringGetter connectionStringGetter)
+        {
+            this.connectionStringGetter = connectionStringGetter;
+        }
+
         public async Task StartAsync()
         {
             try

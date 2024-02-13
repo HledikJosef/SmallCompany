@@ -1,38 +1,19 @@
-using SmallCompany.ClientBlazor.Data;
+using SmallCompany.CompositionRoot;
 
 namespace SmallCompany.ClientBlazor
 {
     public class Program
     {
-        public static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            IServiceCollection services = new ServiceCollection();
+            services.AddSmallCompanyServices();
+            services.AddTransient<UI>();
 
-            // Add services to the container.
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
-            builder.Services.AddSingleton<WeatherForecastService>();
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.MapBlazorHub();
-            app.MapFallbackToPage("/_Host");
-
-            app.Run();
+            UI uI = serviceProvider.GetRequiredService<UI>();
+            await uI.StartAsync();
         }
     }
 }
