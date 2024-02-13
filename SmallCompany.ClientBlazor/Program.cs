@@ -17,13 +17,15 @@ namespace SmallCompany.ClientBlazor
                 builder.Services.AddRazorPages();
                 builder.Services.AddServerSideBlazor();
                 builder.Services.AddSingleton<WeatherForecastService>();
+
                 string? connectionString = builder.Configuration.GetConnectionString("SmallCompanyDb")
                     ?? throw new InvalidOperationException();
-
-                builder.Services.AddSingleton<IConnectionStringGetter, ConnectionStringGetter>(serviceProvider =>
+                builder.Services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>(serviceProvider =>
                 {
-                    return new ConnectionStringGetter(connectionString);
+                    return new ConnectionStringProvider(connectionString);
                 });
+
+                builder.Services.AddTransient<IDBRecordReader, DBRecordReader>();
 
 
                 var app = builder.Build();

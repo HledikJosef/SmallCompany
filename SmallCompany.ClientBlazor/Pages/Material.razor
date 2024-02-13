@@ -1,4 +1,8 @@
 ﻿@page "/material"
+@using SmallCompany.ServiceLayer;
+@using System.Data;
+
+@inject IDBRecordReader dBRecordReader;
 
 <PageTitle>Materiál-záznam</PageTitle>
 
@@ -27,12 +31,17 @@
 </table>
 </div>
 
-<button class="btn btn-primary" @onclick="CreateMaterialTabel">Ulož záznam</button>
+<button class="btn btn-primary" @onclick="AddMaterialRecord">Ulož záznam</button>
 
 @code {
-    SmallCompany.DataLayer.MaterialModel materialModel= new SmallCompany.DataLayer.MaterialModel();
+    DataSet table = null;
 
-    private void CreateMaterialTabel()
+    protected override void OnInitialized()
+    {
+        table = dBRecordReader.ReadTable("PropertyList");
+    }
+
+    private void AddMaterialRecord()
     {
         
     }

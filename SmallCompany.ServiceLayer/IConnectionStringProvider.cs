@@ -1,6 +1,6 @@
 ﻿namespace SmallCompany.ServiceLayer
 {
-    public interface IConnectionStringGetter
+    public interface IConnectionStringProvider
     {
         public string ConnectionString { get; }
     }
