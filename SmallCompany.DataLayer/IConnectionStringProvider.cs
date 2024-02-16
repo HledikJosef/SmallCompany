@@ -1,4 +1,4 @@
-﻿namespace SmallCompany.ServiceLayer
+﻿namespace SmallCompany.DataLayer
 {
     public interface IConnectionStringProvider
     {

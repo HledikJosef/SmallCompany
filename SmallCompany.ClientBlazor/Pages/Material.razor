@@ -1,48 +1,67 @@
 ﻿@page "/material"
 @using SmallCompany.ServiceLayer;
+@using ServiceLayer.ModelsBlazor;
 @using System.Data;
-
-@inject IDBRecordReader dBRecordReader;
+@inject IPropertiesService propertiesService;
+@inject IMaterialModelCreator materialModelCreator;
 
 <PageTitle>Materiál-záznam</PageTitle>
 
 <h1>Vytvoř nový model materiálu</h1>
-<h4>Vyplň obecný název skupiny, krátký popis a zaškrtnutím přiřaď k materiálu vhodné vlastnosti.</h4>
+<h5>Vyplň obecný název skupiny, krátký popis a zaškrtnutím přiřaď k materiálu vhodné vlastnosti.</h5>
+
 <div class="table-responsive-sm">
 <table class="table">
-    <thead>
-        <tr>
-            <th scope="col">název</th>
-            <th scope="col">popis</th>
-            <th scope="col">barva</th>
-            <th scope="col">tvrdost</th>
-            <th scope="col">hustota</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row"><input class="text" placeholder="název skupiny" id="materialTitle"></th>
-            <td><input class="text" placeholder="krátký popis" id="materialDescription"></td>
-            <td><input class="form-check-input" type="checkbox" value="" id="materialColor"></td>
-            <td><input class="form-check-input" type="checkbox" value="" id="materialHardness"></td>
-            <td><input class="form-check-input" type="checkbox" value="" id="materialDensity"></td>
-        </tr>        
-    </tbody>
+        <tbody>
+            <tr>
+                <td>
+                    <input class="form-control" type="text" placeholder="Typ skupiny materiálů" @bind-value="@MaterialGroupName">
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <input class="form-control" type="text" placeholder="Krátký popis" @bind-value="@MaterialDescription">
+                </td>
+                
+            </tr>
+
+            @foreach (var property in blazorProperties)
+            {
+                <tr>
+                    <td>                        
+                        <input class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-value=property.IsValid>
+                        <label class="form-check-label" for="flexCheckDefault">@property.PropertyName</label>                         
+                        
+
+                    </td>
+                </tr>
+            }
+        </tbody>       
+      
+    
 </table>
 </div>
+
 
 <button class="btn btn-primary" @onclick="AddMaterialRecord">Ulož záznam</button>
 
 @code {
-    DataSet table = null;
+    public string MaterialGroupName = "";
+    public string MaterialDescription = "";
+    
+
+    List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
+
 
     protected override void OnInitialized()
     {
-        table = dBRecordReader.ReadTable("PropertyList");
+        blazorProperties = propertiesService.GetBlazorProperties();
     }
 
     private void AddMaterialRecord()
-    {
-        
+    {     
+     
+
     }
 }

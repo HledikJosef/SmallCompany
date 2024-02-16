@@ -1,6 +1,5 @@
 using SmallCompany.ClientBlazor.Data;
-using SmallCompany.ServiceLayer;
-using SmallCompany.ServiceLayer.Impl;
+using SmallCompany.CompositionRoot;
 
 namespace SmallCompany.ClientBlazor
 {
@@ -11,6 +10,7 @@ namespace SmallCompany.ClientBlazor
             try
             {
 
+
                 var builder = WebApplication.CreateBuilder();
 
                 // Add services to the container.
@@ -19,14 +19,8 @@ namespace SmallCompany.ClientBlazor
                 builder.Services.AddSingleton<WeatherForecastService>();
 
                 string? connectionString = builder.Configuration.GetConnectionString("SmallCompanyDb")
-                    ?? throw new InvalidOperationException();
-                builder.Services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>(serviceProvider =>
-                {
-                    return new ConnectionStringProvider(connectionString);
-                });
-
-                builder.Services.AddTransient<IDBRecordReader, DBRecordReader>();
-
+                        ?? throw new InvalidOperationException();
+                builder.Services.AddServices(connectionString);
 
                 var app = builder.Build();
 

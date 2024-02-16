@@ -1,8 +1,8 @@
-﻿namespace SmallCompany.ServiceLayer.Impl
+﻿namespace SmallCompany.DataLayer.Implementation
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {
-        public string ConnectionString { get; }
+        public string ConnectionString { get; set; }
 
         public ConnectionStringProvider(string connectionString)
         {
