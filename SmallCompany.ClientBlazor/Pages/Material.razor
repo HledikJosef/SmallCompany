@@ -15,13 +15,19 @@
         <tbody>
             <tr>
                 <td>
-                    <input class="form-control" type="text" placeholder="Typ skupiny materiálů" @bind-value="@MaterialGroupName">
+                    <input class="form-control" type="text" placeholder="Typ skupiny materiálů" @bind-value="@materialGroupName">
                 </td>
                 
             </tr>
             <tr>
                 <td>
-                    <input class="form-control" type="text" placeholder="Krátký popis" @bind-value="@MaterialDescription">
+                    <select class="form-select">
+                        <option disabled selected>Vyberte jednu z možností</option>
+                        @foreach(var enumValue in Enum.GetValues(typeof(MaterialDescription)))
+                        {
+                            <option value="@enumValue">@enumValue.ToString()</option>
+                        }
+                    </select>
                 </td>
                 
             </tr>
@@ -47,9 +53,8 @@
 <button class="btn btn-primary" @onclick="AddMaterialRecord">Ulož záznam</button>
 
 @code {
-    public string MaterialGroupName = "";
-    public string MaterialDescription = "";
-    
+    private string materialGroupName;
+    MaterialDescription materialDescription = new MaterialDescription();
 
     List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
 
@@ -60,8 +65,7 @@
     }
 
     private void AddMaterialRecord()
-    {     
-     
-
+    {
+        materialModelCreator.CreateMaterialEntryModel(materialGroupName, materialDescription.ToString(),blazorProperties);
     }
 }

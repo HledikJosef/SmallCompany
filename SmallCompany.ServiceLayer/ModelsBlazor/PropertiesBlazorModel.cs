@@ -9,6 +9,9 @@
         public string? PropertyDescription { get; set; }
 
         public bool? IsValid { get; set; } = false;
+
+
     }
+
 
 }

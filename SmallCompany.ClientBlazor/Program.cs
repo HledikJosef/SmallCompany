@@ -9,8 +9,6 @@ namespace SmallCompany.ClientBlazor
         {
             try
             {
-
-
                 var builder = WebApplication.CreateBuilder();
 
                 // Add services to the container.

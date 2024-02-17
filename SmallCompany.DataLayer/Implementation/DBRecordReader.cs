@@ -16,13 +16,13 @@ namespace SmallCompany.DataLayer.Implementation
 
         public List<PropertiesModel> ReadProperties()
         {
-            string sqlCommand = "SELECT * FROM PropertyList";
+            string sqlCommand = "SELECT Id, PropertyName, PropertyType, PropertyDescription FROM PropertyList";
             List<PropertiesModel> propertiesFromSql = new List<PropertiesModel>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
                 propertiesFromSql = connection.Query<PropertiesModel>(sqlCommand).ToList();
             }
-            //List<PropertiesBlazorModel> propertiesBlazor = propertiesFromSql.Select(property => maper.MapProperties(property)).ToList();
+
             return propertiesFromSql;
         }
     }
