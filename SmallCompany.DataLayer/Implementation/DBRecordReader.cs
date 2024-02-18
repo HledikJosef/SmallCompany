@@ -14,16 +14,28 @@ namespace SmallCompany.DataLayer.Implementation
         }
 
 
-        public List<PropertyList> ReadProperties()
+        public List<PropertyModel> ReadProperties()
         {
-            string sqlCommand = "SELECT Id, PropertyName, PropertyType, PropertyDescription FROM PropertyList";
-            List<PropertyList> propertiesFromSql = new List<PropertyList>();
+            string sqlCommand = "SELECT Id, PropertyName, PropertyType, PropertyDescription FROM PropertyModel";
+            List<PropertyModel> propertiesFromSql = new List<PropertyModel>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                propertiesFromSql = connection.Query<PropertyList>(sqlCommand).ToList();
+                propertiesFromSql = connection.Query<PropertyModel>(sqlCommand).ToList();
             }
 
             return propertiesFromSql;
+        }
+
+        public List<UnitModel> ReadUnits()
+        {
+            string sqlCommand = "SELECT Unit FROM Units";
+            List<UnitModel> unitsFromSql = new List<UnitModel>();
+            using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
+            {
+                unitsFromSql = connection.Query<UnitModel>(sqlCommand).ToList();
+            }
+
+            return unitsFromSql;
         }
     }
 }

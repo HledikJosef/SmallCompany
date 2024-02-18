@@ -2,7 +2,6 @@
 {
     public class ItemModel
     {
-        public int? ItemId { get; set; }
         public string ItemGroupName { get; set; }
         public string ItemDescription { get; set; }
         public bool ItemColor { get; set; }
@@ -14,7 +13,9 @@
         public bool ItemHigh { get; set; }
         public bool ItemThickness { get; set; }
         public bool ItemWeight { get; set; }
+        public string Unit { get; set; }
         public bool IsValid { get; set; }
+
 
     }
 }

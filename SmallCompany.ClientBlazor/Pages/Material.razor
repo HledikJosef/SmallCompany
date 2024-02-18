@@ -27,7 +27,6 @@
                         @foreach(var enumValue in Enum.GetValues(typeof(ItemDescription)))
                         {
                             <option value="@enumValue">@enumValue.ToString()</option>
-                         
                         }
                     </select>
                 </td>
@@ -35,7 +34,7 @@
             </tr>
 
             @foreach (var property in blazorProperties)
-            {
+            {                
                 <tr>
                     <td>                        
                         <input class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-value=property.IsValid>
