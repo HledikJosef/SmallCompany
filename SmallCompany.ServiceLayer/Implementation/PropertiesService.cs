@@ -15,13 +15,13 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<PropertiesBlazorModel> GetBlazorProperties()
         {
-            List<PropertiesModel> propertiesFromSql = dBRrecordReader.ReadProperties();
+            List<PropertyList> propertiesFromSql = dBRrecordReader.ReadProperties();
             List<PropertiesBlazorModel> blazorProperties = propertiesFromSql.Select(property => MapProperties(property)).ToList();
 
             return blazorProperties;
         }
 
-        private PropertiesBlazorModel MapProperties(PropertiesModel properties)
+        private PropertiesBlazorModel MapProperties(PropertyList properties)
         {
             PropertiesBlazorModel propertiesBlazorModel = new PropertiesBlazorModel();
             propertiesBlazorModel.Id = properties.Id;

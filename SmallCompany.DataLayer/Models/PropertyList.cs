@@ -1,6 +1,6 @@
 ﻿namespace SmallCompany.DataLayer.Models
 {
-    public class PropertiesModel
+    public class PropertyList
     {
         public int Id { get; set; }
         public string? PropertyName { get; set; }

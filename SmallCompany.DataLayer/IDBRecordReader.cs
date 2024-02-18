@@ -4,6 +4,6 @@ namespace SmallCompany.DataLayer
 {
     public interface IDBRecordReader
     {
-        public List<PropertiesModel> ReadProperties();
+        public List<PropertyList> ReadProperties();
     }
 }

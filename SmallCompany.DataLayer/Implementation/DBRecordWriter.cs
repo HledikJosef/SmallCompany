@@ -13,17 +13,19 @@ namespace SmallCompany.DataLayer.Implementation
             this.connectionStringProvider = connectionStringProvider;
         }
 
-        public void WriteMaterialModel(MaterialModel materialModel)
+        public bool WriteItemModel(ItemModel itemModel)
         {
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
                 try
                 {
-                    var rowsAffected = connection.Insert(materialModel);
+                    var rowsAffected = connection.Insert(itemModel);
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
+                    return false;
                 }
             };
         }

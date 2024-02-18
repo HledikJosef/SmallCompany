@@ -1,31 +1,33 @@
-﻿@page "/material"
+﻿@page "/itemModelRecord"
 @using SmallCompany.ServiceLayer;
 @using ServiceLayer.ModelsBlazor;
 @using System.Data;
+@using System.Threading;
 @inject IPropertiesService propertiesService;
-@inject IMaterialModelCreator materialModelCreator;
+@inject IItemModelCreator itemModelCreator;
 
 <PageTitle>Materiál-záznam</PageTitle>
 
 <h1>Vytvoř nový model materiálu</h1>
 <h5>Vyplň obecný název skupiny, krátký popis a zaškrtnutím přiřaď k materiálu vhodné vlastnosti.</h5>
 
-<div class="table-responsive-sm">
-<table class="table">
+<form class="form-control">
+    <table class="table">
         <tbody>
             <tr>
                 <td>
-                    <input class="form-control" type="text" placeholder="Typ skupiny materiálů" @bind-value="@materialGroupName">
+                    <input type="text" class="form-control" placeholder="Název skupiny prvků" @bind-value="@itemGroupName" required>
                 </td>
                 
             </tr>
             <tr>
                 <td>
-                    <select class="form-select">
-                        <option disabled selected>Vyberte jednu z možností</option>
-                        @foreach(var enumValue in Enum.GetValues(typeof(MaterialDescription)))
+                    <select class="form-select" @bind="itemDescription" required>
+                        <option disabled selected value="">Vyberte jednu z možností</option>
+                        @foreach(var enumValue in Enum.GetValues(typeof(ItemDescription)))
                         {
                             <option value="@enumValue">@enumValue.ToString()</option>
+                         
                         }
                     </select>
                 </td>
@@ -38,23 +40,52 @@
                     <td>                        
                         <input class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-value=property.IsValid>
                         <label class="form-check-label" for="flexCheckDefault">@property.PropertyName</label>                         
-                        
-
                     </td>
                 </tr>
             }
-        </tbody>       
-      
-    
-</table>
-</div>
+        </tbody>     
+    </table>
+
+    <button class="btn btn-primary" @onclick="AddItemRecord">Ulož záznam</button>
+
+</form>
 
 
-<button class="btn btn-primary" @onclick="AddMaterialRecord">Ulož záznam</button>
+
+@if (notification != null)
+{
+    if (notification == "Záznam byl uložen")
+    {
+        <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+            @notification
+            <button type="button" class="btn-close" aria-label="Close"></button>
+        </div>
+
+        <script>
+            // Počkejte 5 sekund a poté skryjte alert
+            setTimeout(function () {
+                var alert = document.getElementById('myAlertSuccess');
+                alert.classList.remove('show');
+                alert.classList.add('hide');
+            }, 4000); // 5000 ms = 5 sekund
+        </script>
+    }
+    else if (notification == "Záznam se nepodařilo uložit")
+    {
+        <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
+            @notification
+            <button type="button" class="btn-success" aria-label="Close"></button>
+        </div>
+    }
+
+}
+
+
 
 @code {
-    private string materialGroupName;
-    MaterialDescription materialDescription = new MaterialDescription();
+    private string? notification = null;
+    private string? itemGroupName = null;
+    ItemDescription? itemDescription = null;
 
     List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
 
@@ -64,8 +95,27 @@
         blazorProperties = propertiesService.GetBlazorProperties();
     }
 
-    private void AddMaterialRecord()
+    private void AddItemRecord()
     {
-        materialModelCreator.CreateMaterialEntryModel(materialGroupName, materialDescription.ToString(),blazorProperties);
+        bool isSuccessful = false;
+        if ((itemDescription != null) && (itemGroupName != null))
+        {
+            isSuccessful = itemModelCreator.CreateItemEntryModel(itemGroupName, itemDescription.ToString(), blazorProperties);        
+        }
+        SetNotification(isSuccessful);
+
+    }
+
+
+    private void SetNotification(bool isSuccesfull)
+    {
+        if (isSuccesfull)
+        {
+            notification = "Záznam byl uložen";
+        }
+        else
+        {
+            notification = "Záznam se nepodařilo uložit";
+        }
     }
 }

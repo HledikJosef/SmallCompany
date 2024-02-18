@@ -14,13 +14,13 @@ namespace SmallCompany.DataLayer.Implementation
         }
 
 
-        public List<PropertiesModel> ReadProperties()
+        public List<PropertyList> ReadProperties()
         {
             string sqlCommand = "SELECT Id, PropertyName, PropertyType, PropertyDescription FROM PropertyList";
-            List<PropertiesModel> propertiesFromSql = new List<PropertiesModel>();
+            List<PropertyList> propertiesFromSql = new List<PropertyList>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                propertiesFromSql = connection.Query<PropertiesModel>(sqlCommand).ToList();
+                propertiesFromSql = connection.Query<PropertyList>(sqlCommand).ToList();
             }
 
             return propertiesFromSql;

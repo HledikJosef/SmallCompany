@@ -16,8 +16,7 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IDBRecordWriter, DBRecordWriter>();
             //ServiceLayer
             services.AddTransient<IPropertiesService, PropertiesService>();
-            services.AddTransient<IMaterialModelCreator, MaterialModelCreator>();
-            services.AddTransient<IMaterialModelCreator, MaterialModelCreator>();
+            services.AddTransient<IItemModelCreator, ItemModelCreator>();
         }
     }
 }
