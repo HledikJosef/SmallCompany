@@ -7,7 +7,5 @@
         public string? PropertyType { get; set; }
         public string? PropertyDescription { get; set; }
 
-        private UnitModel Unit { get; set; }
-
     }
 }

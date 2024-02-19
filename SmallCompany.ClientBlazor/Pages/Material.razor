@@ -23,7 +23,7 @@
             <tr>
                 <td>
                     <select class="form-select" @bind="itemDescription" required>
-                        <option disabled selected value="">Vyberte jednu z možností</option>
+                        <option disabled selected value="">Vyberte typ skupiny</option>
                         @foreach(var enumValue in Enum.GetValues(typeof(ItemDescription)))
                         {
                             <option value="@enumValue">@enumValue.ToString()</option>
@@ -42,6 +42,18 @@
                     </td>
                 </tr>
             }
+            <tr>
+                <td>
+                    <select class="form-select" @bind="itemUnit" required>
+                        <option disabled selected value="">Vyberte jednotku skupiny</option>
+                        @foreach (var unit in blazorUnits)
+                        {
+                            <option value="@unit">@unit.Unit</option>
+                        }
+                    </select>
+                </td>
+
+            </tr>
         </tbody>     
     </table>
 
@@ -84,14 +96,17 @@
 @code {
     private string? notification = null;
     private string? itemGroupName = null;
+    private string? itemUnit = null;
     ItemDescription? itemDescription = null;
 
     List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
+    List<UnitBlazorModel> blazorUnits = new List<UnitBlazorModel>();
 
 
     protected override void OnInitialized()
     {
         blazorProperties = propertiesService.GetBlazorProperties();
+        blazorUnits = propertiesService.GetBlazorUnits();
     }
 
     private void AddItemRecord()

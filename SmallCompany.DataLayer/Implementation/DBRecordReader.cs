@@ -28,7 +28,7 @@ namespace SmallCompany.DataLayer.Implementation
 
         public List<UnitModel> ReadUnits()
         {
-            string sqlCommand = "SELECT Unit FROM Units";
+            string sqlCommand = "SELECT Unit FROM UnitModel";
             List<UnitModel> unitsFromSql = new List<UnitModel>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {

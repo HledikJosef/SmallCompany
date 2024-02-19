@@ -4,6 +4,7 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IPropertiesService
     {
-        List<PropertiesBlazorModel> GetBlazorProperties();
+        public List<PropertiesBlazorModel> GetBlazorProperties();
+        public List<UnitBlazorModel> GetBlazorUnits();
     }
 }

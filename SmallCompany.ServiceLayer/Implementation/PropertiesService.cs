@@ -32,10 +32,19 @@ namespace SmallCompany.ServiceLayer.Impl
             return propertiesBlazorModel;
         }
 
-        public List<UnitModel> GetUnits()
+        public List<UnitBlazorModel> GetBlazorUnits()
         {
-            List<UnitModel> units = new List<UnitModel>();
-            return units;
+            List<UnitModel> unitsFromSql = dBRrecordReader.ReadUnits();
+            List<UnitBlazorModel> blazorUnits = unitsFromSql.Select(unit => MapUnits(unit)).ToList();
+            return blazorUnits;
+        }
+
+        private UnitBlazorModel MapUnits(UnitModel units)
+        {
+            UnitBlazorModel blazorUnits = new UnitBlazorModel();
+            blazorUnits.Unit = units.Unit;
+
+            return blazorUnits;
         }
 
 
