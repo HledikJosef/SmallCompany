@@ -13,7 +13,7 @@
         public bool ItemHigh { get; set; }
         public bool ItemThickness { get; set; }
         public bool ItemWeight { get; set; }
-        public string Unit { get; set; }
+        public string ItemUnit { get; set; }
         public bool IsValid { get; set; }
 
 

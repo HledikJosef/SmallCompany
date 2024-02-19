@@ -48,7 +48,7 @@
                         <option disabled selected value="">Vyberte jednotku skupiny</option>
                         @foreach (var unit in blazorUnits)
                         {
-                            <option value="@unit">@unit.Unit</option>
+                            <option value="@unit.Unit">@unit.Unit</option>
                         }
                     </select>
                 </td>
@@ -112,9 +112,9 @@
     private void AddItemRecord()
     {
         bool isSuccessful = false;
-        if ((itemDescription != null) && (itemGroupName != null))
+        if ((itemDescription != null) && (itemGroupName != null) && (itemUnit != null))
         {
-            isSuccessful = itemModelCreator.CreateItemEntryModel(itemGroupName, itemDescription.ToString(), blazorProperties);        
+            isSuccessful = itemModelCreator.CreateItemEntryModel(itemGroupName, itemDescription.ToString(), blazorProperties, itemUnit);        
         }
         SetNotification(isSuccessful);
 

@@ -4,6 +4,6 @@ namespace SmallCompany.DataLayer
 {
     public interface IDBRecordWriter
     {
-        public bool WriteItemModel(ItemModel materialModel);
+        public bool WriteItemModel(ItemModel itemModel);
     }
 }

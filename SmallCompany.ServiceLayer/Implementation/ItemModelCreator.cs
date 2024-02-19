@@ -14,7 +14,7 @@ namespace SmallCompany.ServiceLayer.Impl
         }
 
 
-        public bool CreateItemEntryModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties)
+        public bool CreateItemEntryModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
         {
             ItemModel itemModel = new ItemModel();
             itemModel.ItemGroupName = itemGroupName;
@@ -52,8 +52,10 @@ namespace SmallCompany.ServiceLayer.Impl
                         break;
 
                 }
-                itemModel.IsValid = true;
+
             }
+            itemModel.ItemUnit = unit;
+            itemModel.IsValid = true;
             bool isSuccsesfull = dBRecordWriter.WriteItemModel(itemModel);
             return isSuccsesfull;
 

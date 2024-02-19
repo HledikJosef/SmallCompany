@@ -2,6 +2,6 @@
 {
     public class UnitModel
     {
-        public string Unit { get; set; }
+        public string ItemUnit { get; set; }
     }
 }

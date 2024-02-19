@@ -42,7 +42,7 @@ namespace SmallCompany.ServiceLayer.Impl
         private UnitBlazorModel MapUnits(UnitModel units)
         {
             UnitBlazorModel blazorUnits = new UnitBlazorModel();
-            blazorUnits.Unit = units.Unit;
+            blazorUnits.Unit = units.ItemUnit;
 
             return blazorUnits;
         }
