@@ -41,10 +41,26 @@ namespace SmallCompany.ServiceLayer.Impl
 
         private UnitBlazorModel MapUnits(UnitModel units)
         {
-            UnitBlazorModel blazorUnits = new UnitBlazorModel();
-            blazorUnits.Unit = units.ItemUnit;
+            UnitBlazorModel blazorUnit = new UnitBlazorModel();
+            blazorUnit.Unit = units.ItemUnit;
 
-            return blazorUnits;
+            return blazorUnit;
+        }
+
+        public List<ItemTypBlazorModel> GetBlazorItemTyps()
+        {
+            List<ItemTyp> itemTypsFromSql = dBRrecordReader.ReadItemTyps();
+            List<ItemTypBlazorModel> blazorItemTyps = itemTypsFromSql.Select(item => MapItemTyps(item)).ToList();
+
+            return blazorItemTyps;
+        }
+
+        private ItemTypBlazorModel MapItemTyps(ItemTyp itemTyp)
+        {
+            ItemTypBlazorModel blazorItemTyp = new ItemTypBlazorModel();
+            blazorItemTyp.ItemTyp = itemTyp.Itemtyp;
+
+            return blazorItemTyp;
         }
 
 

@@ -37,5 +37,29 @@ namespace SmallCompany.DataLayer.Implementation
 
             return unitsFromSql;
         }
+
+        public List<ItemTyp> ReadItemTyps()
+        {
+            string sqlCommand = "SELECT ItemTyp FROM ItemTypModel";
+            List<ItemTyp> itemTypsFromSql = new List<ItemTyp>();
+            using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
+            {
+                itemTypsFromSql = connection.Query<ItemTyp>(sqlCommand).ToList();
+            }
+
+            return itemTypsFromSql;
+        }
+
+        public List<StockModel> ReadStockModels()
+        {
+            string sqlComman = "SELECT StockId, StockTitel, StockDescription, StockLocation, IsValid FROM StockModel";
+            List<StockModel> stocksFromSql = new List<StockModel>();
+            using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
+            {
+                stocksFromSql = connection.Query<StockModel>(sqlComman).ToList();
+            }
+
+            return stocksFromSql;
+        }
     }
 }

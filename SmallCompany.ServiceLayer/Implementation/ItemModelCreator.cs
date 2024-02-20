@@ -14,7 +14,7 @@ namespace SmallCompany.ServiceLayer.Impl
         }
 
 
-        public bool CreateItemEntryModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
+        public bool CreateItemModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
         {
             ItemModel itemModel = new ItemModel();
             itemModel.ItemGroupName = itemGroupName;

@@ -1,0 +1,100 @@
+﻿@page "/stockRecord"
+@using SmallCompany.ServiceLayer;
+@using ServiceLayer.ModelsBlazor;
+@using System.Data;
+@inject IStockService stockservice;
+
+<PageTitle>Stock-record</PageTitle>
+
+<h1>Vytvoř nový sklad</h1>
+<h5>Vyplň název skladu, stručný popis a lokaci.</h5>
+
+<form class="form-control">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Název skladu" @bind-value="@blazorStock.StockTitel" required>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Stručný popis skladu" @bind-value="@blazorStock.StockDescription" required>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Umístění skladu" @bind-value="@blazorStock.StockLocation" required>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-primary" @onclick="AddStockRecord">Ulož záznam</button>
+
+</form>
+
+@if (notification != null)
+{
+    if (notification == "Záznam byl uložen")
+    {
+        <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+            @notification
+            <button type="button" class="btn-close" aria-label="Close"></button>
+        </div>
+
+        <script>
+            // Počkejte 5 sekund a poté skryjte alert
+            setTimeout(function () {
+                var alert = document.getElementById('myAlertSuccess');
+                alert.classList.remove('show');
+                alert.classList.add('hide');
+            }, 4000); // 5000 ms = 5 sekund
+        </script>
+    }
+    else if (notification == "Záznam se nepodařilo uložit")
+    {
+        <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
+            @notification
+            <button type="button" class="btn-success" aria-label="Close"></button>
+        </div>
+    }
+
+}
+
+@code {
+    private string? notification = null;
+    StockBlazorModel blazorStock = null;
+
+    protected override void OnInitialized()
+    {
+        blazorStock = new StockBlazorModel();
+    }
+
+    private void AddStockRecord()
+    {
+        bool isSuccessful = false;
+        if((blazorStock.StockTitel != null) && (blazorStock.StockDescription != null) && (blazorStock.StockLocation != null))
+        {
+            blazorStock.IsValid = true;
+            isSuccessful = stockservice.CreateStockModel(blazorStock);
+        }
+
+        SetNotification(isSuccessful);
+    }
+
+    private void SetNotification(bool isSuccesfull)
+    {
+        if (isSuccesfull)
+        {
+            notification = "Záznam byl uložen";
+        }
+        else
+        {
+            notification = "Záznam se nepodařilo uložit";
+        }
+    }
+
+
+}

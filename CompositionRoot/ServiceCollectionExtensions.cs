@@ -3,6 +3,7 @@ using SmallCompany.DataLayer;
 using SmallCompany.DataLayer.Implementation;
 using SmallCompany.ServiceLayer;
 using SmallCompany.ServiceLayer.Impl;
+using SmallCompany.ServiceLayer.Implementation;
 
 namespace SmallCompany.CompositionRoot
 {
@@ -17,6 +18,7 @@ namespace SmallCompany.CompositionRoot
             //ServiceLayer
             services.AddTransient<IPropertiesService, PropertiesService>();
             services.AddTransient<IItemModelCreator, ItemModelCreator>();
+            services.AddTransient<IStockService, StockService>();
         }
     }
 }

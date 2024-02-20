@@ -14,9 +14,14 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
+        <div class="nav-item px-3">            
+            <NavLink class="nav-link" href="itemModelRecord">               
+                <span class="oi oi-plus" aria-hidden="true"></span> nový prvek             
+            </NavLink>            
+        </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="itemModelRecord">
-                <span class="oi oi-plus" aria-hidden="true"></span> itemModelRecord
+            <NavLink class="nav-link" href="stockRecord">
+                <span class="oi oi-plus" aria-hidden="true"></span> nový sklad
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -25,7 +30,9 @@
             </NavLink>
         </div>
     </nav>
+
 </div>
+
 
 @code {
     private bool collapseNavMenu = true;

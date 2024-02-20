@@ -6,10 +6,10 @@
 @inject IPropertiesService propertiesService;
 @inject IItemModelCreator itemModelCreator;
 
-<PageTitle>Materiál-záznam</PageTitle>
+<PageTitle>Item-record</PageTitle>
 
-<h1>Vytvoř nový model materiálu</h1>
-<h5>Vyplň obecný název skupiny, krátký popis a zaškrtnutím přiřaď k materiálu vhodné vlastnosti.</h5>
+<h1>Vytvoř nový model prvku</h1>
+<h5>Vyplň obecný název skupiny, vyber typ prvku(např.materíál, výrobek, zoží..) a zaškrtnutím přiřaď k prvku vhodné vlastnosti a jednotku.</h5>
 
 <form class="form-control">
     <table class="table">
@@ -22,11 +22,11 @@
             </tr>
             <tr>
                 <td>
-                    <select class="form-select" @bind="itemDescription" required>
+                    <select class="form-select" @bind="itemTyp" required>
                         <option disabled selected value="">Vyberte typ skupiny</option>
-                        @foreach(var enumValue in Enum.GetValues(typeof(ItemDescription)))
+                        @foreach(var itemTyp in blazorItemTyps)
                         {
-                            <option value="@enumValue">@enumValue.ToString()</option>
+                            <option value="@itemTyp.ItemTyp">@itemTyp.ItemTyp</option>
                         }
                     </select>
                 </td>
@@ -97,24 +97,26 @@
     private string? notification = null;
     private string? itemGroupName = null;
     private string? itemUnit = null;
-    ItemDescription? itemDescription = null;
+    private string? itemTyp = null;
 
     List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
     List<UnitBlazorModel> blazorUnits = new List<UnitBlazorModel>();
+    List<ItemTypBlazorModel> blazorItemTyps = new List<ItemTypBlazorModel>();
 
 
     protected override void OnInitialized()
     {
         blazorProperties = propertiesService.GetBlazorProperties();
         blazorUnits = propertiesService.GetBlazorUnits();
+        blazorItemTyps = propertiesService.GetBlazorItemTyps();
     }
 
     private void AddItemRecord()
     {
         bool isSuccessful = false;
-        if ((itemDescription != null) && (itemGroupName != null) && (itemUnit != null))
+        if ((itemTyp != null) && (itemGroupName != null) && (itemUnit != null))
         {
-            isSuccessful = itemModelCreator.CreateItemEntryModel(itemGroupName, itemDescription.ToString(), blazorProperties, itemUnit);        
+            isSuccessful = itemModelCreator.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);        
         }
         SetNotification(isSuccessful);
 
