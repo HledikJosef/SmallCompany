@@ -6,11 +6,11 @@ namespace SmallCompany.ServiceLayer.Impl
 {
     public class ItemModelCreator : IItemModelCreator
     {
-        private readonly IDBRecordWriter dBRecordWriter;
+        private readonly IItemModelDao itemModelDao;
 
-        public ItemModelCreator(IDBRecordWriter dBRecordWriter)
+        public ItemModelCreator(IItemModelDao itemModelDao)
         {
-            this.dBRecordWriter = dBRecordWriter;
+            this.itemModelDao = itemModelDao;
         }
 
 
@@ -56,7 +56,7 @@ namespace SmallCompany.ServiceLayer.Impl
             }
             itemModel.ItemUnit = unit;
             itemModel.IsValid = true;
-            bool isSuccsesfull = dBRecordWriter.WriteItemModel(itemModel);
+            bool isSuccsesfull = itemModelDao.WriteItemModel(itemModel);
             return isSuccsesfull;
 
 

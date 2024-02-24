@@ -6,16 +6,20 @@ namespace SmallCompany.ServiceLayer.Impl
 {
     public class PropertiesService : IPropertiesService
     {
-        private readonly IDBRecordReader dBRrecordReader;
+        private readonly IPropertyModelDao propertyModelDao;
+        private readonly IUnitModelDao unitModelDao;
+        private readonly IItemTypModelDao itemTypModelDao;
 
-        public PropertiesService(IConnectionStringProvider connectionStringProvider, IDBRecordReader dBRecordReader)
+        public PropertiesService(IPropertyModelDao propertyModelDao, IUnitModelDao unitModelDao, IItemTypModelDao itemTypModelDao)
         {
-            this.dBRrecordReader = dBRecordReader;
+            this.propertyModelDao = propertyModelDao;
+            this.unitModelDao = unitModelDao;
+            this.itemTypModelDao = itemTypModelDao;
         }
 
         public List<PropertiesBlazorModel> GetBlazorProperties()
         {
-            List<PropertyModel> propertiesFromSql = dBRrecordReader.ReadProperties();
+            List<PropertyModel> propertiesFromSql = propertyModelDao.ReadProperties();
             List<PropertiesBlazorModel> blazorProperties = propertiesFromSql.Select(property => MapProperties(property)).ToList();
 
             return blazorProperties;
@@ -34,7 +38,7 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<UnitBlazorModel> GetBlazorUnits()
         {
-            List<UnitModel> unitsFromSql = dBRrecordReader.ReadUnits();
+            List<UnitModel> unitsFromSql = unitModelDao.ReadUnits();
             List<UnitBlazorModel> blazorUnits = unitsFromSql.Select(unit => MapUnits(unit)).ToList();
             return blazorUnits;
         }
@@ -49,7 +53,7 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<ItemTypBlazorModel> GetBlazorItemTyps()
         {
-            List<ItemTyp> itemTypsFromSql = dBRrecordReader.ReadItemTyps();
+            List<ItemTyp> itemTypsFromSql = itemTypModelDao.ReadItemTyps();
             List<ItemTypBlazorModel> blazorItemTyps = itemTypsFromSql.Select(item => MapItemTyps(item)).ToList();
 
             return blazorItemTyps;

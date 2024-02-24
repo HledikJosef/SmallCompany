@@ -13,8 +13,12 @@ namespace SmallCompany.CompositionRoot
         {
             //DataLayer
             services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(connectionString));
-            services.AddTransient<IDBRecordReader, DBRecordReader>();
-            services.AddTransient<IDBRecordWriter, DBRecordWriter>();
+            services.AddTransient<IItemModelDao, ItemModelDao>();
+            services.AddTransient<IItemTypModelDao, ItemTypModelDao>();
+            services.AddTransient<IPropertyModelDao, PropertyModelDao>();
+            services.AddTransient<IStockModelDao, StockModelDao>();
+            services.AddTransient<IUnitModelDao, UnitModelDao>();
+
             //ServiceLayer
             services.AddTransient<IPropertiesService, PropertiesService>();
             services.AddTransient<IItemModelCreator, ItemModelCreator>();

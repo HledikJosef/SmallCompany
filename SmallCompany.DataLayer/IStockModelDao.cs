@@ -2,9 +2,9 @@
 
 namespace SmallCompany.DataLayer
 {
-    public interface IDBRecordWriter
+    public interface IStockModelDao
     {
-        public bool WriteItemModel(ItemModel itemModel);
+        public List<StockModel> ReadStockModels();
         public bool WriteStockmodel(StockModel stockmodel);
     }
 }

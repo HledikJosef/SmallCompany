@@ -6,17 +6,17 @@ namespace SmallCompany.ServiceLayer.Implementation
 {
     public class StockService : IStockService
     {
-        private readonly IDBRecordWriter dBRecordWriter;
+        private readonly IStockModelDao stockModelDao;
 
-        public StockService(IDBRecordWriter dBRecordWriter)
+        public StockService(IStockModelDao stockModelDao)
         {
-            this.dBRecordWriter = dBRecordWriter;
+            this.stockModelDao = stockModelDao;
         }
 
         public bool CreateStockModel(StockBlazorModel blazorStock)
         {
             StockModel stockModel = MapStocks(blazorStock);
-            bool isSuccessful = dBRecordWriter.WriteStockmodel(stockModel);
+            bool isSuccessful = stockModelDao.WriteStockmodel(stockModel);
 
             return isSuccessful;
         }

@@ -63,38 +63,25 @@
 
 
 
-@if (notification != null)
+@if (savingSuccesfull is not null && savingSuccesfull == true)
 {
-    if (notification == "Záznam byl uložen")
-    {
-        <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
-            @notification
-            <button type="button" class="btn-close" aria-label="Close"></button>
-        </div>
-
-        <script>
-            // Počkejte 5 sekund a poté skryjte alert
-            setTimeout(function () {
-                var alert = document.getElementById('myAlertSuccess');
-                alert.classList.remove('show');
-                alert.classList.add('hide');
-            }, 4000); // 5000 ms = 5 sekund
-        </script>
-    }
-    else if (notification == "Záznam se nepodařilo uložit")
-    {
-        <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
-            @notification
-            <button type="button" class="btn-success" aria-label="Close"></button>
-        </div>
-    }
-
+    <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+        Záznam byl uložen
+    </div>
 }
+else if (savingSuccesfull is not null && savingSuccesfull == false)
+{
+    <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
+        Záznam se nepodařilo uložit
+    </div>
+}
+
 
 
 
 @code {
     private string? notification = null;
+    private bool? savingSuccesfull = null;
     private string? itemGroupName = null;
     private string? itemUnit = null;
     private string? itemTyp = null;
@@ -111,27 +98,17 @@
         blazorItemTyps = propertiesService.GetBlazorItemTyps();
     }
 
-    private void AddItemRecord()
+    private async Task AddItemRecord()
     {
-        bool isSuccessful = false;
         if ((itemTyp != null) && (itemGroupName != null) && (itemUnit != null))
         {
-            isSuccessful = itemModelCreator.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);        
-        }
-        SetNotification(isSuccessful);
-
-    }
-
-
-    private void SetNotification(bool isSuccesfull)
-    {
-        if (isSuccesfull)
-        {
-            notification = "Záznam byl uložen";
+            savingSuccesfull = itemModelCreator.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
         }
         else
         {
-            notification = "Záznam se nepodařilo uložit";
+            savingSuccesfull = false;
         }
+        await Task.Delay(1);
+        StateHasChanged();
     }
 }
