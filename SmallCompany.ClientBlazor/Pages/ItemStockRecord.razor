@@ -1,0 +1,150 @@
+﻿@page "/itemStockRecord"
+@using SmallCompany.ServiceLayer;
+@using SmallCompany.ServiceLayer.ModelsBlazor;
+@inject IItemModelService itemModelService;
+
+<PageTitle>ItemStock-record</PageTitle>
+
+<h1>Vlož prvek na sklad</h1>
+<h5>Zvol skupinu a vyplň požadované parametry</h5>
+
+<form class="form-control">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <select class="form-select" @onchange="GetSelectedItem" required>
+                        <option disabled selected value="">Vyberte typ skupiny</option>
+                        @foreach (var itemModel in blazorItemModels)
+                        {
+                            <option value="@itemModel.ItemGroupName">@itemModel.ItemGroupName</option>
+                        }
+                    </select>
+                </td>
+
+                @if (selectedModel != null)
+                {
+                    <td>
+                        <input class="form-control" type="text" @bind-value="@selectedModel.ItemDescription" readonly>
+                    </td>
+                    
+                }
+                
+            </tr>
+            @if(selectedModel != null)
+            {
+                <tr>
+                    <td>
+                        <input class="form-control" type="text" placeholder="Název/Typ" @bind-value=itemRecordBlazorModel.ItemType required>
+                    </td>
+
+                    @if (selectedModel.ItemColor)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Barva" @bind-value=itemRecordBlazorModel.ItemColor required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemHardness)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Tvrdost (ShA)" @bind-value=itemRecordBlazorModel.ItemHardness required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemDensity)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Hustota" @bind-value=itemRecordBlazorModel.ItemDensity required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemDiameter)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Průměr (mm)" @bind-value=itemRecordBlazorModel.ItemDiameter required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemWidth)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Šířka (mm)" @bind-value=itemRecordBlazorModel.ItemWidth required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemLength)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Délka (mm)" @bind-value=itemRecordBlazorModel.ItemLength required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemHigh)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Výška (mm)" @bind-value=itemRecordBlazorModel.ItemHigh required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemThickness)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Tloušťka/Síla materiálu (mm)" @bind-value=itemRecordBlazorModel.ItemThickness required>
+                        </td>
+                    }
+
+                    @if (selectedModel.ItemWeight)
+                    {
+                        <td>
+                            <input class="form-control" type="text" placeholder="Hmotnost (kg)" @bind-value=itemRecordBlazorModel.ItemWeight required>
+                        </td>
+                    }
+
+                </tr>
+
+                @if (selectedModel != null)
+                {
+                    <tr>
+                        <td>
+                            <input class="form-control" type="text" placeholder="Množství" @bind-value="itemRecordBlazorModel.ItemQuantity" requiered>
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
+                        </td>
+                    </tr>                
+
+                }
+
+                
+            }
+            
+            
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</form>
+
+@code {
+    private ItemBlazorModel selectedModel;
+    ItemRecordBlazorModel itemRecordBlazorModel;
+
+    List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
+
+
+    protected override void OnInitialized()
+    {
+        blazorItemModels = itemModelService.GetBlazorItemModels();
+        itemRecordBlazorModel = new ItemRecordBlazorModel();
+    }
+
+    private void GetSelectedItem(ChangeEventArgs e)
+    {
+        string selectedGroupName = e.Value.ToString();
+        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);
+	}
+
+
+}

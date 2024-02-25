@@ -15,7 +15,7 @@ namespace SmallCompany.DataLayer.Implementation
 
         public List<PropertyModel> ReadProperties()
         {
-            string sqlCommand = "SELECT Id, PropertyName, PropertyType, PropertyDescription FROM PropertyModel";
+            string sqlCommand = "SELECT PropertyId, PropertyName, PropertyType, PropertyDescription FROM PropertyModel";
             List<PropertyModel> propertiesFromSql = new List<PropertyModel>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {

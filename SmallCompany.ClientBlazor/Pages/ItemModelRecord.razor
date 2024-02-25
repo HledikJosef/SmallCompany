@@ -1,17 +1,16 @@
 ﻿@page "/itemModelRecord"
 @using SmallCompany.ServiceLayer;
 @using ServiceLayer.ModelsBlazor;
-@using System.Data;
-@using System.Threading;
 @inject IPropertiesService propertiesService;
-@inject IItemModelCreator itemModelCreator;
+@inject IItemModelService itemModelService;
+@inject NavigationManager navigationManager;
 
 <PageTitle>Item-record</PageTitle>
 
 <h1>Vytvoř nový model prvku</h1>
 <h5>Vyplň obecný název skupiny, vyber typ prvku(např.materíál, výrobek, zoží..) a zaškrtnutím přiřaď k prvku vhodné vlastnosti a jednotku.</h5>
 
-<form class="form-control">
+<form class="form-control" @onsubmit="AddItemRecord">
     <table class="table">
         <tbody>
             <tr>
@@ -57,23 +56,27 @@
         </tbody>     
     </table>
 
-    <button class="btn btn-primary" @onclick="AddItemRecord">Ulož záznam</button>
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
 </form>
 
 
 
-@if (savingSuccesfull is not null && savingSuccesfull == true)
+@if (notification != null)
 {
-    <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
-        Záznam byl uložen
-    </div>
-}
-else if (savingSuccesfull is not null && savingSuccesfull == false)
-{
-    <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
-        Záznam se nepodařilo uložit
-    </div>
+    if (notification == "Záznam byl uložen")
+    {
+        <div id="myAlertSuccess" class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+    else if (notification == "Záznam se nepodařilo uložit")
+    {
+        <div id="myAlertDanger" class="alert alert-danger" role="alert">
+            @notification
+        </div>
+    }
+
 }
 
 
@@ -81,7 +84,7 @@ else if (savingSuccesfull is not null && savingSuccesfull == false)
 
 @code {
     private string? notification = null;
-    private bool? savingSuccesfull = null;
+    private bool isSuccesfull = false;
     private string? itemGroupName = null;
     private string? itemUnit = null;
     private string? itemTyp = null;
@@ -102,13 +105,33 @@ else if (savingSuccesfull is not null && savingSuccesfull == false)
     {
         if ((itemTyp != null) && (itemGroupName != null) && (itemUnit != null))
         {
-            savingSuccesfull = itemModelCreator.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
+            isSuccesfull = itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
+        }
+
+        SetNotification(isSuccesfull);
+
+    }
+
+    private void SetNotification(bool isSuccesfull)
+    {
+        int delay;
+
+        if (isSuccesfull)
+        {
+            notification = "Záznam byl uložen";
+            delay = 1300;
         }
         else
         {
-            savingSuccesfull = false;
+            notification = "Záznam se nepodařilo uložit";
+            delay = 2000;
         }
-        await Task.Delay(1);
-        StateHasChanged();
+        Task.Delay(delay).ContinueWith(_ => RefreshPage());
+
+    }
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo("/itemModelRecord", forceLoad: true);
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace SmallCompany.DataLayer.Models
+﻿namespace SmallCompany.ServiceLayer.ModelsBlazor
 {
-    public class ItemModel
+    public class ItemBlazorModel
     {
         public int? ItemId { get; set; }
         public string ItemGroupName { get; set; }
@@ -16,7 +16,5 @@
         public bool ItemWeight { get; set; }
         public string ItemUnit { get; set; }
         public bool IsValid { get; set; }
-
-
     }
 }

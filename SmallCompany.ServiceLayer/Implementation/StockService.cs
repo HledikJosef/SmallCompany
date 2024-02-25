@@ -24,6 +24,7 @@ namespace SmallCompany.ServiceLayer.Implementation
         private StockModel MapStocks(StockBlazorModel blazorStock)
         {
             StockModel stockModel = new StockModel();
+            stockModel.StockId = blazorStock.StockId;
             stockModel.StockTitel = blazorStock.StockTitel;
             stockModel.StockDescription = blazorStock.StockDescription;
             stockModel.StockLocation = blazorStock.StockLocation;

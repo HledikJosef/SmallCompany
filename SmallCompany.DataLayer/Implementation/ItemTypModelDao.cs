@@ -15,7 +15,7 @@ namespace SmallCompany.DataLayer.Implementation
 
         public List<ItemTyp> ReadItemTyps()
         {
-            string sqlCommand = "SELECT ItemTyp FROM ItemTypModel";
+            string sqlCommand = "SELECT ItemTypId, ItemTyp FROM ItemTypModel";
             List<ItemTyp> itemTypsFromSql = new List<ItemTyp>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {

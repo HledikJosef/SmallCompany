@@ -2,13 +2,15 @@
 using SmallCompany.DataLayer.Models;
 using SmallCompany.ServiceLayer.ModelsBlazor;
 
+
+
 namespace SmallCompany.ServiceLayer.Impl
 {
-    public class ItemModelCreator : IItemModelCreator
+    public class ItemModelService : IItemModelService
     {
         private readonly IItemModelDao itemModelDao;
 
-        public ItemModelCreator(IItemModelDao itemModelDao)
+        public ItemModelService(IItemModelDao itemModelDao)
         {
             this.itemModelDao = itemModelDao;
         }
@@ -59,6 +61,37 @@ namespace SmallCompany.ServiceLayer.Impl
             bool isSuccsesfull = itemModelDao.WriteItemModel(itemModel);
             return isSuccsesfull;
 
+
+        }
+
+        public List<ItemBlazorModel> GetBlazorItemModels()
+        {
+            List<ItemModel> itemModels = itemModelDao.ReadItemModels();
+            List<ItemBlazorModel> blazorItemModels = itemModels.Select(itemModel => MapItemModel(itemModel)).ToList();
+
+
+            return blazorItemModels;
+        }
+
+        private ItemBlazorModel MapItemModel(ItemModel itemModel)
+        {
+            ItemBlazorModel blazorItemModel = new ItemBlazorModel();
+            blazorItemModel.ItemId = itemModel.ItemId;
+            blazorItemModel.ItemGroupName = itemModel.ItemGroupName;
+            blazorItemModel.ItemDescription = itemModel.ItemDescription;
+            blazorItemModel.ItemColor = itemModel.ItemColor;
+            blazorItemModel.ItemHardness = itemModel.ItemHardness;
+            blazorItemModel.ItemDensity = itemModel.ItemDensity;
+            blazorItemModel.ItemDiameter = itemModel.ItemDiameter;
+            blazorItemModel.ItemWidth = itemModel.ItemWidth;
+            blazorItemModel.ItemLength = itemModel.ItemLength;
+            blazorItemModel.ItemHigh = itemModel.ItemHigh;
+            blazorItemModel.ItemThickness = itemModel.ItemThickness;
+            blazorItemModel.ItemWeight = itemModel.ItemWeight;
+            blazorItemModel.ItemUnit = itemModel.ItemUnit;
+            blazorItemModel.IsValid = itemModel.IsValid;
+
+            return blazorItemModel;
 
         }
 

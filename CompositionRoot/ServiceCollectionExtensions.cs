@@ -21,7 +21,7 @@ namespace SmallCompany.CompositionRoot
 
             //ServiceLayer
             services.AddTransient<IPropertiesService, PropertiesService>();
-            services.AddTransient<IItemModelCreator, ItemModelCreator>();
+            services.AddTransient<IItemModelService, ItemModelService>();
             services.AddTransient<IStockService, StockService>();
         }
     }

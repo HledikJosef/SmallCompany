@@ -1,18 +1,15 @@
 ﻿@page "/stockRecord"
 @using SmallCompany.ServiceLayer;
 @using ServiceLayer.ModelsBlazor;
-@using System.Data;
-@using Microsoft.AspNetCore.Components
-@using Microsoft.JSInterop
-@inject IJSRuntime jsr;
 @inject IStockService stockservice;
+@inject NavigationManager navigationManager;
 
 <PageTitle>Stock-record</PageTitle>
 
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
 
-<form class="form-control">
+<form class="form-control" @onsubmit="AddStockRecord">
     <table class="table">
         <tbody>
             <tr>
@@ -34,37 +31,21 @@
         </tbody>
     </table>
 
-    <button type="submit" class="btn btn-primary" @onclick="AddStockRecord">Ulož záznam</button>
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
 </form>
-
-@if (isSuccessful)
-{
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-        <div class="toast-header">
-            <strong class="mr-auto">Bootstrap Toast</strong>
-            <small>Now</small>
-            <button type="button" class="ml-2 mb-1 close" @onclick="HideToast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="toast-body">
-            Toto je ukázkový Bootstrap toast.
-        </div>
-    </div>
-}
 
 @if (notification != null)
 {
     if (notification == "Záznam byl uložen")
     {    
-        <div id="myAlertSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div id="myAlertSuccess" class="alert alert-success" role="alert">
             @notification
         </div>
     }
     else if (notification == "Záznam se nepodařilo uložit")
     {
-        <div id="myAlertDanger" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div id="myAlertDanger" class="alert alert-danger" role="alert">
             @notification
         </div>
     }
@@ -91,24 +72,31 @@
         }
 
         SetNotification(isSuccessful);
+
     }
 
     private void SetNotification(bool isSuccesfull)
     {
+        int delay;
+
         if (isSuccesfull)
         {
             notification = "Záznam byl uložen";
+            delay = 1000;
         }
         else
         {
             notification = "Záznam se nepodařilo uložit";
+            delay = 2000;
         }
+        Task.Delay(delay).ContinueWith(_ => RefreshPage());
+
     }
 
-    private void HideToast()
+    private void RefreshPage()
     {
-        isSuccessful = false;
+        navigationManager.NavigateTo("/stockRecord", forceLoad: true);
     }
 
-
-}
+}  
+    

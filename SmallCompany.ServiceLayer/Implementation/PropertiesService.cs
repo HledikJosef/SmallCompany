@@ -28,7 +28,7 @@ namespace SmallCompany.ServiceLayer.Impl
         private PropertiesBlazorModel MapProperties(PropertyModel properties)
         {
             PropertiesBlazorModel propertiesBlazorModel = new PropertiesBlazorModel();
-            propertiesBlazorModel.Id = properties.Id;
+            propertiesBlazorModel.PropertyId = properties.PropertyId;
             propertiesBlazorModel.PropertyName = properties.PropertyName;
             propertiesBlazorModel.PropertyType = properties.PropertyType;
             propertiesBlazorModel.PropertyDescription = properties.PropertyDescription;
@@ -46,6 +46,7 @@ namespace SmallCompany.ServiceLayer.Impl
         private UnitBlazorModel MapUnits(UnitModel units)
         {
             UnitBlazorModel blazorUnit = new UnitBlazorModel();
+            blazorUnit.UnitId = units.UnitId;
             blazorUnit.Unit = units.ItemUnit;
 
             return blazorUnit;
@@ -62,6 +63,7 @@ namespace SmallCompany.ServiceLayer.Impl
         private ItemTypBlazorModel MapItemTyps(ItemTyp itemTyp)
         {
             ItemTypBlazorModel blazorItemTyp = new ItemTypBlazorModel();
+            blazorItemTyp.ItemTypId = itemTyp.ItemTypId;
             blazorItemTyp.ItemTyp = itemTyp.Itemtyp;
 
             return blazorItemTyp;
