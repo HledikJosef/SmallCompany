@@ -15,13 +15,13 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public bool CreateStockModel(StockBlazorModel blazorStock)
         {
-            StockModel stockModel = MapStocks(blazorStock);
+            StockModel stockModel = MapStocksModel(blazorStock);
             bool isSuccessful = stockModelDao.WriteStockmodel(stockModel);
 
             return isSuccessful;
         }
 
-        private StockModel MapStocks(StockBlazorModel blazorStock)
+        private StockModel MapStocksModel(StockBlazorModel blazorStock)
         {
             StockModel stockModel = new StockModel();
             stockModel.StockId = blazorStock.StockId;
@@ -32,5 +32,28 @@ namespace SmallCompany.ServiceLayer.Implementation
 
             return stockModel;
         }
+
+        public List<StockBlazorModel> GetBlazorStockList()
+        {
+            List<StockModel> stocksFromSql = stockModelDao.ReadStockModels();
+            List<StockBlazorModel> blazorStockList = stocksFromSql.Select(stock => MapStocksFromSql(stock)).ToList();
+
+
+            return blazorStockList;
+        }
+
+        private StockBlazorModel MapStocksFromSql(StockModel stockFromSql)
+        {
+            StockBlazorModel blazorStock = new StockBlazorModel();
+            blazorStock.StockId = stockFromSql.StockId;
+            blazorStock.StockTitel = stockFromSql.StockTitel;
+            blazorStock.StockDescription = stockFromSql.StockDescription;
+            blazorStock.StockLocation = stockFromSql.StockLocation;
+            blazorStock.IsValid = stockFromSql.IsValid;
+
+            return blazorStock;
+
+        }
+
     }
 }

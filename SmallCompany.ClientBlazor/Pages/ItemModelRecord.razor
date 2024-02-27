@@ -10,7 +10,7 @@
 <h1>Vytvoř nový model prvku</h1>
 <h5>Vyplň obecný název skupiny, vyber typ prvku(např.materíál, výrobek, zoží..) a zaškrtnutím přiřaď k prvku vhodné vlastnosti a jednotku.</h5>
 
-<form class="form-control" @onsubmit="AddItemRecord">
+<form class="form-control" @onsubmit="AddItemModel">
     <table class="table">
         <tbody>
             <tr>
@@ -84,7 +84,6 @@
 
 @code {
     private string? notification = null;
-    private bool isSuccesfull = false;
     private string? itemGroupName = null;
     private string? itemUnit = null;
     private string? itemTyp = null;
@@ -101,14 +100,15 @@
         blazorItemTyps = propertiesService.GetBlazorItemTyps();
     }
 
-    private async Task AddItemRecord()
+    private async Task AddItemModel()
     {
+        bool isSuccessful = false;
         if ((itemTyp != null) && (itemGroupName != null) && (itemUnit != null))
         {
-            isSuccesfull = itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
+            isSuccessful = itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
         }
 
-        SetNotification(isSuccesfull);
+        SetNotification(isSuccessful);
 
     }
 

@@ -18,11 +18,13 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IPropertyModelDao, PropertyModelDao>();
             services.AddTransient<IStockModelDao, StockModelDao>();
             services.AddTransient<IUnitModelDao, UnitModelDao>();
+            services.AddTransient<IItemStockDao, ItemStockDao>();
 
             //ServiceLayer
             services.AddTransient<IPropertiesService, PropertiesService>();
             services.AddTransient<IItemModelService, ItemModelService>();
             services.AddTransient<IStockService, StockService>();
+            services.AddTransient<IItemStockService, ItemStockService>();
         }
     }
 }

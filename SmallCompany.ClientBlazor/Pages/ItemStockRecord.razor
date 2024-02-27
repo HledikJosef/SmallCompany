@@ -2,18 +2,21 @@
 @using SmallCompany.ServiceLayer;
 @using SmallCompany.ServiceLayer.ModelsBlazor;
 @inject IItemModelService itemModelService;
+@inject IStockService stockService;
+@inject IItemStockService itemStockService;
+@inject NavigationManager navigationManager;
 
 <PageTitle>ItemStock-record</PageTitle>
 
 <h1>Vlož prvek na sklad</h1>
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
-<form class="form-control">
+<form class="form-control" @onsubmit="AddItemOnStock" >
     <table class="table">
         <tbody>
             <tr>
                 <td>
-                    <select class="form-select" @onchange="GetSelectedItem" required>
+                    <select class="form-select" @onchange="GetSelectedItemModel" required>
                         <option disabled selected value="">Vyberte typ skupiny</option>
                         @foreach (var itemModel in blazorItemModels)
                         {
@@ -35,69 +38,69 @@
             {
                 <tr>
                     <td>
-                        <input class="form-control" type="text" placeholder="Název/Typ" @bind-value=itemRecordBlazorModel.ItemType required>
+                        <input class="form-control" type="text" placeholder="Název/Typ" @bind-value=itemStockRecordBlazorModel.ItemType required>
                     </td>
 
                     @if (selectedModel.ItemColor)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Barva" @bind-value=itemRecordBlazorModel.ItemColor required>
+                            <input class="form-control" type="text" placeholder="Barva" @bind-value=itemStockRecordBlazorModel.ItemColor required>
                         </td>
                     }
 
                     @if (selectedModel.ItemHardness)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Tvrdost (ShA)" @bind-value=itemRecordBlazorModel.ItemHardness required>
+                            <input class="form-control" type="text" placeholder="Tvrdost (ShA)" @bind-value=itemStockRecordBlazorModel.ItemHardness required>
                         </td>
                     }
 
                     @if (selectedModel.ItemDensity)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Hustota" @bind-value=itemRecordBlazorModel.ItemDensity required>
+                            <input class="form-control" type="text" placeholder="Hustota" @bind-value=itemStockRecordBlazorModel.ItemDensity required>
                         </td>
                     }
 
                     @if (selectedModel.ItemDiameter)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Průměr (mm)" @bind-value=itemRecordBlazorModel.ItemDiameter required>
+                            <input class="form-control" type="text" placeholder="Průměr (mm)" @bind-value=itemStockRecordBlazorModel.ItemDiameter required>
                         </td>
                     }
 
                     @if (selectedModel.ItemWidth)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Šířka (mm)" @bind-value=itemRecordBlazorModel.ItemWidth required>
+                            <input class="form-control" type="text" placeholder="Šířka (mm)" @bind-value=itemStockRecordBlazorModel.ItemWidth required>
                         </td>
                     }
 
                     @if (selectedModel.ItemLength)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Délka (mm)" @bind-value=itemRecordBlazorModel.ItemLength required>
+                            <input class="form-control" type="text" placeholder="Délka (mm)" @bind-value=itemStockRecordBlazorModel.ItemLength required>
                         </td>
                     }
 
                     @if (selectedModel.ItemHigh)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Výška (mm)" @bind-value=itemRecordBlazorModel.ItemHigh required>
+                            <input class="form-control" type="text" placeholder="Výška (mm)" @bind-value=itemStockRecordBlazorModel.ItemHigh required>
                         </td>
                     }
 
                     @if (selectedModel.ItemThickness)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Tloušťka/Síla materiálu (mm)" @bind-value=itemRecordBlazorModel.ItemThickness required>
+                            <input class="form-control" type="text" placeholder="Tloušťka/Síla materiálu (mm)" @bind-value=itemStockRecordBlazorModel.ItemThickness required>
                         </td>
                     }
 
                     @if (selectedModel.ItemWeight)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Hmotnost (kg)" @bind-value=itemRecordBlazorModel.ItemWeight required>
+                            <input class="form-control" type="text" placeholder="Hmotnost (kg)" @bind-value=itemStockRecordBlazorModel.ItemWeight required>
                         </td>
                     }
 
@@ -107,11 +110,21 @@
                 {
                     <tr>
                         <td>
-                            <input class="form-control" type="text" placeholder="Množství" @bind-value="itemRecordBlazorModel.ItemQuantity" requiered>
+                            <input class="form-control" type="text" placeholder="Množství" @bind-value="itemStockRecordBlazorModel.ItemQuantity" requiered>
                         </td>
                         <td>
                             <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
                         </td>
+                        <td>
+                            <select class="form-select" @onchange="GetSelectedStock" required>
+                                <option disabled selected value="">Vyberte sklad</option>
+                                @foreach (var stock in blazorStockList)
+                                {
+                                    <option value="@stock.StockTitel">@stock.StockTitel</option>
+                                }
+                            </select>
+                        </td>
+
                     </tr>                
 
                 }
@@ -127,24 +140,85 @@
 
 </form>
 
+@if (notification != null)
+{
+    if (notification == "Záznam byl uložen")
+    {
+        <div id="myAlertSuccess" class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+    else if (notification == "Záznam se nepodařilo uložit")
+    {
+        <div id="myAlertDanger" class="alert alert-danger" role="alert">
+            @notification
+        </div>
+    }
+
+}
+
 @code {
     private ItemBlazorModel selectedModel;
-    ItemRecordBlazorModel itemRecordBlazorModel;
+    private ItemStockRecordBlazorModel itemStockRecordBlazorModel;
+    private StockBlazorModel selectedStock;
+    private string notification;
 
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
+    List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();
 
 
     protected override void OnInitialized()
     {
         blazorItemModels = itemModelService.GetBlazorItemModels();
-        itemRecordBlazorModel = new ItemRecordBlazorModel();
+        blazorStockList = stockService.GetBlazorStockList();
+        itemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
     }
 
-    private void GetSelectedItem(ChangeEventArgs e)
+    private void GetSelectedItemModel(ChangeEventArgs e)
     {
         string selectedGroupName = e.Value.ToString();
         selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);
-	}
+    }
+
+    private void GetSelectedStock(ChangeEventArgs e)
+    {
+        string selectedStockTitel = e.Value.ToString();
+        itemStockRecordBlazorModel.StockId = blazorStockList.FirstOrDefault(stock => stock.StockTitel == selectedStockTitel).StockId;
+    }
+
+    private void AddItemOnStock()
+    {
+        itemStockRecordBlazorModel.ItemGroupName = selectedModel.ItemGroupName;
+        itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
+        itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;
+        bool isSuccessful = false;
+        isSuccessful = itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
+
+        SetNotification(isSuccessful);
+    }
+
+    private void SetNotification(bool isSuccesfull)
+    {
+        int delay;
+
+        if (isSuccesfull)
+        {
+            notification = "Záznam byl uložen";
+            delay = 1300;
+        }
+        else
+        {
+            notification = "Záznam se nepodařilo uložit";
+            delay = 2000;
+        }
+        Task.Delay(delay).ContinueWith(_ => RefreshPage());
+
+    }
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo("/itemStockRecord", forceLoad: true);
+    }
 
 
 }

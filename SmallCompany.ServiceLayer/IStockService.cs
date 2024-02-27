@@ -5,5 +5,6 @@ namespace SmallCompany.ServiceLayer
     public interface IStockService
     {
         public bool CreateStockModel(StockBlazorModel blazorStock);
+        public List<StockBlazorModel> GetBlazorStockList();
     }
 }
