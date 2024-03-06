@@ -45,5 +45,37 @@ namespace SmallCompany.ServiceLayer.Implementation
 
             return itemStockRecordModel;
         }
+
+        public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(int stockId)
+        {
+            List<ItemStockRecordBlazorModel> blazorItemsOnStock = new List<ItemStockRecordBlazorModel>();
+            List<ItemOnStock> itemsOnStockFromSql = itemStockDao.ReadItemsOnStock(stockId);
+            blazorItemsOnStock = itemsOnStockFromSql.Select(item => MapItemStockOuput(item)).ToList();
+            return blazorItemsOnStock;
+        }
+
+        private ItemStockRecordBlazorModel MapItemStockOuput(ItemOnStock itemsOnStockFromSql)
+        {
+            ItemStockRecordBlazorModel itemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
+            itemStockRecordBlazorModel.ItemId = itemsOnStockFromSql.ItemId;
+            itemStockRecordBlazorModel.ItemGroupName = itemsOnStockFromSql.ItemGroupName;
+            itemStockRecordBlazorModel.ItemDescription = itemsOnStockFromSql.ItemDescription;
+            itemStockRecordBlazorModel.ItemType = itemsOnStockFromSql.ItemType;
+            itemStockRecordBlazorModel.ItemColor = itemsOnStockFromSql.ItemColor;
+            itemStockRecordBlazorModel.ItemHardness = itemsOnStockFromSql.ItemHardness;
+            itemStockRecordBlazorModel.ItemDensity = itemsOnStockFromSql.ItemDensity;
+            itemStockRecordBlazorModel.ItemDiameter = itemsOnStockFromSql.ItemDiameter;
+            itemStockRecordBlazorModel.ItemWidth = itemsOnStockFromSql.ItemWidth;
+            itemStockRecordBlazorModel.ItemLength = itemsOnStockFromSql.ItemLength;
+            itemStockRecordBlazorModel.ItemHigh = itemsOnStockFromSql.ItemHigh;
+            itemStockRecordBlazorModel.ItemThickness = itemsOnStockFromSql.ItemThickness;
+            itemStockRecordBlazorModel.ItemWeight = itemsOnStockFromSql.ItemWeight;
+            itemStockRecordBlazorModel.ItemQuantity = itemsOnStockFromSql.ItemQuantity;
+            itemStockRecordBlazorModel.ItemUnit = itemsOnStockFromSql.ItemUnit;
+            itemStockRecordBlazorModel.StockId = itemsOnStockFromSql.StockId;
+
+            return itemStockRecordBlazorModel;
+
+        }
     }
 }

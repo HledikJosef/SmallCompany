@@ -156,11 +156,40 @@
     }
 
 }
+<hr class="my-4">
+<h5>Zobraz stav skladu: </h5>
+<select class="form-select" @onchange="ReadSelectedStock">
+    <option disabled selected value="">Vyberte sklad</option>
+    @foreach (var stock in blazorStockList)
+    {
+        <option value="@stock.StockId">@stock.StockTitel</option>
+    }
+</select>
+<table class="table">
+    @if(blazorItemsOnStock != null)
+    {
+        @foreach (var item in blazorItemsOnStock)
+        {
+            <tr>
+                <td>
+                    @item.ItemGroupName
+                </td>
+                <td>
+                    @item.ItemDescription
+                </td>
+            </tr>
+        }
+    }
+    
+</table>
+
+
 
 @code {
     private ItemBlazorModel selectedModel;
     private ItemStockRecordBlazorModel itemStockRecordBlazorModel;
     private StockBlazorModel selectedStock;
+    private List<ItemStockRecordBlazorModel> blazorItemsOnStock;
     private string notification;
 
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
@@ -195,6 +224,13 @@
         isSuccessful = itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
 
         SetNotification(isSuccessful);
+    }
+
+    private void ReadSelectedStock(ChangeEventArgs e)
+    {
+        string Id = e.Value.ToString();
+        int stockId = int.Parse(Id); 
+        blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(stockId);
     }
 
     private void SetNotification(bool isSuccesfull)

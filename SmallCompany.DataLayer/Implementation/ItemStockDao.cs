@@ -14,14 +14,14 @@ namespace SmallCompany.DataLayer.Implementation
             this.connectionStringProvider = connectionStringProvider;
         }
 
-        public List<ItemModel> ReadItemsOnStock()
+        public List<ItemOnStock> ReadItemsOnStock(int stockId)
         {
-            string sqlCommand = "SELECT ItemId, ItemGroupName, ItemDescription, ItemColor, ItemHardness, ItemDensity, ItemDiameter, ItemWidth, ItemLength, ItemHigh, " +
-                "ItemThickness, ItemWeight, ItemUnit, IsValid FROM ItemModel";
-            List<ItemModel> itemsOnStockFromSql = new List<ItemModel>();
+            string sqlCommand = string.Format("SELECT ItemId, ItemGroupName, ItemDescription, ItemType, ItemColor, ItemHardness, ItemDensity, ItemDiameter, ItemWidth, ItemLength, ItemHigh, " +
+                "ItemThickness, ItemWeight, ItemQuantity, ItemUnit, StockId FROM ItemOnStock WHERE StockId={0}", stockId);
+            List<ItemOnStock> itemsOnStockFromSql = new List<ItemOnStock>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                itemsOnStockFromSql = connection.Query<ItemModel>(sqlCommand).ToList();
+                itemsOnStockFromSql = connection.Query<ItemOnStock>(sqlCommand).ToList();
             }
 
             return itemsOnStockFromSql;

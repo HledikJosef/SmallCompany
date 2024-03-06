@@ -4,7 +4,7 @@ namespace SmallCompany.DataLayer
 {
     public interface IItemStockDao
     {
-        public List<ItemModel> ReadItemsOnStock();
+        public List<ItemOnStock> ReadItemsOnStock(int stockId);
         public bool WriteItemOnStock(ItemOnStock item);
     }
 }
