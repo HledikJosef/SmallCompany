@@ -139,27 +139,12 @@
 </form>
 
 
-
-<ErrorBoundary>
-    <ErrorContent>
-        @if (notification != null)
-        {
-            if (notification == "Záznam byl uložen")
-            {
-                <div class="alert alert-success" role="alert">
-                    @notification
-                </div>
-            }
-            else if (notification == "Záznam se nepodařilo uložit")
-            {
-                <div class="alert alert-danger" role="alert">
-                    @notification: @exceptionMessage
-                </div>
-            }
-
-        }
-    </ErrorContent>
-</ErrorBoundary>
+@if (notification != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @notification: @exceptionMessage
+    </div>
+}
 
 
 <hr class="my-4">
@@ -382,7 +367,7 @@
         itemStockRecordBlazorModel.StockId = blazorStockList.FirstOrDefault(stock => stock.StockTitel == selectedStockTitel).StockId;
     }
 
-    private void AddItemOnStock()
+    private async void AddItemOnStock()
     {
         try
         {
@@ -390,7 +375,6 @@
             itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
             itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;            
             itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
-            notification = "Záznam byl uložen ";
             RefreshPage();
         }
         catch(Exception ex)
@@ -410,7 +394,6 @@
 
     private void RefreshPage()
     {
-        Task.Delay(2300);
         navigationManager.NavigateTo("/itemStockRecord", forceLoad: true);
     }
 
