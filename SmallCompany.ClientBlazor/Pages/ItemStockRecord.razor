@@ -141,9 +141,20 @@
 
 @if (notification != null)
 {
-    <div class="alert alert-danger" role="alert">
-        @notification: @exceptionMessage
-    </div>
+    if(exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>        
+    }
+
 }
 
 
@@ -375,6 +386,8 @@
             itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
             itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;            
             itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
+            notification = "Vloženo ";
+            await Task.Delay(1300);
             RefreshPage();
         }
         catch(Exception ex)
