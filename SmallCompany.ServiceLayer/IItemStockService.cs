@@ -4,7 +4,7 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IItemStockService
     {
-        public bool CreateItemStockRecord(ItemStockRecordBlazorModel item);
-        public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(int stockId);
+        public void CreateItemStockRecord(ItemStockRecordBlazorModel item);
+        public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(string itemModel);
     }
 }

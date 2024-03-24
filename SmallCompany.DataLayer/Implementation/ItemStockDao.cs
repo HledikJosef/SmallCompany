@@ -14,10 +14,10 @@ namespace SmallCompany.DataLayer.Implementation
             this.connectionStringProvider = connectionStringProvider;
         }
 
-        public List<ItemOnStock> ReadItemsOnStock(int stockId)
+        public List<ItemOnStock> ReadItemsOnStock(string itemModel)
         {
             string sqlCommand = string.Format("SELECT ItemId, ItemGroupName, ItemDescription, ItemType, ItemColor, ItemHardness, ItemDensity, ItemDiameter, ItemWidth, ItemLength, ItemHigh, " +
-                "ItemThickness, ItemWeight, ItemQuantity, ItemUnit, StockId FROM ItemOnStock WHERE StockId={0}", stockId);
+                "ItemThickness, ItemWeight, ItemQuantity, ItemUnit, StockId FROM ItemOnStock WHERE ItemGroupName='{0}'", itemModel);
             List<ItemOnStock> itemsOnStockFromSql = new List<ItemOnStock>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
@@ -27,20 +27,11 @@ namespace SmallCompany.DataLayer.Implementation
             return itemsOnStockFromSql;
         }
 
-        public bool WriteItemOnStock(ItemOnStock item)
+        public void WriteItemOnStock(ItemOnStock item)
         {
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                try
-                {
-                    var rowsAffected = connection.Insert(item);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return false;
-                }
+                var rowsAffected = connection.Insert(item);
             };
         }
     }

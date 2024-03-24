@@ -105,29 +105,27 @@
                     }
 
                 </tr>
+                              
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" placeholder="Množství" pattern="[1-9]\d*" @bind-value="itemStockRecordBlazorModel.ItemQuantity" >
+                    </td>
+                    <td>
+                        <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
+                    </td>
+                    <td>
+                        <select class="form-select" @onchange="GetSelectedStock" required>
+                            <option disabled selected value="">Vyberte sklad</option>
+                            @foreach (var stock in blazorStockList)
+                            {
+                                <option value="@stock.StockTitel">@stock.StockTitel</option>
+                            }
+                        </select>
+                    </td>
 
-                @if (selectedModel != null)
-                {
-                    <tr>
-                        <td>
-                            <input class="form-control" type="text" placeholder="Množství" @bind-value="itemStockRecordBlazorModel.ItemQuantity" requiered>
-                        </td>
-                        <td>
-                            <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
-                        </td>
-                        <td>
-                            <select class="form-select" @onchange="GetSelectedStock" required>
-                                <option disabled selected value="">Vyberte sklad</option>
-                                @foreach (var stock in blazorStockList)
-                                {
-                                    <option value="@stock.StockTitel">@stock.StockTitel</option>
-                                }
-                            </select>
-                        </td>
+                </tr>                
 
-                    </tr>                
-
-                }
+                
 
                 
             }
@@ -140,57 +138,217 @@
 
 </form>
 
-@if (notification != null)
-{
-    if (notification == "Záznam byl uložen")
-    {
-        <div id="myAlertSuccess" class="alert alert-success" role="alert">
-            @notification
-        </div>
-    }
-    else if (notification == "Záznam se nepodařilo uložit")
-    {
-        <div id="myAlertDanger" class="alert alert-danger" role="alert">
-            @notification
-        </div>
-    }
 
-}
+
+<ErrorBoundary>
+    <ErrorContent>
+        @if (notification != null)
+        {
+            if (notification == "Záznam byl uložen")
+            {
+                <div class="alert alert-success" role="alert">
+                    @notification
+                </div>
+            }
+            else if (notification == "Záznam se nepodařilo uložit")
+            {
+                <div class="alert alert-danger" role="alert">
+                    @notification: @exceptionMessage
+                </div>
+            }
+
+        }
+    </ErrorContent>
+</ErrorBoundary>
+
+
 <hr class="my-4">
 <h5>Zobraz stav skladu: </h5>
 <select class="form-select" @onchange="ReadSelectedStock">
-    <option disabled selected value="">Vyberte sklad</option>
-    @foreach (var stock in blazorStockList)
+    <option disabled selected value="">Vyberte prvek</option>
+    @foreach (var itemModel in blazorItemModels)
     {
-        <option value="@stock.StockId">@stock.StockTitel</option>
+        <option value="@itemModel.ItemGroupName">@itemModel.ItemGroupName</option>
     }
 </select>
-<table class="table">
-    @if(blazorItemsOnStock != null)
-    {
-        @foreach (var item in blazorItemsOnStock)
-        {
+<form class="form-control">
+    <table class="table table-bordered">
+        <thead>Filtr</thead>
+        <tbody>
             <tr>
                 <td>
-                    @item.ItemGroupName
+                    Skupina
                 </td>
                 <td>
-                    @item.ItemDescription
+                    Popis
+                </td>
+                <td>
+                    Typ
+                </td>
+                <td>
+                    Barva
+                </td>
+                <td>
+                    Tvrdost
+                </td>
+                <td>
+                    Hustota
+                </td>
+                <td>
+                    Průměr
+                </td>
+                <td>
+                    Šířka
+                </td>
+                <td>
+                    Délka
+                </td>
+                <td>
+                    Výška
+                </td>
+                <td>
+                    Tloušťka
+                </td>
+                <td>
+                    Hmotnost
+                </td>
+                <td>
+                    Množství
+                </td>
+                <td>
+                    Jednotka
+                </td>
+                <td>
+                    ID skladu
                 </td>
             </tr>
-        }
-    }
-    
-</table>
+
+        </tbody>
+    </table>
+</form>
+<form class="form-control">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>
+                    Skupina
+                </td>
+                <td>
+                    Popis
+                </td>
+                <td>
+                    Typ
+                </td>
+                <td>
+                    Barva
+                </td>
+                <td>
+                    Tvrdost
+                </td>
+                <td>
+                    Hustota
+                </td>
+                <td>
+                    Průměr
+                </td>
+                <td>
+                    Šířka
+                </td>
+                <td>
+                    Délka
+                </td>
+                <td>
+                    Výška
+                </td>
+                <td>
+                    Tloušťka
+                </td>
+                <td>
+                    Hmotnost
+                </td>
+                <td>
+                    Množství
+                </td>
+                <td>
+                    Jednotka
+                </td>
+                <td>
+                    ID skladu
+                </td>
+            </tr>
+
+        </thead>
+        <tbody>
+        
+        @if (blazorItemsOnStock != null)
+        {
+            @foreach (var item in blazorItemsOnStock)
+            {
+                <tr>
+                
+                    <td>
+                        @item.ItemGroupName
+                    </td>
+                    <td>
+                        @item.ItemDescription
+                    </td>
+                    <td>
+                        @item.ItemType
+                    </td>
+                    <td>
+                        @item.ItemColor
+                    </td>
+                    <td>
+                        @item.ItemHardness
+                    </td>
+                    <td>
+                        @item.ItemDensity
+                    </td>
+                    <td>
+                        @item.ItemDiameter
+                    </td>
+                    <td>
+                        @item.ItemWidth
+                    </td>
+                    <td>
+                        @item.ItemLength
+                    </td>
+                    <td>
+                        @item.ItemHigh
+                    </td>
+                    <td>
+                        @item.ItemThickness
+                    </td>
+                    <td>
+                        @item.ItemWeight
+                    </td>
+                    <td>
+                        @item.ItemQuantity
+                    </td>
+                    <td>
+                        @item.ItemUnit
+                    </td>
+                    <td>
+                        @item.StockId
+                    </td>
+                </tr>
+                
+            }
+        }        
+        </tbody>
+
+    </table>
+</form>
+
 
 
 
 @code {
     private ItemBlazorModel selectedModel;
     private ItemStockRecordBlazorModel itemStockRecordBlazorModel;
-    private StockBlazorModel selectedStock;
     private List<ItemStockRecordBlazorModel> blazorItemsOnStock;
-    private string notification;
+    public string? notification;
+    public string? exceptionMessage;
 
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
     List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();
@@ -198,15 +356,24 @@
 
     protected override void OnInitialized()
     {
-        blazorItemModels = itemModelService.GetBlazorItemModels();
-        blazorStockList = stockService.GetBlazorStockList();
+        try
+        {
+            blazorItemModels = itemModelService.GetBlazorItemModels();
+            blazorStockList = stockService.GetBlazorStockList();            
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o skladech a prvcích z databáze ";            
+        }
+
         itemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
     }
 
     private void GetSelectedItemModel(ChangeEventArgs e)
     {
         string selectedGroupName = e.Value.ToString();
-        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);
+        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);     
     }
 
     private void GetSelectedStock(ChangeEventArgs e)
@@ -217,42 +384,33 @@
 
     private void AddItemOnStock()
     {
-        itemStockRecordBlazorModel.ItemGroupName = selectedModel.ItemGroupName;
-        itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
-        itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;
-        bool isSuccessful = false;
-        isSuccessful = itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
-
-        SetNotification(isSuccessful);
+        try
+        {
+            itemStockRecordBlazorModel.ItemGroupName = selectedModel.ItemGroupName;
+            itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
+            itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;            
+            itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
+            notification = "Záznam byl uložen ";
+            RefreshPage();
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
+        }
     }
+
 
     private void ReadSelectedStock(ChangeEventArgs e)
     {
-        string Id = e.Value.ToString();
-        int stockId = int.Parse(Id); 
-        blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(stockId);
-    }
+        string itemModel = e.Value.ToString();
+        blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(itemModel);
+    }      
 
-    private void SetNotification(bool isSuccesfull)
-    {
-        int delay;
-
-        if (isSuccesfull)
-        {
-            notification = "Záznam byl uložen";
-            delay = 1300;
-        }
-        else
-        {
-            notification = "Záznam se nepodařilo uložit";
-            delay = 2000;
-        }
-        Task.Delay(delay).ContinueWith(_ => RefreshPage());
-
-    }
 
     private void RefreshPage()
     {
+        Task.Delay(2300);
         navigationManager.NavigateTo("/itemStockRecord", forceLoad: true);
     }
 

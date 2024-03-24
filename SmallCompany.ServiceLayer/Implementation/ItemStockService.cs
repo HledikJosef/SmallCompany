@@ -13,14 +13,10 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.itemStockDao = itemStockDao;
         }
 
-        public bool CreateItemStockRecord(ItemStockRecordBlazorModel item)
+        public void CreateItemStockRecord(ItemStockRecordBlazorModel item)
         {
-            bool isSuccessful = false;
             ItemOnStock itemStockRecordModel = MapItemStockRecord(item);
-
-            isSuccessful = itemStockDao.WriteItemOnStock(itemStockRecordModel);
-
-            return isSuccessful;
+            itemStockDao.WriteItemOnStock(itemStockRecordModel);
         }
 
         private ItemOnStock MapItemStockRecord(ItemStockRecordBlazorModel item)
@@ -46,10 +42,10 @@ namespace SmallCompany.ServiceLayer.Implementation
             return itemStockRecordModel;
         }
 
-        public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(int stockId)
+        public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(string itemModel)
         {
             List<ItemStockRecordBlazorModel> blazorItemsOnStock = new List<ItemStockRecordBlazorModel>();
-            List<ItemOnStock> itemsOnStockFromSql = itemStockDao.ReadItemsOnStock(stockId);
+            List<ItemOnStock> itemsOnStockFromSql = itemStockDao.ReadItemsOnStock(itemModel);
             blazorItemsOnStock = itemsOnStockFromSql.Select(item => MapItemStockOuput(item)).ToList();
             return blazorItemsOnStock;
         }
