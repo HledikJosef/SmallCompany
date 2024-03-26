@@ -16,7 +16,7 @@ namespace SmallCompany.ServiceLayer.Impl
         }
 
 
-        public bool CreateItemModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
+        public void CreateItemModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
         {
             ItemModel itemModel = new ItemModel();
             itemModel.ItemGroupName = itemGroupName;
@@ -58,9 +58,7 @@ namespace SmallCompany.ServiceLayer.Impl
             }
             itemModel.ItemUnit = unit;
             itemModel.IsValid = true;
-            bool isSuccsesfull = itemModelDao.WriteItemModel(itemModel);
-            return isSuccsesfull;
-
+            itemModelDao.WriteItemModel(itemModel);
 
         }
 

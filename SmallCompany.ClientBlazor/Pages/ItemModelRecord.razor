@@ -64,15 +64,16 @@
 
 @if (notification != null)
 {
-    if (notification == "Záznam byl uložen")
+    if (exceptionMessage != null)
     {
-        <div id="myAlertSuccess" class="alert alert-success" role="alert">
-            @notification
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
         </div>
+
     }
-    else if (notification == "Záznam se nepodařilo uložit")
+    else
     {
-        <div id="myAlertDanger" class="alert alert-danger" role="alert">
+        <div class="alert alert-success" role="alert">
             @notification
         </div>
     }
@@ -84,6 +85,7 @@
 
 @code {
     private string? notification = null;
+    private string? exceptionMessage = null;
     private string? itemGroupName = null;
     private string? itemUnit = null;
     private string? itemTyp = null;
@@ -95,38 +97,34 @@
 
     protected override void OnInitialized()
     {
-        blazorProperties = propertiesService.GetBlazorProperties();
-        blazorUnits = propertiesService.GetBlazorUnits();
-        blazorItemTyps = propertiesService.GetBlazorItemTyps();
-    }
-
-    private async Task AddItemModel()
-    {
-        bool isSuccessful = false;
-        if ((itemTyp != null) && (itemGroupName != null) && (itemUnit != null))
+        try
         {
-            isSuccessful = itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
+            blazorProperties = propertiesService.GetBlazorProperties();
+            blazorUnits = propertiesService.GetBlazorUnits();
+            blazorItemTyps = propertiesService.GetBlazorItemTyps();
         }
-
-        SetNotification(isSuccessful);
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o skladech a prvcích z databáze ";
+        }
 
     }
 
-    private void SetNotification(bool isSuccesfull)
+    private async void AddItemModel()
     {
-        int delay;
-
-        if (isSuccesfull)
+        try
         {
-            notification = "Záznam byl uložen";
-            delay = 1300;
+            itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);
+            notification = "Vloženo ";
+            await Task.Delay(1300);
+            RefreshPage();
         }
-        else
+        catch(Exception ex)
         {
-            notification = "Záznam se nepodařilo uložit";
-            delay = 2000;
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
         }
-        Task.Delay(delay).ContinueWith(_ => RefreshPage());
 
     }
 

@@ -5,6 +5,6 @@ namespace SmallCompany.DataLayer
     public interface IItemModelDao
     {
         public List<ItemModel> ReadItemModels();
-        public bool WriteItemModel(ItemModel itemModel);
+        public void WriteItemModel(ItemModel itemModel);
     }
 }

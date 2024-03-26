@@ -22,25 +22,16 @@ namespace SmallCompany.DataLayer.Implementation
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
                 itemModelsFromSql = connection.Query<ItemModel>(sqlCommand).ToList();
-            }
+            };
 
             return itemModelsFromSql;
         }
 
-        public bool WriteItemModel(ItemModel itemModel)
+        public void WriteItemModel(ItemModel itemModel)
         {
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                try
-                {
-                    var rowsAffected = connection.Insert(itemModel);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return false;
-                }
+                var rowsAffected = connection.Insert(itemModel);
             };
         }
     }

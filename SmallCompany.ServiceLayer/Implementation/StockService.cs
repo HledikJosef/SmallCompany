@@ -13,12 +13,10 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.stockModelDao = stockModelDao;
         }
 
-        public bool CreateStockModel(StockBlazorModel blazorStock)
+        public void CreateStockModel(StockBlazorModel blazorStock)
         {
             StockModel stockModel = MapStocksModel(blazorStock);
-            bool isSuccessful = stockModelDao.WriteStockmodel(stockModel);
-
-            return isSuccessful;
+            stockModelDao.WriteStockmodel(stockModel);
         }
 
         private StockModel MapStocksModel(StockBlazorModel blazorStock)

@@ -5,6 +5,6 @@ namespace SmallCompany.DataLayer
     public interface IStockModelDao
     {
         public List<StockModel> ReadStockModels();
-        public bool WriteStockmodel(StockModel stockmodel);
+        public void WriteStockmodel(StockModel stockmodel);
     }
 }

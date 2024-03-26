@@ -108,7 +108,7 @@
                               
                 <tr>
                     <td>
-                        <input type="text" class="form-control" placeholder="Množství" pattern="[1-9]\d*" @bind-value="itemStockRecordBlazorModel.ItemQuantity" >
+                        <input type="text" class="form-control" placeholder="Množství" pattern="[1-9]\d*" @bind-value="itemStockRecordBlazorModel.ItemQuantity" required>
                     </td>
                     <td>
                         <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
@@ -343,8 +343,8 @@
     private ItemBlazorModel selectedModel;
     private ItemStockRecordBlazorModel itemStockRecordBlazorModel;
     private List<ItemStockRecordBlazorModel> blazorItemsOnStock;
-    public string? notification;
-    public string? exceptionMessage;
+    private string? notification;
+    private string? exceptionMessage;
 
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
     List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();

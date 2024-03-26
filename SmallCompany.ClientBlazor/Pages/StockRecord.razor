@@ -37,23 +37,26 @@
 
 @if (notification != null)
 {
-    if (notification == "Záznam byl uložen")
-    {    
-        <div id="myAlertSuccess" class="alert alert-success" role="alert">
-            @notification
-        </div>
-    }
-    else if (notification == "Záznam se nepodařilo uložit")
+    if (exceptionMessage != null)
     {
-        <div id="myAlertDanger" class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
             @notification
         </div>
     }
 
 }
 
+
 @code {
     private string? notification = null;
+    private string? exceptionMessage = null;
     StockBlazorModel blazorStock = null;
     bool isSuccessful = false;
 
@@ -62,36 +65,24 @@
         blazorStock = new StockBlazorModel();
     }
 
-    private void AddStockRecord()
+    private async void AddStockRecord()
     {
-        isSuccessful = false;
-        if((blazorStock.StockTitel != null) && (blazorStock.StockDescription != null) && (blazorStock.StockLocation != null))
+        try
         {
             blazorStock.IsValid = true;
-            isSuccessful = stockservice.CreateStockModel(blazorStock);
+            stockservice.CreateStockModel(blazorStock);
+            notification = "Vloženo ";
+            await Task.Delay(1300);
+            RefreshPage();
         }
-
-        SetNotification(isSuccessful);
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
+        }
 
     }
-
-    private void SetNotification(bool isSuccesfull)
-    {
-        int delay;
-
-        if (isSuccesfull)
-        {
-            notification = "Záznam byl uložen";
-            delay = 1000;
-        }
-        else
-        {
-            notification = "Záznam se nepodařilo uložit";
-            delay = 2000;
-        }
-        Task.Delay(delay).ContinueWith(_ => RefreshPage());
-
-    }
+    
 
     private void RefreshPage()
     {
