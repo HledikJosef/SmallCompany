@@ -198,7 +198,7 @@
                     <td>Skupina</td>
                     <td>Popis</td>
                     <td>
-                        <select class="form-select-sm" @onchange="SetFilterItemType">
+                        <select class="form-select-sm" @onchange="SetFilterItemType" value="@colorFilter">
                             <option selected value="">Typ</option>
                             @foreach (var type in itemTypeList)
                             {
@@ -287,6 +287,9 @@
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
     List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();
 
+    private string typeFilter = "";
+    private string colorFilter = "";
+    private float? hardnessFilter = null; 
 
     List<string> itemTypeList = new List<string>();
     List<string> itemColorList = new List<string>();
@@ -349,6 +352,41 @@
             blazorItemsFiltered.Clear();
         }
 
+        if (itemFiltr != null)
+        {
+            itemFiltr = new ItemStockRecordBlazorModel();
+        }
+
+        if (itemTypeList != null)
+        {
+            itemTypeList = new List<string>();
+        }
+
+        if (itemColorList != null)
+        {
+            itemColorList = new List<string>();
+        }
+
+        if (itemHardnessList != null)
+        {
+            itemHardnessList = new List<float?>();
+        }
+
+        if (typeFilter! is null)
+        {
+            typeFilter = "";
+        }
+
+        if (colorFilter !is null)
+        {
+            colorFilter = "";
+        }
+
+        if(hardnessFilter !is null)
+        {
+            hardnessFilter = null;            
+        }
+
         string itemModel = e.Value.ToString();
         blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(itemModel);
         blazorItemsFiltered = blazorItemsOnStock.ToList();
@@ -371,7 +409,7 @@
 
     private void SetFilterItemType(ChangeEventArgs e)
     {
-        if(e.Value != "")
+        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
         {
             itemFiltr.ItemType = e.Value.ToString();
         }
@@ -385,7 +423,7 @@
 
     private void SetFilterItemColor(ChangeEventArgs e)
     {
-        if (e.Value != "")
+        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
         {
             itemFiltr.ItemColor = e.Value.ToString();
         }
@@ -399,7 +437,7 @@
 
     private void SetFilterItemHardness(ChangeEventArgs e)
     {
-        if (e.Value != "")
+        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
         {
             itemFiltr.ItemHardness = float.Parse(e.Value.ToString());
         }
