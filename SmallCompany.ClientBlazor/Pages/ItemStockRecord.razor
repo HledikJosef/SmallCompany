@@ -163,42 +163,18 @@
         <option value="@itemModel.ItemGroupName">@itemModel.ItemGroupName</option>
     }
 </select>
-@* <form class="form-control">
-    <table class="table table-bordered">
-        <thead>Filtr</thead>
-        <tbody>
-            <tr>
-                <td>Skupina</td>
-                <td>Popis</td>
-                <td>Typ</td>
-                <td>Barva</td>
-                <td>Tvrdost</td>
-                <td>Hustota</td>
-                <td>Průměr</td>
-                <td>Šířka</td>
-                <td>Délka</td>
-                <td>Výška</td>
-                <td>Tloušťka</td>
-                <td>Hmotnost</td>
-                <td>Množství</td>
-                <td>Jednotka</td>
-                <td>ID skladu</td>
-            </tr>
-
-        </tbody>
-    </table>
-</form> *@
 
 @if (blazorItemsOnStock != null)
 {
-    <form class="form-control">
+    <form class="form-control" @onsubmit=SetFilters>
+        <button type="submit" class="btn-sm btn-warning ">Filtruj</button>
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <td>Skupina</td>
                     <td>Popis</td>
                     <td>
-                        <select class="form-select-sm" @onchange="SetFilterItemType">
+                        <select class="form-select-sm" @bind=typeFilter>
                             <option selected value="">Typ</option>
                             @foreach (var type in itemTypeList)
                             {
@@ -207,7 +183,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="form-select-sm" @onchange="SetFilterItemColor">
+                        <select class="form-select-sm" @bind=colorFilter>
                             <option selected value="">Barva</option>
                             @foreach (var color in itemColorList)
                             {
@@ -216,7 +192,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="form-select-sm" @onchange="SetFilterItemHardness">
+                        <select class="form-select-sm" @bind=hardnessFilter>
                             <option selected value="">Tvrdost</option>
                             @foreach (var hardness in itemHardnessList)
                             {
@@ -224,16 +200,96 @@
                             }
                         </select>
                     </td>
-                    <td>Hustota</td>
-                    <td>Průměr</td>
-                    <td>Šířka</td>
-                    <td>Délka</td>
-                    <td>Výška</td>
-                    <td>Tloušťka</td>
-                    <td>Hmotnost</td>
-                    <td>Množství</td>
-                    <td>Jednotka</td>
-                    <td>ID skladu</td>
+                    <td>
+                        <select class="form-select-sm" @bind=densityFilter>
+                            <option selected value="">Hustota</option>
+                            @foreach (var density in itemDensityList)
+                            {
+                                <option value="@density">@density</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=diameterFilter>
+                            <option selected value="">Průměr</option>
+                            @foreach (var diameter in itemDiameterList)
+                            {
+                                <option value="@diameter">@diameter</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=widthFilter>
+                            <option selected value="">Šířka</option>
+                            @foreach (var width in itemWidthList)
+                            {
+                                <option value="@width">@width</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=lengthFilter>
+                            <option selected value="">Délka</option>
+                            @foreach (var length in itemLengthList)
+                            {
+                                <option value="@length">@length</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=highFilter>
+                            <option selected value="">Výška</option>
+                            @foreach (var high in itemHighList)
+                            {
+                                <option value="@high">@high</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=thicknessFilter>
+                            <option selected value="">Tloušťka</option>
+                            @foreach (var thickness in itemThicknessList)
+                            {
+                                <option value="@thickness">@thickness</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=weightFilter>
+                            <option selected value="">Hmotnost</option>
+                            @foreach (var weigth in itemWeightList)
+                            {
+                                <option value="@weigth">@weigth</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=quantityFilter>
+                            <option selected value="">Množství</option>
+                            @foreach (var quantity in itemQuantityList)
+                            {
+                                <option value="@quantity">@quantity</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=unitFilter>
+                            <option selected value="">Jednotka</option>
+                                @foreach (var unit in itemUnitList)
+                                {
+                                <option value="@unit">@unit</option>
+                                }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-sm" @bind=stockIDFilter>
+                            <option selected value="">Sklad</option>
+                            @foreach (var stock in itemStockIdList)
+                            {
+                                <option value="@stock">@stock</option>
+                            }
+                        </select>
+                    </td>
                 </tr>
 
             </thead>
@@ -277,7 +333,6 @@
 
 @code {
     private ItemBlazorModel? selectedModel;
-    private ItemStockRecordBlazorModel? itemFiltr;
     private ItemStockRecordBlazorModel? itemStockRecordBlazorModel;
     private List<ItemStockRecordBlazorModel>? blazorItemsOnStock;
     private List<ItemStockRecordBlazorModel>? blazorItemsFiltered;
@@ -289,11 +344,32 @@
 
     private string? typeFilter = "";
     private string? colorFilter = "";
-    private float? hardnessFilter = null; 
+    private string? hardnessFilter = "";
+    private string? densityFilter = "";
+    private string? diameterFilter = "";
+    private string? widthFilter = "";
+    private string? highFilter = "";
+    private string? lengthFilter = "";
+    private string? thicknessFilter = "";
+    private string? weightFilter = "";
+    private string? quantityFilter = "";
+    private string? unitFilter = "";
+    private string? stockIDFilter = "";
 
     List<string>? itemTypeList = new List<string>();
     List<string>? itemColorList = new List<string>();
     List<float?> itemHardnessList = new List<float?>();
+    List<float?> itemDensityList = new List<float?>();
+    List<float?> itemDiameterList = new List<float?>();
+    List<float?> itemWidthList = new List<float?>();
+    List<float?> itemLengthList = new List<float?>();
+    List<float?> itemHighList = new List<float?>();
+    List<float?> itemThicknessList = new List<float?>();
+    List<float?> itemWeightList = new List<float?>();
+    List<float?> itemQuantityList = new List<float?>();
+    List<string> itemUnitList = new List<string>();
+    List<float?> itemStockIdList = new List<float?>();
+
 
 
     protected override void OnInitialized()
@@ -310,19 +386,20 @@
         }
 
         itemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
-        itemFiltr = new ItemStockRecordBlazorModel();
     }
 
     private void GetSelectedItemModel(ChangeEventArgs e)
     {
-        string? selectedGroupName = e.Value.ToString();
-        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);     
+        string? selectedGroupName = e.Value?.ToString();
+        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);
+
     }
 
     private void GetSelectedStock(ChangeEventArgs e)
     {
-        string selectedStockTitel = e.Value.ToString();
+        string? selectedStockTitel = e.Value?.ToString();
         itemStockRecordBlazorModel.StockId = blazorStockList.FirstOrDefault(stock => stock.StockTitel == selectedStockTitel).StockId;
+
     }
 
     private async void AddItemOnStock()
@@ -347,40 +424,20 @@
 
     private void ReadSelectedStock(ChangeEventArgs e)
     {
-        if(blazorItemsOnStock != null)
-        {
-            blazorItemsOnStock = new List<ItemStockRecordBlazorModel>();
-        }
-
-        if(blazorItemsFiltered != null)
-        {
-            blazorItemsFiltered = new List<ItemStockRecordBlazorModel>();
-        }
-
-        if (itemFiltr != null)
-        {
-            itemFiltr = new ItemStockRecordBlazorModel();
-        }
-
-        if (itemTypeList != null)
-        {
-            itemTypeList = new List<string>();
-        }
-
-        if (itemColorList != null)
-        {
-            itemColorList = new List<string>();
-        }
-
-        if (itemHardnessList != null)
-        {
-            itemHardnessList = new List<float?>();
-        }           
+        ClearFilterLists();
+        ClearPageFilters();
 
         string itemModel = e.Value.ToString();
         blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(itemModel);
         blazorItemsFiltered = blazorItemsOnStock.ToList();
-        foreach(var item in blazorItemsOnStock)
+
+        GetFilterValues();
+    }
+
+    private void GetFilterValues()
+    {
+
+        foreach (var item in blazorItemsFiltered)
         {
             if ((item.ItemType != null) && (!itemTypeList.Contains(item.ItemType)))
             {
@@ -394,56 +451,121 @@
             {
                 itemHardnessList.Add(item.ItemHardness);
             }
+            if ((item.ItemDensity != null) && (!itemDensityList.Contains(item.ItemDensity)))
+            {
+                itemDensityList.Add(item.ItemDensity);
+            }
+            if ((item.ItemDiameter != null) && (!itemDiameterList.Contains(item.ItemDiameter)))
+            {
+                itemDiameterList.Add(item.ItemDiameter);
+            }
+            if ((item.ItemWidth != null) && (!itemWidthList.Contains(item.ItemWidth)))
+            {
+                itemWidthList.Add(item.ItemWidth);
+            }
+            if ((item.ItemLength != null) && (!itemLengthList.Contains(item.ItemLength)))
+            {
+                itemLengthList.Add(item.ItemLength);
+            }
+            if ((item.ItemHigh != null) && (!itemHighList.Contains(item.ItemHigh)))
+            {
+                itemHighList.Add(item.ItemHigh);
+            }
+            if ((item.ItemThickness != null) && (!itemThicknessList.Contains(item.ItemThickness)))
+            {
+                itemThicknessList.Add(item.ItemThickness);
+            }
+            if ((item.ItemWeight != null) && (!itemWeightList.Contains(item.ItemWeight)))
+            {
+                itemWeightList.Add(item.ItemWeight);
+            }
+            if ((item.ItemQuantity != null) && (!itemQuantityList.Contains(item.ItemQuantity)))
+            {
+                itemQuantityList.Add(item.ItemQuantity);
+            }
+            if ((item.ItemUnit != null) && (!itemUnitList.Contains(item.ItemUnit)))
+            {
+                itemUnitList.Add(item.ItemUnit);
+            }
+            if ((item.StockId != null) && (!itemStockIdList.Contains(item.StockId)))
+            {
+                itemStockIdList.Add(item.StockId);
+            }
         }
+
     }
 
-    private void SetFilterItemType(ChangeEventArgs e)
-    {
-        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
-        {
-            itemFiltr.ItemType = e.Value.ToString();
-        }
-        else
-        {
-            itemFiltr.ItemType = null;
-        }
-        SetFilters(itemFiltr);
 
+    private void SetFilters()
+    {
+        float floatHardnessFilter;
+        float floatDensityFilter;
+        float floatDiameterFilter;
+        float floatWidthFilter;
+        float floatHighFilter;
+        float floatLengthFilter;
+        float floatThicknessFilter;
+        float floatWeightFilter;
+        float floatQuantityFilter;
+        int intStockIdFilter;
+        float.TryParse(hardnessFilter, out floatHardnessFilter);
+        float.TryParse(densityFilter, out floatDensityFilter);
+        float.TryParse(diameterFilter, out floatDiameterFilter);
+        float.TryParse(widthFilter, out floatWidthFilter);
+        float.TryParse(highFilter, out floatHighFilter);
+        float.TryParse(lengthFilter, out floatLengthFilter);
+        float.TryParse(thicknessFilter, out floatThicknessFilter);
+        float.TryParse(weightFilter, out floatWeightFilter);
+        float.TryParse(quantityFilter, out floatQuantityFilter);
+        Int32.TryParse(stockIDFilter, out intStockIdFilter);
+
+        blazorItemsFiltered = blazorItemsOnStock.Where(item => ((typeFilter == "" || item.ItemType == typeFilter) &&
+        (colorFilter == "" || item.ItemColor == colorFilter) &&
+        (hardnessFilter == "" || item.ItemHardness == floatHardnessFilter) && (densityFilter == "" || item.ItemDensity == floatDensityFilter) &&
+        (diameterFilter == "" || item.ItemDiameter == floatDiameterFilter) &&
+        (widthFilter == "" || item.ItemWidth == floatWidthFilter) && (highFilter == "" || item.ItemHigh == floatHighFilter) &&
+        (lengthFilter == "" || item.ItemLength == floatLengthFilter) && (thicknessFilter == "" || item.ItemThickness == floatThicknessFilter) &&
+        (weightFilter == "" || item.ItemWeight == floatWeightFilter) && (quantityFilter == "" || item.ItemQuantity == floatQuantityFilter) && 
+        (unitFilter == "" || item.ItemUnit == unitFilter) && (stockIDFilter == "" || item.StockId == intStockIdFilter))).ToList();
+
+        GetFilterValues();
     }
 
-    private void SetFilterItemColor(ChangeEventArgs e)
+    private void ClearFilterLists()
     {
-        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
-        {
-            itemFiltr.ItemColor = e.Value.ToString();
-        }
-        else
-        {
-            itemFiltr.ItemColor = null;
-        }
-        SetFilters(itemFiltr);
-
+        blazorItemsFiltered = new List<ItemStockRecordBlazorModel>();
+        itemTypeList = new List<string>();
+        itemColorList = new List<string>();
+        itemHardnessList = new List<float?>();
+        itemDensityList = new List<float?>();
+        itemDiameterList = new List<float?>();
+        itemWidthList = new List<float?>();
+        itemLengthList = new List<float?>();
+        itemHighList = new List<float?>();
+        itemThicknessList = new List<float?>();
+        itemWeightList = new List<float?>();
+        itemQuantityList = new List<float?>();
+        itemUnitList = new List<string>();
+        itemStockIdList = new List<float?>();
+        
     }
 
-    private void SetFilterItemHardness(ChangeEventArgs e)
-    {
-        if (e.Value is string strValue && !string.IsNullOrEmpty(strValue))
-        {
-            itemFiltr.ItemHardness = float.Parse(e.Value.ToString());
-        }
-        else
-        {
-            itemFiltr.ItemHardness = null;
-        }
-        SetFilters(itemFiltr);
-
-    }
-
-    private void SetFilters(ItemStockRecordBlazorModel itemFiltr)
-    {
-        blazorItemsFiltered = blazorItemsOnStock.Where(item => ((itemFiltr.ItemType == null || item.ItemType == itemFiltr.ItemType) && 
-        (itemFiltr.ItemColor == null || item.ItemColor == itemFiltr.ItemColor) &&
-        (itemFiltr.ItemHardness == null || item.ItemHardness == itemFiltr.ItemHardness))).ToList();
+    private void ClearPageFilters()
+    {   
+        typeFilter = "";
+        colorFilter = "";
+        hardnessFilter = "";
+        densityFilter = "";
+        diameterFilter = "";
+        widthFilter = "";
+        highFilter = "";
+        lengthFilter = "";
+        thicknessFilter = "";
+        weightFilter = "";
+        quantityFilter = "";
+        unitFilter = "";
+        stockIDFilter = "";
+        
     }
 
 
