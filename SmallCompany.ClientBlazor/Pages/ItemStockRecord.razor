@@ -163,7 +163,7 @@
         <option value="@itemModel.ItemGroupName">@itemModel.ItemGroupName</option>
     }
 </select>
-<form class="form-control">
+@* <form class="form-control">
     <table class="table table-bordered">
         <thead>Filtr</thead>
         <tbody>
@@ -187,7 +187,7 @@
 
         </tbody>
     </table>
-</form>
+</form> *@
 
 @if (blazorItemsOnStock != null)
 {
@@ -198,7 +198,7 @@
                     <td>Skupina</td>
                     <td>Popis</td>
                     <td>
-                        <select class="form-select-sm" @onchange="SetFilterItemType" value="@colorFilter">
+                        <select class="form-select-sm" @onchange="SetFilterItemType">
                             <option selected value="">Typ</option>
                             @foreach (var type in itemTypeList)
                             {
@@ -276,23 +276,23 @@
 
 
 @code {
-    private ItemBlazorModel selectedModel;
-    private ItemStockRecordBlazorModel itemFiltr;
-    private ItemStockRecordBlazorModel itemStockRecordBlazorModel;
-    private List<ItemStockRecordBlazorModel> blazorItemsOnStock;
-    private List<ItemStockRecordBlazorModel> blazorItemsFiltered;
+    private ItemBlazorModel? selectedModel;
+    private ItemStockRecordBlazorModel? itemFiltr;
+    private ItemStockRecordBlazorModel? itemStockRecordBlazorModel;
+    private List<ItemStockRecordBlazorModel>? blazorItemsOnStock;
+    private List<ItemStockRecordBlazorModel>? blazorItemsFiltered;
     private string? notification;
     private string? exceptionMessage;
 
     List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
     List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();
 
-    private string typeFilter = "";
-    private string colorFilter = "";
+    private string? typeFilter = "";
+    private string? colorFilter = "";
     private float? hardnessFilter = null; 
 
-    List<string> itemTypeList = new List<string>();
-    List<string> itemColorList = new List<string>();
+    List<string>? itemTypeList = new List<string>();
+    List<string>? itemColorList = new List<string>();
     List<float?> itemHardnessList = new List<float?>();
 
 
@@ -315,7 +315,7 @@
 
     private void GetSelectedItemModel(ChangeEventArgs e)
     {
-        string selectedGroupName = e.Value.ToString();
+        string? selectedGroupName = e.Value.ToString();
         selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);     
     }
 
@@ -347,9 +347,14 @@
 
     private void ReadSelectedStock(ChangeEventArgs e)
     {
+        if(blazorItemsOnStock != null)
+        {
+            blazorItemsOnStock = new List<ItemStockRecordBlazorModel>();
+        }
+
         if(blazorItemsFiltered != null)
         {
-            blazorItemsFiltered.Clear();
+            blazorItemsFiltered = new List<ItemStockRecordBlazorModel>();
         }
 
         if (itemFiltr != null)
@@ -370,22 +375,7 @@
         if (itemHardnessList != null)
         {
             itemHardnessList = new List<float?>();
-        }
-
-        if (typeFilter! is null)
-        {
-            typeFilter = "";
-        }
-
-        if (colorFilter !is null)
-        {
-            colorFilter = "";
-        }
-
-        if(hardnessFilter !is null)
-        {
-            hardnessFilter = null;            
-        }
+        }           
 
         string itemModel = e.Value.ToString();
         blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(itemModel);
