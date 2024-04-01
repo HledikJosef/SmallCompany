@@ -391,7 +391,7 @@
     private void GetSelectedItemModel(ChangeEventArgs e)
     {
         string? selectedGroupName = e.Value?.ToString();
-        selectedModel = blazorItemModels.FirstOrDefault(model => model.ItemGroupName == selectedGroupName);
+        selectedModel = blazorItemModels.FirstOrDefault(model => model?.ItemGroupName == selectedGroupName);
 
     }
 
@@ -487,7 +487,7 @@
             {
                 itemUnitList.Add(item.ItemUnit);
             }
-            if ((item.StockId != null) && (!itemStockIdList.Contains(item.StockId)))
+            if (!itemStockIdList.Contains(item.StockId))
             {
                 itemStockIdList.Add(item.StockId);
             }

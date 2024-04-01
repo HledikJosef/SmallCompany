@@ -39,7 +39,7 @@ namespace SmallCompany.ClientBlazor
                 app.MapBlazorHub();
                 app.MapFallbackToPage("/_Host");
 
-                app.Run();
+                await Task.Run(app.Run);
 
             }
             catch (Exception ex)
