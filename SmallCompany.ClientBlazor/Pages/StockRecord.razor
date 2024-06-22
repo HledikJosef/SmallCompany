@@ -66,6 +66,10 @@
 
     private async void AddStockRecord()
     {
+        if (blazorStock.IsValid())
+        {
+            throw new InvalidOperationException();
+        }
         try
         {
             stockservice.CreateStockModel(blazorStock);
