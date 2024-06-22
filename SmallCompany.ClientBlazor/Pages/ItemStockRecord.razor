@@ -118,7 +118,7 @@
                             <option disabled selected value="">Vyberte sklad</option>
                             @foreach (var stock in blazorStockList)
                             {
-                                <option value="@stock.StockTitel">@stock.StockTitel</option>
+                                <option value="@stock.StockTitle">@stock.StockTitle</option>
                             }
                         </select>
                     </td>
@@ -333,14 +333,14 @@
 
 @code {
     private ItemBlazorModel? selectedModel;
-    private ItemStockRecordBlazorModel? itemStockRecordBlazorModel;
-    private List<ItemStockRecordBlazorModel>? blazorItemsOnStock;
-    private List<ItemStockRecordBlazorModel>? blazorItemsFiltered;
+    private ItemStockRecordBlazorModel itemStockRecordBlazorModel = new();
+    private List<ItemStockRecordBlazorModel> blazorItemsOnStock =  new();
+    private List<ItemStockRecordBlazorModel> blazorItemsFiltered = new();
     private string? notification;
     private string? exceptionMessage;
 
-    List<ItemBlazorModel>? blazorItemModels = new List<ItemBlazorModel>();
-    List<StockBlazorModel>? blazorStockList = new List<StockBlazorModel>();
+    List<ItemBlazorModel> blazorItemModels = new List<ItemBlazorModel>();
+    List<StockBlazorModel> blazorStockList = new List<StockBlazorModel>();
 
     private string? typeFilter = "";
     private string? colorFilter = "";
@@ -356,8 +356,8 @@
     private string? unitFilter = "";
     private string? stockIDFilter = "";
 
-    List<string>? itemTypeList = new List<string>();
-    List<string>? itemColorList = new List<string>();
+    List<string> itemTypeList = new List<string>();
+    List<string> itemColorList = new List<string>();
     List<float?> itemHardnessList = new List<float?>();
     List<float?> itemDensityList = new List<float?>();
     List<float?> itemDiameterList = new List<float?>();
@@ -397,18 +397,25 @@
 
     private void GetSelectedStock(ChangeEventArgs e)
     {
-        string? selectedStockTitel = e.Value?.ToString();
-        itemStockRecordBlazorModel.StockId = blazorStockList.FirstOrDefault(stock => stock.StockTitel == selectedStockTitel).StockId;
-
+        string selectedStockTitel = e.Value?.ToString() ?? String.Empty;
+        if (itemStockRecordBlazorModel is null)
+        {
+            throw new InvalidOperationException();
+        }
+        itemStockRecordBlazorModel.StockId = blazorStockList.Single(stock => stock.StockTitle == selectedStockTitel).StockId;
     }
 
     private async void AddItemOnStock()
     {
         try
         {
-            itemStockRecordBlazorModel.ItemGroupName = selectedModel.ItemGroupName;
-            itemStockRecordBlazorModel.ItemDescription = selectedModel.ItemDescription;
-            itemStockRecordBlazorModel.ItemUnit = selectedModel.ItemUnit;            
+            if (itemStockRecordBlazorModel is null)
+            {
+                throw new InvalidOperationException();
+            }
+            itemStockRecordBlazorModel.ItemGroupName = selectedModel?.ItemGroupName ?? string.Empty;
+            itemStockRecordBlazorModel.ItemDescription = selectedModel?.ItemDescription ?? string.Empty;
+            itemStockRecordBlazorModel.ItemUnit = selectedModel?.ItemUnit ?? string.Empty;            
             itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
             notification = "Vloženo ";
             await Task.Delay(1300);
@@ -427,7 +434,8 @@
         ClearFilterLists();
         ClearPageFilters();
 
-        string itemModel = e.Value.ToString();
+        string itemModel = e.Value?.ToString() ?? string.Empty;
+
         blazorItemsOnStock = itemStockService.CreateItemsOnStockOutput(itemModel);
         blazorItemsFiltered = blazorItemsOnStock.ToList();
 

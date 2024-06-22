@@ -2,7 +2,7 @@
 {
     public class ItemTyp
     {
-        public int? ItemTypId { get; set; }
-        public string Itemtyp { get; set; }
+        public int ItemTypId { get; set; }
+        public string Itemtyp { get; set; } = String.Empty;
     }
 }

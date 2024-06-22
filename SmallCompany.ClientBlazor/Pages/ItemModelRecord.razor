@@ -84,8 +84,8 @@
 
 
 @code {
-    private string? notification = null;
-    private string? exceptionMessage = null;
+    private string? notification;
+    private string? exceptionMessage;
     private string? itemGroupName = null;
     private string? itemUnit = null;
     private string? itemTyp = null;
@@ -101,7 +101,7 @@
         {
             blazorProperties = propertiesService.GetBlazorProperties();
             blazorUnits = propertiesService.GetBlazorUnits();
-            blazorItemTyps = propertiesService.GetBlazorItemTyps();
+            blazorItemTyps = propertiesService.GetBlazorItemTypes();
         }
         catch(Exception ex)
         {
@@ -113,6 +113,10 @@
 
     private async void AddItemModel()
     {
+        if ((itemGroupName is null) || (itemTyp is null) || (itemUnit is null))
+        {
+            throw new InvalidOperationException();
+        }
         try
         {
             itemModelService.CreateItemModel(itemGroupName, itemTyp, blazorProperties, itemUnit);

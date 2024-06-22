@@ -52,12 +52,12 @@ namespace SmallCompany.ServiceLayer.Impl
             return blazorUnit;
         }
 
-        public List<ItemTypBlazorModel> GetBlazorItemTyps()
+        public List<ItemTypBlazorModel> GetBlazorItemTypes()
         {
-            List<ItemTyp> itemTypsFromSql = itemTypModelDao.ReadItemTyps();
-            List<ItemTypBlazorModel> blazorItemTyps = itemTypsFromSql.Select(item => MapItemTyps(item)).ToList();
+            List<ItemTyp> itemTypesFromSql = itemTypModelDao.ReadItemTypes();
+            List<ItemTypBlazorModel> blazorItemTypes = itemTypesFromSql.Select(item => MapItemTyps(item)).ToList();
 
-            return blazorItemTyps;
+            return blazorItemTypes;
         }
 
         private ItemTypBlazorModel MapItemTyps(ItemTyp itemTyp)

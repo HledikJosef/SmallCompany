@@ -23,10 +23,10 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             StockModel stockModel = new StockModel();
             stockModel.StockId = blazorStock.StockId;
-            stockModel.StockTitel = blazorStock.StockTitel;
-            stockModel.StockDescription = blazorStock.StockDescription;
-            stockModel.StockLocation = blazorStock.StockLocation;
-            stockModel.IsValid = blazorStock.IsValid;
+            stockModel.StockTitel = blazorStock?.StockTitle ?? throw new InvalidOperationException();
+            stockModel.StockDescription = blazorStock?.StockDescription ?? throw new InvalidOperationException();
+            stockModel.StockLocation = blazorStock?.StockLocation ?? throw new InvalidOperationException();
+            stockModel.IsValid = true; /*blazorStock.IsValid();*/
 
             return stockModel;
         }
@@ -44,10 +44,10 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             StockBlazorModel blazorStock = new StockBlazorModel();
             blazorStock.StockId = stockFromSql.StockId;
-            blazorStock.StockTitel = stockFromSql.StockTitel;
+            blazorStock.StockTitle = stockFromSql.StockTitel;
             blazorStock.StockDescription = stockFromSql.StockDescription;
             blazorStock.StockLocation = stockFromSql.StockLocation;
-            blazorStock.IsValid = stockFromSql.IsValid;
+            //blazorStock.IsValid = stockFromSql.IsValid();
 
             return blazorStock;
 

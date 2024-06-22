@@ -2,7 +2,7 @@
 {
     public class UnitModel
     {
-        public int? UnitId { get; set; }
-        public string ItemUnit { get; set; }
+        public int UnitId { get; set; }
+        public string ItemUnit { get; set; } = String.Empty;
     }
 }

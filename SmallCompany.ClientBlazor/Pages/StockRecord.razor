@@ -14,7 +14,7 @@
         <tbody>
             <tr>
                 <td>
-                    <input type="text" class="form-control" placeholder="Název skladu" @bind-value="@blazorStock.StockTitel" required>
+                    <input type="text" class="form-control" placeholder="Název skladu" @bind-value="@blazorStock.StockTitle" required>
                 </td>
             </tr>
             <tr>
@@ -57,7 +57,7 @@
 @code {
     private string? notification = null;
     private string? exceptionMessage = null;
-    StockBlazorModel? blazorStock = null;
+    StockBlazorModel blazorStock = new();
 
     protected override void OnInitialized()
     {
@@ -66,9 +66,12 @@
 
     private async void AddStockRecord()
     {
+        if (blazorStock.IsValid())
+        {
+            throw new InvalidOperationException();
+        }
         try
         {
-            blazorStock.IsValid = true;
             stockservice.CreateStockModel(blazorStock);
             notification = "Vloženo ";
             await Task.Delay(1300);

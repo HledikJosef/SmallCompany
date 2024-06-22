@@ -4,6 +4,6 @@ namespace SmallCompany.DataLayer
 {
     public interface IItemTypModelDao
     {
-        public List<ItemTyp> ReadItemTyps();
+        public List<ItemTyp> ReadItemTypes();
     }
 }

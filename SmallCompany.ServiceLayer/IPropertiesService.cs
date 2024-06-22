@@ -6,6 +6,6 @@ namespace SmallCompany.ServiceLayer
     {
         public List<PropertiesBlazorModel> GetBlazorProperties();
         public List<UnitBlazorModel> GetBlazorUnits();
-        public List<ItemTypBlazorModel> GetBlazorItemTyps();
+        public List<ItemTypBlazorModel> GetBlazorItemTypes();
     }
 }

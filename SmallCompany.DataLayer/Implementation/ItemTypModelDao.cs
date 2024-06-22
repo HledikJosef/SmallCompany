@@ -13,16 +13,16 @@ namespace SmallCompany.DataLayer.Implementation
             this.connectionStringProvider = connectionStringProvider;
         }
 
-        public List<ItemTyp> ReadItemTyps()
+        public List<ItemTyp> ReadItemTypes()
         {
             string sqlCommand = "SELECT ItemTypId, ItemTyp FROM ItemTypModel";
-            List<ItemTyp> itemTypsFromSql = new List<ItemTyp>();
+            List<ItemTyp> itemTypesFromSql = new List<ItemTyp>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                itemTypsFromSql = connection.Query<ItemTyp>(sqlCommand).ToList();
+                itemTypesFromSql = connection.Query<ItemTyp>(sqlCommand).ToList();
             }
 
-            return itemTypsFromSql;
+            return itemTypesFromSql;
         }
     }
 }
