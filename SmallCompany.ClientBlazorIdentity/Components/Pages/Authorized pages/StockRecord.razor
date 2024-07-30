@@ -1,0 +1,94 @@
+﻿@page "/stockRecord"
+
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
+
+@using SmallCompany.ServiceLayer;
+@using ServiceLayer.ModelsBlazor;
+@inject IStockService stockservice;
+@inject NavigationManager navigationManager;
+
+<PageTitle>Stock-record</PageTitle>
+
+<h1>Vytvoř nový sklad</h1>
+<h5>Vyplň název skladu, stručný popis a lokaci.</h5>
+
+<form class="form-control" @onsubmit="AddStockRecord">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Název skladu" @bind-value="@blazorStock.StockTitle" required>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Stručný popis skladu" @bind-value="@blazorStock.StockDescription" required>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="Umístění skladu" @bind-value="@blazorStock.StockLocation" required>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</form>
+
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
+
+
+@code {
+    private string? notification = null;
+    private string? exceptionMessage = null;
+    StockBlazorModel blazorStock = new();
+
+    protected override void OnInitialized()
+    {
+        blazorStock = new StockBlazorModel();
+    }
+
+    private async void AddStockRecord()
+    {
+        try
+        {
+            stockservice.CreateStockModel(blazorStock);
+            notification = "Vloženo ";
+            await Task.Delay(1300);
+            RefreshPage();
+        }
+        catch (Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
+        }
+
+    }
+
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo("/stockRecord", forceLoad: true);
+    }
+
+}  
