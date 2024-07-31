@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using SmallCompany.ClientBlazorIdentity.Data;
+using SmallCompany.Models.Data;
 using System.Security.Claims;
 
 namespace SmallCompany.ClientBlazorIdentity.Components.Account

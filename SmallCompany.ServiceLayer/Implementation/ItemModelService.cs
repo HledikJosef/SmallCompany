@@ -1,5 +1,5 @@
 ﻿using SmallCompany.DataLayer;
-using SmallCompany.DataLayer.Models;
+using SmallCompany.Models;
 using SmallCompany.ServiceLayer.ModelsBlazor;
 
 

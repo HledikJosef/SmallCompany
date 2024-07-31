@@ -31,7 +31,7 @@
                         <option disabled selected value="">Vyberte typ skupiny</option>
                         @foreach (var itemTyp in blazorItemTyps)
                         {
-                            <option value="@itemTyp.ItemTyp">@itemTyp.ItemTyp</option>
+                            <option value="@itemTyp.ItemType">@itemTyp.ItemType</option>
                         }
                     </select>
                 </td>
@@ -99,7 +99,7 @@
 
     List<PropertiesBlazorModel> blazorProperties = new List<PropertiesBlazorModel>();
     List<UnitBlazorModel> blazorUnits = new List<UnitBlazorModel>();
-    List<ItemTypBlazorModel> blazorItemTyps = new List<ItemTypBlazorModel>();
+    List<ItemTypeBlazorModel> blazorItemTyps = new List<ItemTypeBlazorModel>();
 
 
     protected override void OnInitialized()
@@ -118,7 +118,7 @@
 
     }
 
-    private async void AddItemModel()
+    private async Task AddItemModel()
     {
         if ((itemGroupName is null) || (itemTyp is null) || (itemUnit is null))
         {

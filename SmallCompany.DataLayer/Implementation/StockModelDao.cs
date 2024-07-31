@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using DapperExtensions;
-using SmallCompany.DataLayer.Models;
+using SmallCompany.Models;
 using System.Data.SqlClient;
 
 namespace SmallCompany.DataLayer.Implementation

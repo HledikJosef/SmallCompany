@@ -1,9 +1,9 @@
-﻿using SmallCompany.DataLayer.Models;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.DataLayer
 {
     public interface IItemTypModelDao
     {
-        public List<ItemTyp> ReadItemTypes();
+        public List<ItemType> ReadItemTypes();
     }
 }

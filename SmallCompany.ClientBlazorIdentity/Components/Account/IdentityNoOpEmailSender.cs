@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using SmallCompany.ClientBlazorIdentity.Data;
+using SmallCompany.Models.Data;
 
 namespace SmallCompany.ClientBlazorIdentity.Components.Account
 {

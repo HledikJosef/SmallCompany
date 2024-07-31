@@ -409,7 +409,7 @@
         itemStockRecordBlazorModel.StockId = blazorStockList.Single(stock => stock.StockTitle == selectedStockTitel).StockId;
     }
 
-    private async void AddItemOnStock()
+    private async Task AddItemOnStock()
     {
         try
         {

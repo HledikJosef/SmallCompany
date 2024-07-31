@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using SmallCompany.ClientBlazorIdentity.Components.Account.Pages;
 using SmallCompany.ClientBlazorIdentity.Components.Account.Pages.Manage;
-using SmallCompany.ClientBlazorIdentity.Data;
+using SmallCompany.Models.Data;
 using System.Security.Claims;
 using System.Text.Json;
 

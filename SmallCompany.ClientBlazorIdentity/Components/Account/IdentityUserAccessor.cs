@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using SmallCompany.ClientBlazorIdentity.Data;
+using SmallCompany.Models.Data;
 
 namespace SmallCompany.ClientBlazorIdentity.Components.Account
 {

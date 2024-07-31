@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmallCompany.ClientBlazorIdentity.Components;
 using SmallCompany.ClientBlazorIdentity.Components.Account;
-using SmallCompany.ClientBlazorIdentity.Data;
 using SmallCompany.CompositionRoot;
+using SmallCompany.Models.Data;
 
 namespace SmallCompany.ClientBlazorIdentity
 {

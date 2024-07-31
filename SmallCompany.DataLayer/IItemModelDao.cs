@@ -1,4 +1,4 @@
-﻿using SmallCompany.DataLayer.Models;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.DataLayer
 {

@@ -1,7 +1,10 @@
-﻿namespace SmallCompany.DataLayer.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SmallCompany.Models
 {
     public class ItemModel
     {
+        [Key]
         public int ItemId { get; set; }
         public string ItemGroupName { get; set; } = String.Empty;
         public string ItemDescription { get; set; } = String.Empty;

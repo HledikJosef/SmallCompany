@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using SmallCompany.DataLayer.Models;
+using SmallCompany.Models;
 using System.Data.SqlClient;
 
 namespace SmallCompany.DataLayer.Implementation
@@ -13,13 +13,13 @@ namespace SmallCompany.DataLayer.Implementation
             this.connectionStringProvider = connectionStringProvider;
         }
 
-        public List<ItemTyp> ReadItemTypes()
+        public List<ItemType> ReadItemTypes()
         {
-            string sqlCommand = "SELECT ItemTypId, ItemTyp FROM ItemTypModel";
-            List<ItemTyp> itemTypesFromSql = new List<ItemTyp>();
+            string sqlCommand = "SELECT ItemTypeId, ItemTyp FROM ItemTypModel";
+            List<ItemType> itemTypesFromSql = new List<ItemType>();
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                itemTypesFromSql = connection.Query<ItemTyp>(sqlCommand).ToList();
+                itemTypesFromSql = connection.Query<ItemType>(sqlCommand).ToList();
             }
 
             return itemTypesFromSql;

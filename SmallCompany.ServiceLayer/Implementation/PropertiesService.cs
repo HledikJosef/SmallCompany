@@ -1,5 +1,5 @@
 ﻿using SmallCompany.DataLayer;
-using SmallCompany.DataLayer.Models;
+using SmallCompany.Models;
 using SmallCompany.ServiceLayer.ModelsBlazor;
 
 namespace SmallCompany.ServiceLayer.Impl
@@ -52,19 +52,19 @@ namespace SmallCompany.ServiceLayer.Impl
             return blazorUnit;
         }
 
-        public List<ItemTypBlazorModel> GetBlazorItemTypes()
+        public List<ItemTypeBlazorModel> GetBlazorItemTypes()
         {
-            List<ItemTyp> itemTypesFromSql = itemTypModelDao.ReadItemTypes();
-            List<ItemTypBlazorModel> blazorItemTypes = itemTypesFromSql.Select(item => MapItemTyps(item)).ToList();
+            List<ItemType> itemTypesFromSql = itemTypModelDao.ReadItemTypes();
+            List<ItemTypeBlazorModel> blazorItemTypes = itemTypesFromSql.Select(item => MapItemTyps(item)).ToList();
 
             return blazorItemTypes;
         }
 
-        private ItemTypBlazorModel MapItemTyps(ItemTyp itemTyp)
+        private ItemTypeBlazorModel MapItemTyps(ItemType itemTyp)
         {
-            ItemTypBlazorModel blazorItemTyp = new ItemTypBlazorModel();
-            blazorItemTyp.ItemTypId = itemTyp.ItemTypId;
-            blazorItemTyp.ItemTyp = itemTyp.Itemtyp;
+            ItemTypeBlazorModel blazorItemTyp = new ItemTypeBlazorModel();
+            blazorItemTyp.ItemTypeId = itemTyp.ItemTypeId;
+            blazorItemTyp.ItemType = itemTyp.Itemtype;
 
             return blazorItemTyp;
         }
