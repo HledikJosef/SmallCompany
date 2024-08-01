@@ -2,6 +2,7 @@
 
 namespace SmallCompany.Models
 {
+
     public class ItemType
     {
         [Key]

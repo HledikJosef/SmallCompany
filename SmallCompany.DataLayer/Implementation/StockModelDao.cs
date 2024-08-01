@@ -26,11 +26,11 @@ namespace SmallCompany.DataLayer.Implementation
             return stocksFromSql;
         }
 
-        public void WriteStockmodel(StockModel stockmodel)
+        public void WriteStockmodel(StockModel stockModel)
         {
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
-                var rowsAffected = connection.Insert(stockmodel);
+                var rowsAffected = connection.Insert(stockModel);
             }
         }
     }

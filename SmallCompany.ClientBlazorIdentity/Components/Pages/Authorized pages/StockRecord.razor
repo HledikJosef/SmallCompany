@@ -13,22 +13,22 @@
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
 
-<form class="form-control" @onsubmit="AddStockRecord">
+<EditForm Model="blazorStock" OnValidSubmit="AddStockRecord" FormName="StockRecord">
     <table class="table">
         <tbody>
             <tr>
                 <td>
-                    <input type="text" class="form-control" placeholder="Název skladu" @bind-value="@blazorStock.StockTitle" required>
+                    <InputText @bind-Value="blazorStock.StockTitle" class="form-control" placeholder="Název skladu" id="title" required />
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type="text" class="form-control" placeholder="Stručný popis skladu" @bind-value="@blazorStock.StockDescription" required>
+                    <InputText @bind-Value="blazorStock.StockDescription" class="form-control" placeholder="Stručný popis skladu" id="description" required />
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type="text" class="form-control" placeholder="Umístění skladu" @bind-value="@blazorStock.StockLocation" required>
+                    <InputText @bind-Value="blazorStock.StockLocation" class="form-control" placeholder="Umístění skladu" id="location" required />
                 </td>
 
             </tr>
@@ -37,7 +37,7 @@
 
     <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
-</form>
+</EditForm>
 
 @if (notification != null)
 {
@@ -61,12 +61,9 @@
 @code {
     private string? notification = null;
     private string? exceptionMessage = null;
-    StockBlazorModel blazorStock = new();
 
-    protected override void OnInitialized()
-    {
-        blazorStock = new StockBlazorModel();
-    }
+    [SupplyParameterFromForm]
+    public StockBlazorModel blazorStock { get; set; } = new StockBlazorModel();
 
     private async Task AddStockRecord()
     {
