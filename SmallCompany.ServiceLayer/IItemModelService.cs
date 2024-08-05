@@ -4,7 +4,8 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IItemModelService
     {
-        public void CreateItemModel(string materialGroupName, string materialDescription, List<PropertiesBlazorModel> blazorProperties, string unit);
+        public void CreateItemModel(ItemBlazorModel itemBlazorModel);
+
         public List<ItemBlazorModel> GetBlazorItemModels();
     }
 }

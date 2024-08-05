@@ -11,10 +11,11 @@ namespace SmallCompany.CompositionRoot
     {
         public static void AddServices(this IServiceCollection services, string connectionString)
         {
+
             //DataLayer
             services.AddSingleton<IConnectionStringProvider>(new ConnectionStringProvider(connectionString));
             services.AddTransient<IItemModelDao, ItemModelDao>();
-            services.AddTransient<IItemTypModelDao, ItemTypModelDao>();
+            services.AddTransient<IItemTypeModelDao, ItemTypeModelDao>();
             services.AddTransient<IPropertyModelDao, PropertyModelDao>();
             services.AddTransient<IStockModelDao, StockModelDao>();
             services.AddTransient<IUnitModelDao, UnitModelDao>();

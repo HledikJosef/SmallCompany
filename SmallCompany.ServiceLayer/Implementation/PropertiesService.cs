@@ -8,9 +8,9 @@ namespace SmallCompany.ServiceLayer.Impl
     {
         private readonly IPropertyModelDao propertyModelDao;
         private readonly IUnitModelDao unitModelDao;
-        private readonly IItemTypModelDao itemTypModelDao;
+        private readonly IItemTypeModelDao itemTypModelDao;
 
-        public PropertiesService(IPropertyModelDao propertyModelDao, IUnitModelDao unitModelDao, IItemTypModelDao itemTypModelDao)
+        public PropertiesService(IPropertyModelDao propertyModelDao, IUnitModelDao unitModelDao, IItemTypeModelDao itemTypModelDao)
         {
             this.propertyModelDao = propertyModelDao;
             this.unitModelDao = unitModelDao;
@@ -19,7 +19,7 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<PropertiesBlazorModel> GetBlazorProperties()
         {
-            List<PropertyModel> propertiesFromSql = propertyModelDao.ReadProperties();
+            List<PropertyModel> propertiesFromSql = propertyModelDao.ReadPropertiesEF();
             List<PropertiesBlazorModel> blazorProperties = propertiesFromSql.Select(property => MapProperties(property)).ToList();
 
             return blazorProperties;
@@ -38,7 +38,7 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<UnitBlazorModel> GetBlazorUnits()
         {
-            List<UnitModel> unitsFromSql = unitModelDao.ReadUnits();
+            List<UnitModel> unitsFromSql = unitModelDao.ReadUnitsEF();
             List<UnitBlazorModel> blazorUnits = unitsFromSql.Select(unit => MapUnits(unit)).ToList();
             return blazorUnits;
         }
@@ -54,17 +54,17 @@ namespace SmallCompany.ServiceLayer.Impl
 
         public List<ItemTypeBlazorModel> GetBlazorItemTypes()
         {
-            List<ItemType> itemTypesFromSql = itemTypModelDao.ReadItemTypes();
-            List<ItemTypeBlazorModel> blazorItemTypes = itemTypesFromSql.Select(item => MapItemTyps(item)).ToList();
+            List<ItemType> itemTypesFromSql = itemTypModelDao.ReadItemTypesEF();
+            List<ItemTypeBlazorModel> blazorItemTypes = itemTypesFromSql.Select(item => MapItemTypes(item)).ToList();
 
             return blazorItemTypes;
         }
 
-        private ItemTypeBlazorModel MapItemTyps(ItemType itemTyp)
+        private ItemTypeBlazorModel MapItemTypes(ItemType itemType)
         {
             ItemTypeBlazorModel blazorItemTyp = new ItemTypeBlazorModel();
-            blazorItemTyp.ItemTypeId = itemTyp.ItemTypeId;
-            blazorItemTyp.ItemType = itemTyp.Itemtype;
+            blazorItemTyp.ItemTypeId = itemType.ItemTypeId;
+            blazorItemTyp.ItemType = itemType.Itemtype;
 
             return blazorItemTyp;
         }

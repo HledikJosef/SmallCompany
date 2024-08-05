@@ -16,7 +16,7 @@ namespace SmallCompany.ServiceLayer.Implementation
         public void CreateStockModel(StockBlazorModel blazorStock)
         {
             StockModel stockModel = MapStocksModel(blazorStock);
-            stockModelDao.WriteStockmodel(stockModel);
+            stockModelDao.WriteStockModelEF(stockModel);
         }
 
         private StockModel MapStocksModel(StockBlazorModel blazorStock)
@@ -33,7 +33,7 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public List<StockBlazorModel> GetBlazorStockList()
         {
-            List<StockModel> stocksFromSql = stockModelDao.ReadStockModels();
+            List<StockModel> stocksFromSql = stockModelDao.ReadStockModelsEF();
             List<StockBlazorModel> blazorStockList = stocksFromSql.Select(stock => MapStocksFromSql(stock)).ToList();
 
 

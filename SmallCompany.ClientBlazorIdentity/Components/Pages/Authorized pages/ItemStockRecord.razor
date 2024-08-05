@@ -15,7 +15,7 @@
 <h1>Vlož prvek na sklad</h1>
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
-<form class="form-control" @onsubmit="AddItemOnStock">
+<EditForm EditContext="editContext" class="form-control" OnValidSubmit="AddItemOnStock" FormName="ItemOnStock">
     <table class="table">
         <tbody>
             <tr>
@@ -42,69 +42,69 @@
             {
                 <tr>
                     <td>
-                        <input class="form-control" type="text" placeholder="Název/Typ" @bind-value=itemStockRecordBlazorModel.ItemType required>
+                        <input class="form-control" type="text" placeholder="Název/Typ" @bind-value=ItemStockRecordBlazorModel.ItemType required>
                     </td>
 
                     @if (selectedModel.ItemColor)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Barva" @bind-value=itemStockRecordBlazorModel.ItemColor required>
+                            <input class="form-control" type="text" placeholder="Barva" @bind-value=ItemStockRecordBlazorModel.ItemColor required>
                         </td>
                     }
 
                     @if (selectedModel.ItemHardness)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Tvrdost (ShA)" @bind-value=itemStockRecordBlazorModel.ItemHardness required>
+                            <input class="form-control" type="text" placeholder="Tvrdost (ShA)" @bind-value=ItemStockRecordBlazorModel.ItemHardness required>
                         </td>
                     }
 
                     @if (selectedModel.ItemDensity)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Hustota" @bind-value=itemStockRecordBlazorModel.ItemDensity required>
+                            <input class="form-control" type="text" placeholder="Hustota" @bind-value=ItemStockRecordBlazorModel.ItemDensity required>
                         </td>
                     }
 
                     @if (selectedModel.ItemDiameter)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Průměr (mm)" @bind-value=itemStockRecordBlazorModel.ItemDiameter required>
+                            <input class="form-control" type="text" placeholder="Průměr (mm)" @bind-value=ItemStockRecordBlazorModel.ItemDiameter required>
                         </td>
                     }
 
                     @if (selectedModel.ItemWidth)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Šířka (mm)" @bind-value=itemStockRecordBlazorModel.ItemWidth required>
+                            <input class="form-control" type="text" placeholder="Šířka (mm)" @bind-value=ItemStockRecordBlazorModel.ItemWidth required>
                         </td>
                     }
 
                     @if (selectedModel.ItemLength)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Délka (mm)" @bind-value=itemStockRecordBlazorModel.ItemLength required>
+                            <input class="form-control" type="text" placeholder="Délka (mm)" @bind-value=ItemStockRecordBlazorModel.ItemLength required>
                         </td>
                     }
 
                     @if (selectedModel.ItemHigh)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Výška (mm)" @bind-value=itemStockRecordBlazorModel.ItemHigh required>
+                            <input class="form-control" type="text" placeholder="Výška (mm)" @bind-value=ItemStockRecordBlazorModel.ItemHigh required>
                         </td>
                     }
 
                     @if (selectedModel.ItemThickness)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Tloušťka/Síla materiálu (mm)" @bind-value=itemStockRecordBlazorModel.ItemThickness required>
+                            <input class="form-control" type="text" placeholder="Tloušťka/Síla materiálu (mm)" @bind-value=ItemStockRecordBlazorModel.ItemThickness required>
                         </td>
                     }
 
                     @if (selectedModel.ItemWeight)
                     {
                         <td>
-                            <input class="form-control" type="text" placeholder="Hmotnost (kg)" @bind-value=itemStockRecordBlazorModel.ItemWeight required>
+                            <input class="form-control" type="text" placeholder="Hmotnost (kg)" @bind-value=ItemStockRecordBlazorModel.ItemWeight required>
                         </td>
                     }
 
@@ -112,7 +112,7 @@
 
                 <tr>
                     <td>
-                        <input type="text" class="form-control" placeholder="Množství" pattern="[1-9]\d*" @bind-value="itemStockRecordBlazorModel.ItemQuantity" required>
+                        <input type="text" class="form-control" placeholder="Množství" pattern="[1-9]\d*" @bind-value="ItemStockRecordBlazorModel.ItemQuantity" required>
                     </td>
                     <td>
                         <input class="form-control" type="text" @bind-value="@selectedModel.ItemUnit" readonly>
@@ -136,7 +136,7 @@
 
     <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
-</form>
+</EditForm>
 
 
 @if (notification != null)
@@ -336,8 +336,12 @@
 
 
 @code {
+    private EditContext? editContext;
     private ItemBlazorModel? selectedModel;
-    private ItemStockRecordBlazorModel itemStockRecordBlazorModel = new();
+
+    [SupplyParameterFromForm]
+    private ItemStockRecordBlazorModel ItemStockRecordBlazorModel { get; set; } = new();
+
     private List<ItemStockRecordBlazorModel> blazorItemsOnStock = new();
     private List<ItemStockRecordBlazorModel> blazorItemsFiltered = new();
     private string? notification;
@@ -378,6 +382,8 @@
 
     protected override void OnInitialized()
     {
+        editContext = new(this);
+
         try
         {
             blazorItemModels = itemModelService.GetBlazorItemModels();
@@ -389,7 +395,7 @@
             notification = "Nepodařilo se načíst data o skladech a prvcích z databáze ";
         }
 
-        itemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
+        ItemStockRecordBlazorModel = new ItemStockRecordBlazorModel();
     }
 
     private void GetSelectedItemModel(ChangeEventArgs e)
@@ -402,25 +408,25 @@
     private void GetSelectedStock(ChangeEventArgs e)
     {
         string selectedStockTitel = e.Value?.ToString() ?? String.Empty;
-        if (itemStockRecordBlazorModel is null)
+        if (ItemStockRecordBlazorModel is null)
         {
             throw new InvalidOperationException();
         }
-        itemStockRecordBlazorModel.StockId = blazorStockList.Single(stock => stock.StockTitle == selectedStockTitel).StockId;
+        ItemStockRecordBlazorModel.StockId = blazorStockList.Single(stock => stock.StockTitle == selectedStockTitel).StockId;
     }
 
     private async Task AddItemOnStock()
     {
         try
         {
-            if (itemStockRecordBlazorModel is null)
+            if (ItemStockRecordBlazorModel is null)
             {
                 throw new InvalidOperationException();
             }
-            itemStockRecordBlazorModel.ItemGroupName = selectedModel?.ItemGroupName ?? string.Empty;
-            itemStockRecordBlazorModel.ItemDescription = selectedModel?.ItemDescription ?? string.Empty;
-            itemStockRecordBlazorModel.ItemUnit = selectedModel?.ItemUnit ?? string.Empty;
-            itemStockService.CreateItemStockRecord(itemStockRecordBlazorModel);
+            ItemStockRecordBlazorModel.ItemGroupName = selectedModel?.ItemGroupName ?? string.Empty;
+            ItemStockRecordBlazorModel.ItemDescription = selectedModel?.ItemDescription ?? string.Empty;
+            ItemStockRecordBlazorModel.ItemUnit = selectedModel?.ItemUnit ?? string.Empty;
+            itemStockService.CreateItemStockRecord(ItemStockRecordBlazorModel);
             notification = "Vloženo ";
             await Task.Delay(1300);
             RefreshPage();

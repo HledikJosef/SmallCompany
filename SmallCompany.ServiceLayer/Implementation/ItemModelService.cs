@@ -16,55 +16,38 @@ namespace SmallCompany.ServiceLayer.Impl
         }
 
 
-        public void CreateItemModel(string itemGroupName, string itemDescription, List<PropertiesBlazorModel> blazorProperties, string unit)
+        public void CreateItemModel(ItemBlazorModel itemBlazorModel)
+        {
+            ItemModel itemModel = new();
+            itemModel = MapItemBlazorModel(itemBlazorModel);
+            itemModelDao.WriteItemModelEF(itemModel);
+        }
+
+        private ItemModel MapItemBlazorModel(ItemBlazorModel itemBlazorModel)
         {
             ItemModel itemModel = new ItemModel();
-            itemModel.ItemGroupName = itemGroupName;
-            itemModel.ItemDescription = itemDescription;
-            foreach (var property in blazorProperties)
-            {
-                switch (property.PropertyName)
-                {
-                    case "Barva":
-                        itemModel.ItemColor = (bool)property.IsValid;
-                        break;
-                    case "Tvrdost":
-                        itemModel.ItemHardness = (bool)property.IsValid;
-                        break;
-                    case "Hustota":
-                        itemModel.ItemDensity = (bool)property.IsValid;
-                        break;
-                    case "Průměr":
-                        itemModel.ItemDiameter = (bool)property.IsValid;
-                        break;
-                    case "Šířka":
-                        itemModel.ItemWidth = (bool)property.IsValid;
-                        break;
-                    case "Délka":
-                        itemModel.ItemLength = (bool)property.IsValid;
-                        break;
-                    case "Výška":
-                        itemModel.ItemHigh = (bool)property.IsValid;
-                        break;
-                    case "Tloušťka":
-                        itemModel.ItemThickness = (bool)property.IsValid;
-                        break;
-                    case "Hmotnost":
-                        itemModel.ItemWeight = (bool)property.IsValid;
-                        break;
+            itemModel.ItemId = itemBlazorModel.ItemId;
+            itemModel.ItemGroupName = itemBlazorModel.ItemGroupName;
+            itemModel.ItemDescription = itemBlazorModel.ItemDescription;
+            itemModel.ItemColor = itemBlazorModel.ItemColor;
+            itemModel.ItemHardness = itemBlazorModel.ItemHardness;
+            itemModel.ItemDensity = itemBlazorModel.ItemDensity;
+            itemModel.ItemDiameter = itemBlazorModel.ItemDiameter;
+            itemModel.ItemRadius = itemBlazorModel.ItemRadius;
+            itemModel.ItemWidth = itemBlazorModel.ItemWidth;
+            itemModel.ItemLength = itemBlazorModel.ItemLength;
+            itemModel.ItemHigh = itemBlazorModel.ItemHigh;
+            itemModel.ItemThickness = itemBlazorModel.ItemThickness;
+            itemModel.ItemWeight = itemBlazorModel.ItemWeight;
+            itemModel.ItemUnit = itemBlazorModel.ItemUnit;
 
-                }
-
-            }
-            itemModel.ItemUnit = unit;
-            itemModel.IsValid = true;
-            itemModelDao.WriteItemModel(itemModel);
+            return itemModel;
 
         }
 
         public List<ItemBlazorModel> GetBlazorItemModels()
         {
-            List<ItemModel> itemModels = itemModelDao.ReadItemModels();
+            List<ItemModel> itemModels = itemModelDao.ReadItemModelsEF();
             List<ItemBlazorModel> blazorItemModels = itemModels.Select(itemModel => MapItemModel(itemModel)).ToList();
 
 
@@ -81,6 +64,7 @@ namespace SmallCompany.ServiceLayer.Impl
             blazorItemModel.ItemHardness = itemModel.ItemHardness;
             blazorItemModel.ItemDensity = itemModel.ItemDensity;
             blazorItemModel.ItemDiameter = itemModel.ItemDiameter;
+            blazorItemModel.ItemRadius = itemModel.ItemRadius;
             blazorItemModel.ItemWidth = itemModel.ItemWidth;
             blazorItemModel.ItemLength = itemModel.ItemLength;
             blazorItemModel.ItemHigh = itemModel.ItemHigh;

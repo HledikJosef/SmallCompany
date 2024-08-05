@@ -1,17 +1,20 @@
 ﻿using Dapper;
 using DapperExtensions;
 using SmallCompany.Models;
+using SmallCompany.Models.Data;
 using System.Data.SqlClient;
 
 namespace SmallCompany.DataLayer.Implementation
 {
     public class ItemModelDao : IItemModelDao
     {
+        private readonly ApplicationDbContext context;
         private readonly IConnectionStringProvider connectionStringProvider;
 
-        public ItemModelDao(IConnectionStringProvider connectionStringProvider)
+        public ItemModelDao(IConnectionStringProvider connectionStringProvider, ApplicationDbContext context)
         {
             this.connectionStringProvider = connectionStringProvider;
+            this.context = context;
         }
 
         public List<ItemModel> ReadItemModels()
@@ -27,12 +30,25 @@ namespace SmallCompany.DataLayer.Implementation
             return itemModelsFromSql;
         }
 
+        public List<ItemModel> ReadItemModelsEF()
+        {
+            List<ItemModel> itemModelsFromSql = new(context.ItemModels.AsList());
+            return itemModelsFromSql;
+        }
+
+
         public void WriteItemModel(ItemModel itemModel)
         {
             using (SqlConnection connection = new SqlConnection(connectionStringProvider.ConnectionString))
             {
                 var rowsAffected = connection.Insert(itemModel);
             };
+        }
+
+        public void WriteItemModelEF(ItemModel itemModel)
+        {
+            context.ItemModels.Add(itemModel);
+            context.SaveChanges();
         }
     }
 }

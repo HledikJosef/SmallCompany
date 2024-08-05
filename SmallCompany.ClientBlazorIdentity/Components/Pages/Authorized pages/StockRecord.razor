@@ -63,7 +63,7 @@
     private string? exceptionMessage = null;
 
     [SupplyParameterFromForm]
-    public StockBlazorModel blazorStock { get; set; } = new StockBlazorModel();
+    private StockBlazorModel blazorStock { get; set; } = new StockBlazorModel();
 
     private async Task AddStockRecord()
     {

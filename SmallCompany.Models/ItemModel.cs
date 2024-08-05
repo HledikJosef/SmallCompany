@@ -12,6 +12,7 @@ namespace SmallCompany.Models
         public bool ItemHardness { get; set; }
         public bool ItemDensity { get; set; }
         public bool ItemDiameter { get; set; }
+        public bool ItemRadius { get; set; }
         public bool ItemWidth { get; set; }
         public bool ItemLength { get; set; }
         public bool ItemHigh { get; set; }

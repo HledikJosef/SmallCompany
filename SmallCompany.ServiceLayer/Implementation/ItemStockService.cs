@@ -16,7 +16,7 @@ namespace SmallCompany.ServiceLayer.Implementation
         public void CreateItemStockRecord(ItemStockRecordBlazorModel item)
         {
             ItemOnStock itemStockRecordModel = MapItemStockRecord(item);
-            itemStockDao.WriteItemOnStock(itemStockRecordModel);
+            itemStockDao.WriteItemOnStockEF(itemStockRecordModel);
         }
 
         private ItemOnStock MapItemStockRecord(ItemStockRecordBlazorModel item)
@@ -45,7 +45,7 @@ namespace SmallCompany.ServiceLayer.Implementation
         public List<ItemStockRecordBlazorModel> CreateItemsOnStockOutput(string itemModel)
         {
             List<ItemStockRecordBlazorModel> blazorItemsOnStock = new List<ItemStockRecordBlazorModel>();
-            List<ItemOnStock> itemsOnStockFromSql = itemStockDao.ReadItemsOnStock(itemModel);
+            List<ItemOnStock> itemsOnStockFromSql = itemStockDao.ReadItemsOnStockEF(itemModel);
             blazorItemsOnStock = itemsOnStockFromSql.Select(item => MapItemStockOuput(item)).ToList();
             return blazorItemsOnStock;
         }
