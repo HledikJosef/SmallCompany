@@ -5,16 +5,12 @@ namespace SmallCompany.Models.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public DbSet<ItemModel> ItemModels { get; set; }
-        public DbSet<ItemOnStock> ItemsOnStocks { get; set; }
-        public DbSet<ItemType> ItemTypes { get; set; }
-        public DbSet<PropertyModel> PropertyModels { get; set; }
-        public DbSet<StockModel> StockModels { get; set; }
-        public DbSet<UnitModel> UnitModels { get; set; }
+        public DbSet<DateType> DateTypes { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemPropertyValue> ItemsPropertyValue { get; set; }
+        public DbSet<Property> Properties { get; set; }
+        public DbSet<TypeOfItem> TypesOfItems { get; set; }
+        public DbSet<Unit> Units { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(connectionString);
-        //}
     }
 }

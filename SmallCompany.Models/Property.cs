@@ -1,0 +1,12 @@
+﻿namespace SmallCompany.Models
+{
+    public class Property //např. výška, délka, hmotnost
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = String.Empty;
+        public int DateTypeId { get; set; } //např. text(string), číslo(float)..
+        public DateType DateType { get; set; } = null!;
+        public ICollection<ItemPropertyValue> itemPropertyValues { get; } = new List<ItemPropertyValue>();
+
+    }
+}
