@@ -1,9 +1,10 @@
-﻿using SmallCompany.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SmallCompany.Models;
 using SmallCompany.Models.Data;
 
 namespace SmallCompany.DataLayer.Implementation
 {
-    public class UnitDao : IUnitDao
+    public class UnitDao : IUnitReaderDao, IUnitWriterDao
     {
         private readonly ApplicationDbContext context;
 
@@ -12,18 +13,17 @@ namespace SmallCompany.DataLayer.Implementation
             this.context = context;
         }
 
-        public List<Unit> GetUnitsFromSql()
+        public async Task<List<Unit>> GetUnitsFromDbAsync()
         {
             List<Unit> unitsFromSql = new List<Unit>();
-            unitsFromSql = context.Units.ToList();
+            unitsFromSql = await context.Units.ToListAsync();
 
             return unitsFromSql;
-
         }
 
-        public void AddUnitToSql(Unit unit)
+        public async Task AddUnitToDbAsync(Unit unit)
         {
-            context.Units.Add(unit);
+            await context.Units.AddAsync(unit);
         }
     }
 }

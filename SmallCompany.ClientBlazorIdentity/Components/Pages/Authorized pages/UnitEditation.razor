@@ -1,8 +1,7 @@
 ﻿@page "/unitEditation"
-
-@using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize];
 
+@inject IUnitService unitService;
 @inject NavigationManager navigationManager;
 
 <PageTitle>Item-record</PageTitle>
@@ -67,20 +66,19 @@
 
 @code {
     private BlazorUnit NewBlazorUnit { get; set; } = new BlazorUnit();
-    private List<BlazorUnit> blazorUnitsInSql = new List<BlazorUnit>();
+    private List<BlazorUnit> blazorUnitsInSql = new List<BlazorUnit>();    
     private string? notification;
     private string? exceptionMessage;
 
     protected override void OnInitialized()
     {
         NewBlazorUnit = new BlazorUnit();
-        List<ServiceUnit> ServiceUnitsInSql = new List<ServiceUnit>();
+        List<ServiceUnit> serviceUnitsInSql = new List<ServiceUnit>();
 
-        blazorUnitsInSql = new List<BlazorUnit>();
-        
         try
         {
-            
+            serviceUnitsInSql = unitService.GetUnitsFromDao();
+            blazorUnitsInSql = serviceUnitsInSql.Select(servisUnit => UnitMapper.MapServiceBlazorUnit(servisUnit)).ToList();
 
         }
         catch (Exception ex)
