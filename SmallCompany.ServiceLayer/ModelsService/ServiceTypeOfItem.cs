@@ -1,6 +1,6 @@
-﻿namespace SmallCompany.Models
+﻿namespace SmallCompany.ServiceLayer.ModelsBlazor
 {
-    public class DateType
+    public class ServiceTypeOfItem
     {
         public int Id { get; set; }
         public string Name { get; set; } = String.Empty;

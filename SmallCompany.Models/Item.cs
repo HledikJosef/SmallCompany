@@ -8,7 +8,7 @@
         public int TypeOfItemId { get; set; }
         public Unit Unit { get; set; } = null!;
         public TypeOfItem TypeOfItem { get; set; } = null!;
-        public ICollection<ItemPropertyValue> itemPropertyValues { get; } = new List<ItemPropertyValue>();
+        public List<ItemPropertyValue> itemPropertyValues { get; } = null!;
 
     }
 }
