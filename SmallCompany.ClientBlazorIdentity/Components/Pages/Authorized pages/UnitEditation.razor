@@ -1,0 +1,119 @@
+﻿@page "/unitEditation"
+
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
+
+@inject NavigationManager navigationManager;
+
+<PageTitle>Item-record</PageTitle>
+
+
+<h1>Editace jednotek skladovaných položek.</h1>
+<h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
+
+<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnit">
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <InputText class="form-select" @bind-Value="NewBlazorUnit.Name" id="unitName" />
+                </td>
+
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
+<table class"table">
+    <tbody>
+        @foreach(var unit in blazorUnitsInSql)
+        {
+            <tr>
+                @unit.Name;
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
+
+
+
+
+
+@code {
+    private BlazorUnit NewBlazorUnit { get; set; } = new BlazorUnit();
+    private List<BlazorUnit> blazorUnitsInSql = new List<BlazorUnit>();
+    private string? notification;
+    private string? exceptionMessage;
+
+    protected override void OnInitialized()
+    {
+        NewBlazorUnit = new BlazorUnit();
+        List<ServiceUnit> ServiceUnitsInSql = new List<ServiceUnit>();
+
+        blazorUnitsInSql = new List<BlazorUnit>();
+        
+        try
+        {
+            
+
+        }
+        catch (Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o měrných jednotkách z databáze. ";
+        }
+
+    }
+
+    private async Task AddUnit()
+    {
+        if (NewBlazorUnit is null)
+        {
+            throw new InvalidOperationException();
+        }
+        try
+        {
+            itemModelService.CreateItemModel(ItemGroupName, ItemType, BlazorProperties, ItemUnit);
+            notification = "Vloženo ";
+            await Task.Delay(1300);
+            RefreshPage();
+        }
+        catch (Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
+        }
+
+    }
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo("/itemModelRecord", forceLoad: true);
+    }
+}

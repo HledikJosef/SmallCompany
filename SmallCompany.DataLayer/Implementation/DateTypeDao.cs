@@ -12,17 +12,17 @@ namespace SmallCompany.DataLayer.Implementation
             this.context = context;
         }
 
-        public List<Unit> GetUnitsFromSql()
+        public List<DateType> GetDateTypesFromSql()
         {
-            List<Unit> unitsFromSql = new List<Unit>();
-            unitsFromSql = context.Units.ToList();
+            List<DateType> dateTypesFromSql = new List<DateType>();
+            dateTypesFromSql = context.DateTypes.ToList();
 
-            return unitsFromSql;
+            return dateTypesFromSql;
         }
 
-        public void AddUnitToSql(Unit unit)
+        public void AddDateTypeToSql(DateType dateType)
         {
-            context.Units.Add(unit);
+            context.DateTypes.Add(dateType);
         }
     }
 }

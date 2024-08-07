@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SmallCompany.DataLayer;
 using SmallCompany.DataLayer.Implementation;
+using SmallCompany.ServiceLayer;
+using SmallCompany.ServiceLayer.Implementation;
 
 namespace SmallCompany.CompositionRoot
 {
@@ -14,8 +16,10 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IItemDao, ItemDao>();
             services.AddTransient<IPropertyDao, PropertyDao>();
             services.AddTransient<ITypeOfItemDao, TypeOfItemDao>();
+            services.AddTransient<IUnitDao, UnitDao>();
 
             //ServiceLayer
+            services.AddTransient<IUnitService, UnitService>();
 
         }
     }

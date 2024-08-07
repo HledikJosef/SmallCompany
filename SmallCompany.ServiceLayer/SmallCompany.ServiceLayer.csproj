@@ -16,8 +16,4 @@
     <ProjectReference Include="..\SmallCompany.DataLayer\SmallCompany.DataLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Implementation\" />
-  </ItemGroup>
-
 </Project>
