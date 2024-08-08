@@ -1,5 +1,5 @@
 ﻿using SmallCompany.Models;
-using SmallCompany.ServiceLayer.ModelsBlazor;
+using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Mappers
 {

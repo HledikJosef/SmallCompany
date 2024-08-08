@@ -23,7 +23,7 @@ namespace SmallCompany.CompositionRoot
 
             //ServiceLayer
             services.AddTransient<IUnitService, UnitService>();
-
+            services.AddTransient<IStockService, StockService>();
 
         }
     }

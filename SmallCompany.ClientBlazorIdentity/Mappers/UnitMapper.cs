@@ -1,5 +1,5 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsBlazor;
+using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {

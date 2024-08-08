@@ -10,7 +10,7 @@
 <h1>Editace jednotek skladovaných položek.</h1>
 <h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
 
-<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnit">
+<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnit" FormName="unitEditation">
     <table class="table">
         <tbody>
             <tr>
@@ -31,7 +31,7 @@
 <h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
 <table class"table">
     <tbody>
-        @foreach(var unit in blazorUnitsInSql)
+        @foreach(var unit in blazorUnitsInDb)
         {
             <tr>
                 @unit.Name;
@@ -65,20 +65,22 @@
 
 
 @code {
+    [SupplyParameterFromForm]
     private BlazorUnit NewBlazorUnit { get; set; } = new BlazorUnit();
-    private List<BlazorUnit> blazorUnitsInSql = new List<BlazorUnit>();    
+
+    private List<BlazorUnit> blazorUnitsInDb = new List<BlazorUnit>();    
     private string? notification;
     private string? exceptionMessage;
 
     protected override void OnInitialized()
     {
         NewBlazorUnit = new BlazorUnit();
-        List<ServiceUnit> serviceUnitsInSql = new List<ServiceUnit>();
+        List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
 
         try
         {
-            serviceUnitsInSql = unitService.GetUnitsFromDao();
-            blazorUnitsInSql = serviceUnitsInSql.Select(servisUnit => UnitMapper.MapServiceBlazorUnit(servisUnit)).ToList();
+            serviceUnitsInDb = unitService.GetUnitsFromDao();
+            blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).ToList();
 
         }
         catch (Exception ex)
@@ -104,7 +106,7 @@
             ServiceUnit serviceUnit = new ServiceUnit();
             serviceUnit = UnitMapper.MapBlazorServiceUnit(NewBlazorUnit);
 
-            unitService.AddUnit(serviceUnit);
+            await unitService.AddUnit(serviceUnit);
 
             notification = "Vloženo ";
             await Task.Delay(1300);

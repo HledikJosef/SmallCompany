@@ -1,4 +1,4 @@
-﻿namespace SmallCompany.ServiceLayer.ModelsBlazor
+﻿namespace SmallCompany.ServiceLayer.ModelsService
 {
     public class ServiceItemPropertyValue
     {

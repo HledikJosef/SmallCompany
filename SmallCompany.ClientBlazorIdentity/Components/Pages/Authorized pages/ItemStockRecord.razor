@@ -1,10 +1,10 @@
 ﻿@page "/itemStockRecord"
 
-@using Microsoft.AspNetCore.Authorization;
+@    using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize];
 
-@using SmallCompany.ServiceLayer;
-@using SmallCompany.ServiceLayer.ModelsBlazor;
+@    using SmallCompany.ServiceLayer;
+@    using SmallCompany.ServiceLayer.ModelsBlazor;
 @inject IItemModelService itemModelService;
 @inject IStockService stockService;
 @inject IItemStockService itemStockService;

@@ -2,6 +2,7 @@
 
 @attribute [Authorize];
 
+@inject IStockService stockService;
 @inject NavigationManager navigationManager;
 
 <PageTitle>Stock-record</PageTitle>
@@ -9,22 +10,22 @@
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
 
-<EditForm Model="NewBlazoStock" OnValidSubmit="AddStockRecord" FormName="StockRecord">
+<EditForm Model="NewBlazorStock" OnValidSubmit="AddStock" FormName="StockEditation">
     <table class="table">
         <tbody>
             <tr>
                 <td>
-                    <InputText @bind-Value="blazorStock.StockTitle" class="form-control" placeholder="Název skladu" id="title" required />
+                    <InputText @bind-Value="NewBlazorStock.Name" class="form-control" placeholder="Název skladu" id="title" required />
                 </td>
             </tr>
             <tr>
                 <td>
-                    <InputText @bind-Value="blazorStock.StockDescription" class="form-control" placeholder="Stručný popis skladu" id="description" required />
+                    <InputText @bind-Value="NewBlazorStock.Location" class="form-control" placeholder="Lokace skladu" id="location" required />
                 </td>
             </tr>
             <tr>
                 <td>
-                    <InputText @bind-Value="blazorStock.StockLocation" class="form-control" placeholder="Umístění skladu" id="location" required />
+                    <InputText @bind-Value="NewBlazorStock.Description" class="form-control" placeholder="Stručný popis skladu" id="description" required />
                 </td>
 
             </tr>
@@ -34,6 +35,22 @@
     <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
 </EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených skladů.</h5>
+<table class"table">
+    <tbody>
+        @foreach (var stock in blazorStocksInDb)
+        {
+            <tr>
+                <td>@stock.Id</td>;
+                <td>@stock.Name</td>
+                <td>@stock.Location</td>
+                <td>@stock.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @if (notification != null)
 {
@@ -55,18 +72,44 @@
 
 
 @code {
+
+    [SupplyParameterFromForm]
     private BlazorStock NewBlazorStock { get; set; } = new BlazorStock();
+
+    private List<BlazorStock> blazorStocksInDb = new List<BlazorStock>();
+
     private string? notification = null;
     private string? exceptionMessage = null;
 
-    [SupplyParameterFromForm]
-    private StockBlazorModel blazorStock { get; set; } = new StockBlazorModel();
-
-    private async Task AddStockRecord()
+    protected override void OnInitialized()
     {
+        NewBlazorStock = new();
+        List<ServiceStock> serviceStockinDb = new List<ServiceStock>();
         try
         {
-            stockservice.CreateStockModel(blazorStock);
+            serviceStockinDb = stockService.GetStocksFromDao();
+            blazorStocksInDb = serviceStockinDb.Select(stock => StockMapper.MappServiceBlazorStock(stock)).ToList();
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o skladech z databáze. ";
+        }
+    }
+
+    private async Task AddStock()
+    {
+        if(NewBlazorStock is null)
+        {
+            throw new InvalidOperationException();
+        }
+        try
+        {
+            ServiceStock serviceStock = new ServiceStock();
+            serviceStock = StockMapper.MappBlazorServisStock(NewBlazorStock);
+
+            await stockService.AddStock(serviceStock);
+
             notification = "Vloženo ";
             await Task.Delay(1300);
             RefreshPage();

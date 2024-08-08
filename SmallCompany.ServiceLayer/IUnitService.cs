@@ -1,10 +1,10 @@
-﻿using SmallCompany.ServiceLayer.ModelsBlazor;
+﻿using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer
 {
     public interface IUnitService
     {
         public List<ServiceUnit> GetUnitsFromDao();
-        public void AddUnit(ServiceUnit serviceUnit);
+        public Task AddUnit(ServiceUnit serviceUnit);
     }
 }
