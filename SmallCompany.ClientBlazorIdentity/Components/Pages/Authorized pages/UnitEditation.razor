@@ -96,8 +96,16 @@
             throw new InvalidOperationException();
         }
         try
-        {
-            itemModelService.CreateItemModel(ItemGroupName, ItemType, BlazorProperties, ItemUnit);
+        {  
+            if(NewBlazorUnit is null)
+            {
+                throw new InvalidOperationException();
+            }
+            ServiceUnit serviceUnit = new ServiceUnit();
+            serviceUnit = UnitMapper.MapBlazorServiceUnit(NewBlazorUnit);
+
+            unitService.AddUnit(serviceUnit);
+
             notification = "Vloženo ";
             await Task.Delay(1300);
             RefreshPage();

@@ -9,6 +9,7 @@ namespace SmallCompany.Models.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemPropertyValue> ItemsPropertyValue { get; set; }
         public DbSet<Property> Properties { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
         public DbSet<TypeOfItem> TypesOfItems { get; set; }
         public DbSet<Unit> Units { get; set; }
 

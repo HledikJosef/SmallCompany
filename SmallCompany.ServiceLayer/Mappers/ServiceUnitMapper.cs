@@ -14,5 +14,14 @@ namespace SmallCompany.ServiceLayer.Mappers
 
             return serviceUnit;
         }
+
+        public static Unit MapServiceUnitsToDao(ServiceUnit serviceUnit)
+        {
+            Unit unit = new Unit();
+            unit.Id = serviceUnit.Id;
+            unit.Name = serviceUnit.Name;
+
+            return unit;
+        }
     }
 }

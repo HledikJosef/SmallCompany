@@ -16,11 +16,14 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IItemDao, ItemDao>();
             services.AddTransient<IPropertyDao, PropertyDao>();
             services.AddTransient<ITypeOfItemDao, TypeOfItemDao>();
-            services.AddTransient<IUnitReaderDao, UnitDao>(); //rozděleno na metodu pouze ke čtení
+            services.AddTransient<IUnitReaderDao, UnitDao>(); //rozděleno na metodu pouze ke čtení a k zápisu
             services.AddTransient<IUnitWriterDao, UnitDao>();
+            services.AddTransient<IStockReaderDao, StockDao>();
+            services.AddTransient<IStockWriterDao, StockDao>();
 
             //ServiceLayer
             services.AddTransient<IUnitService, UnitService>();
+
 
         }
     }

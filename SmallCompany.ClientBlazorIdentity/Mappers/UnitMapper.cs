@@ -13,5 +13,14 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
 
             return blazorUnit;
         }
+
+        public static ServiceUnit MapBlazorServiceUnit(BlazorUnit blazorUnit)
+        {
+            ServiceUnit serviceUnit = new ServiceUnit();
+            serviceUnit.Id = blazorUnit.Id;
+            serviceUnit.Name = blazorUnit.Name;
+
+            return serviceUnit;
+        }
     }
 }
