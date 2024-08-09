@@ -1,4 +1,4 @@
-﻿using SmallCompany.DataLayer.Implementation;
+﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
 using SmallCompany.ServiceLayer.Mappers;
 using SmallCompany.ServiceLayer.ModelsService;
@@ -7,17 +7,19 @@ namespace SmallCompany.ServiceLayer.Implementation
 {
     public class UnitService : IUnitService
     {
-        private readonly UnitDao unitDao;
+        private readonly IUnitReaderDao unitReaderDao;
+        private readonly IUnitWriterDao unitWriterDao;
 
-        public UnitService(UnitDao unitDao)
+        public UnitService(IUnitReaderDao unitReaderDao, IUnitWriterDao unitWriterDao)
         {
-            this.unitDao = unitDao;
+            this.unitReaderDao = unitReaderDao;
+            this.unitWriterDao = unitWriterDao;
         }
 
-        public List<ServiceUnit> GetUnitsFromDao()
+        public async Task<List<ServiceUnit>> GetUnitsFromDao()
         {
             List<Unit> unitsFromSql = new List<Unit>();
-            unitsFromSql = unitDao.GetUnitsFromDbAsync().GetAwaiter().GetResult(); //bridge mezi neasynchroní a asynchroní metodou!!
+            unitsFromSql = await unitReaderDao.GetUnitsFromDbAsync();
 
             List<ServiceUnit> serviceUnits = new List<ServiceUnit>();
             serviceUnits = unitsFromSql.Select(unit => ServiceUnitMapper.MapServiceUnitsFromDao(unit)).ToList();
@@ -30,7 +32,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             Unit unit = new Unit();
             unit = ServiceUnitMapper.MapServiceUnitsToDao(serviceUnit);
 
-            return unitDao.AddUnitToDbAsync(unit);
+            return unitWriterDao.AddUnitToDbAsync(unit);
 
         }
     }

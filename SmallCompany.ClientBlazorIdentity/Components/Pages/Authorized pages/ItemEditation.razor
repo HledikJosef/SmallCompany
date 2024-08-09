@@ -1,0 +1,17 @@
+﻿@page "/itemEditation"
+
+@attribute [Authorize];
+
+@inject IStockService stockService;
+@inject NavigationManager navigationManager;
+
+<PageTitle>ItemStock-record</PageTitle>
+
+<h1>Vytvoř skladovou položku prvek na sklad</h1>
+<h5>Zvol skupinu a vyplň požadované parametry</h5>
+
+@code {
+
+	private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
+
+}

@@ -4,7 +4,7 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IStockService
     {
-        public List<ServiceStock> GetStocksFromDao();
+        public Task<List<ServiceStock>> GetStocksFromDao();
         public Task AddStock(ServiceStock serviceStock);
     }
 }

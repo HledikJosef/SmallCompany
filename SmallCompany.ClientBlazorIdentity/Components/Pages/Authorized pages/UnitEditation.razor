@@ -72,14 +72,15 @@
     private string? notification;
     private string? exceptionMessage;
 
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
         NewBlazorUnit = new BlazorUnit();
         List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
 
         try
         {
-            serviceUnitsInDb = unitService.GetUnitsFromDao();
+            serviceUnitsInDb = await unitService.GetUnitsFromDao();
             blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).ToList();
 
         }

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallCompany.CompositionRoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallCompany.ClientBlazorIdentity", "SmallCompany.ClientBlazorIdentity\SmallCompany.ClientBlazorIdentity.csproj", "{03550FC7-FE8B-4BF3-A2E7-260250B1F70F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallCompany.Models", "SmallCompany.Models\SmallCompany.Models.csproj", "{69B84E2D-11E2-419E-BE80-12274FA239F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallCompany.Models", "SmallCompany.Models\SmallCompany.Models.csproj", "{69B84E2D-11E2-419E-BE80-12274FA239F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

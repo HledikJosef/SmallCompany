@@ -72,7 +72,6 @@
 
 
 @code {
-
     [SupplyParameterFromForm]
     private BlazorStock NewBlazorStock { get; set; } = new BlazorStock();
 
@@ -81,13 +80,13 @@
     private string? notification = null;
     private string? exceptionMessage = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         NewBlazorStock = new();
         List<ServiceStock> serviceStockinDb = new List<ServiceStock>();
         try
         {
-            serviceStockinDb = stockService.GetStocksFromDao();
+            serviceStockinDb = await stockService.GetStocksFromDao();
             blazorStocksInDb = serviceStockinDb.Select(stock => StockMapper.MappServiceBlazorStock(stock)).ToList();
         }
         catch(Exception ex)
