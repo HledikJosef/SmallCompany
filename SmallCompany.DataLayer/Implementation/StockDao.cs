@@ -25,6 +25,7 @@ namespace SmallCompany.DataLayer.Implementation
         public async Task AddStockToDbAsync(Stock stock)
         {
             await context.Stocks.AddAsync(stock);
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SmallCompany.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SmallCompany.Models;
 using SmallCompany.Models.Data;
 
 namespace SmallCompany.DataLayer.Implementation
@@ -12,17 +13,18 @@ namespace SmallCompany.DataLayer.Implementation
             this.context = context;
         }
 
-        public List<TypeOfItem> GetTypeOfItemsFromSql()
+        public async Task<List<TypeOfItem>> GetTypeOfItemsFromDbAsync()
         {
             List<TypeOfItem> typeOfItemsFromSql = new List<TypeOfItem>();
-            typeOfItemsFromSql = context.TypesOfItems.ToList();
+            typeOfItemsFromSql = await context.TypesOfItems.ToListAsync();
 
             return typeOfItemsFromSql;
         }
 
-        public void AddTypeOfItemToSql(TypeOfItem typeOfItem)
+        public async Task AddTypeOfItemToDbAsync(TypeOfItem typeOfItem)
         {
-            context.TypesOfItems.Add(typeOfItem);
+            await context.TypesOfItems.AddAsync(typeOfItem);
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -4,7 +4,7 @@ namespace SmallCompany.DataLayer
 {
     public interface ITypeOfItemDao
     {
-        public List<TypeOfItem> GetTypeOfItemsFromSql();
-        public void AddTypeOfItemToSql(TypeOfItem typeOfItem);
+        public Task<List<TypeOfItem>> GetTypeOfItemsFromDbAsync();
+        public Task AddTypeOfItemToDbAsync(TypeOfItem typeOfItem);
     }
 }

@@ -5,13 +5,48 @@
 @inject IStockService stockService;
 @inject NavigationManager navigationManager;
 
-<PageTitle>ItemStock-record</PageTitle>
+<PageTitle>Item editation</PageTitle>
 
-<h1>Vytvoř skladovou položku prvek na sklad</h1>
+<h1>Vytvoř skladovou položku</h1>
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
-@code {
+<EditForm Model ="NewBlazorItem" FormName="itemEditation">
+	<table class="table">
+		<tbody>
+				<td>
+					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId" placeholder="Vyberte typ položku">
+						@foreach (var type in BlazorTypesOfItemInDb)
+							{
+							<option value="@type.Id">@type.Name</option>
+							}
+					</InputSelect>
+				</td>
+				<td>
+					<InputText class="form-text" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Napište název položky" />
+				</td>
+				<td>
+					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId" placeholder="Vyberte měrnou jednotku">
+							@foreach (var unit in BlazorUnitsInDb)
+							{
+							<option value="@unit.Id">@unit.Name</option>
+							}
+					</InputSelect>
+				</td>
+		</tbody>
+			
+	</table>
 
+	<button type="submit" class="btn btn-primary">Ulož záznam</button>
+</EditForm>
+
+@code {
+	[SupplyParameterFromForm]
 	private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
+
+	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
+	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
+	private List<BlazorProperty> BlazorPorpertiesInDb { get; set; } = new List<BlazorProperty>();
+
+
 
 }

@@ -4,18 +4,18 @@
 @inject IUnitService unitService;
 @inject NavigationManager navigationManager;
 
-<PageTitle>Item-record</PageTitle>
-
 
 <h1>Editace jednotek skladovaných položek.</h1>
 <h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
 
 <EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnit" FormName="unitEditation">
+    <DataAnnotationsValidator />    
     <table class="table">
         <tbody>
             <tr>
                 <td>
-                    <InputText class="form-select" @bind-Value="NewBlazorUnit.Name" id="unitName" />
+                    <InputText class="form-text" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
+                    <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>
                 </td>
 
             </tr>
@@ -29,16 +29,14 @@
 
 <hr class="my-4">
 <h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
-<table class"table">
-    <tbody>
+
         @foreach(var unit in blazorUnitsInDb)
         {
-            <tr>
-                @unit.Name;
-            </tr>
+            <button class="btn btn-outline-primary">
+                @unit.Name              
+            </button>
         }
-    </tbody>
-</table>
+
 
 
 
@@ -75,13 +73,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NewBlazorUnit = new BlazorUnit();
         List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
 
         try
         {
             serviceUnitsInDb = await unitService.GetUnitsFromDao();
-            blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).ToList();
+            blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).OrderBy(unit=> unit.Name).ToList();
 
         }
         catch (Exception ex)
@@ -94,16 +91,12 @@
 
     private async Task AddUnit()
     {
-        if (NewBlazorUnit is null)
+        if (string.IsNullOrEmpty(NewBlazorUnit.Name))
         {
             throw new InvalidOperationException();
         }
         try
-        {  
-            if(NewBlazorUnit is null)
-            {
-                throw new InvalidOperationException();
-            }
+        {
             ServiceUnit serviceUnit = new ServiceUnit();
             serviceUnit = UnitMapper.MapBlazorServiceUnit(NewBlazorUnit);
 
@@ -111,7 +104,7 @@
 
             notification = "Vloženo ";
             await Task.Delay(1300);
-            RefreshPage();
+            
         }
         catch (Exception ex)
         {
@@ -119,10 +112,12 @@
             notification = "Záznam se nepodařilo uložit ";
         }
 
+        RefreshPage();
+
     }
 
     private void RefreshPage()
     {
-        navigationManager.NavigateTo("/itemModelRecord", forceLoad: true);
+        navigationManager.NavigateTo(navigationManager.Uri,true);
     }
 }

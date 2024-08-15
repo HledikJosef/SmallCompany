@@ -1,0 +1,98 @@
+﻿@page "/typeOfItemEditation"
+
+@attribute [Authorize];
+
+@inject ITypeOfItemService typeOfItemService;
+@inject NavigationManager navigationManager;
+
+<PageTitle>TypeOfItem editation</PageTitle>
+
+<h1>Editace typů skladových položek.</h1>
+<h5>Zde můžete vytvořit záznam typu skladové položky jako např.: materiál, polotovar, výrobek, služba atd.</h5>
+
+<EditForm Model="NewBlazorTypeOfItem" OnValidSubmit="AddTypeOfItem" FormName="typeOfItemEditation">
+    <DataAnnotationsValidator />    
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <InputText class="form-text" @bind-Value="NewBlazorTypeOfItem.Name" id="typeOfItemName" placeholder="Název typu" />
+                    <ValidationMessage For="@(() => NewBlazorTypeOfItem.Name)" />
+                </td>
+
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených typů položek.</h5>
+
+@foreach(var type in blazorTypesOfItemsInDb)
+{
+    <button class="btn btn-outline-primary">
+        @type.Name
+    </button>
+}
+
+
+
+@code {
+    [SupplyParameterFromForm]
+    BlazorTypeOfItem NewBlazorTypeOfItem { get; set; } = new();
+
+    private List<BlazorTypeOfItem> blazorTypesOfItemsInDb = new();
+    private string? notification;
+    private string? exceptionMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<ServiceTypeOfItem> serviceTypesOfItemsInDb = new();
+
+        try
+        {
+            serviceTypesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+            blazorTypesOfItemsInDb = serviceTypesOfItemsInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy( Type => Type.Name).ToList();
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o měrných jednotkách z databáze. ";            
+        }
+    }
+
+    private async Task AddTypeOfItem()
+    {
+        if (string.IsNullOrEmpty(NewBlazorTypeOfItem.Name))
+        {
+            throw new InvalidOperationException();
+        }
+        try
+        {
+            ServiceTypeOfItem serviceTypeOfItem = new ServiceTypeOfItem();
+            serviceTypeOfItem = TypeOfItemMapper.MapBlazorServiceTypeOfItem(NewBlazorTypeOfItem);
+
+            await typeOfItemService.AddTypeOfItem(serviceTypeOfItem);
+
+            notification = "Vloženo";
+            await Task.Delay(1300);
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";            
+        }
+
+        RefreshPage();
+
+    }
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo(navigationManager.Uri, true);
+    }
+}
