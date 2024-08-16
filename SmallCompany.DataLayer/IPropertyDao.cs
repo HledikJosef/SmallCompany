@@ -2,9 +2,10 @@
 
 namespace SmallCompany.DataLayer
 {
-    public interface IPropertyDao
-    {
-        public List<Property> GetPropertiesFromSql();
-        public void AddPropertyToSql(Property property);
-    }
+	public interface IPropertyDao
+	{
+		public Task<List<Property>> GetPropertiesFromDbAsync();
+
+		public Task AddPropertyToDb(Property property);
+	}
 }

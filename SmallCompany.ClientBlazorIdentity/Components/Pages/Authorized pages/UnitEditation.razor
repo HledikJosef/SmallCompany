@@ -12,11 +12,9 @@
     <DataAnnotationsValidator />    
     <table class="table">
         <tbody>
-            <tr>
-                <td>
-                    <InputText class="form-text" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
-                    <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>
-                </td>
+            <tr>                
+                <InputText class="form-text" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
+                <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>      
 
             </tr>
             

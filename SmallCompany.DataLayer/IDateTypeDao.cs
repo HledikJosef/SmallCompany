@@ -4,9 +4,9 @@ namespace SmallCompany.DataLayer
 {
     public interface IDateTypeDao
     {
-        public List<DateType> GetDateTypesFromSql();
+        public Task<List<DateType>> GetDateTypesFromDbAsync();
 
-        public void AddDateTypeToSql(DateType dateType);
+        public Task AddDateTypeToDbAsync(DateType dateType);
 
     }
 }

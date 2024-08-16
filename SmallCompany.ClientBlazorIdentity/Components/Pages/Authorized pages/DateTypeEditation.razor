@@ -1,0 +1,121 @@
+﻿@page "/DateTypeEditation"
+
+@attribute [Authorize];
+
+@inject IDateTypeService dateTypeService;
+@inject NavigationManager navigationManager;
+
+<PageTitle>DateType editation</PageTitle>
+
+<h1>Editace datového typu vlastnosti.</h1>
+<h5>Zde můžete vytvořit záznam datového typu vlastnosti, jako např.: string (text), float (číslo) atd.</h5>
+
+<EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateType" FormName="dateTypeEditation">
+    <DataAnnotationsValidator />
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <InputText class="form-text" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
+                    <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
+                </td>
+
+            </tr>
+
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených typů položek.</h5>
+
+@foreach (var type in blazorDateTypesInDb)
+{
+    <button class="btn btn-outline-primary">
+        @type.Name
+    </button>
+}
+
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
+
+@code {
+    [SupplyParameterFromForm]
+    BlazorDateType NewBlazorDateType { get; set; } = new BlazorDateType();
+
+    private List<BlazorDateType> blazorDateTypesInDb = new List<BlazorDateType>();
+    private string? notification;
+    private string? exceptionMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<ServiceDateType> serviceDateTypesInDb = new List<ServiceDateType>();
+        try
+        {
+            serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDao();
+            blazorDateTypesInDb = serviceDateTypesInDb.Select(type => DateTypeMapper.MapServiceBlazorDateType(type)).OrderBy(type => type.Name).ToList();
+
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Nepodařilo se načíst data o měrných jednotkách z databáze. ";
+        }
+
+    }
+
+    private async Task AddDateType()
+    {
+        if (string.IsNullOrEmpty(NewBlazorDateType.Name))
+        {
+            throw new InvalidOperationException();
+        }
+
+        try
+        {
+            ServiceDateType serviceDateType = new ServiceDateType();
+            serviceDateType = DateTypeMapper.MapBlazorServiceDateType(NewBlazorDateType);
+
+            await dateTypeService.AddDateType(serviceDateType);
+
+            notification = "Vloženo";
+            await Task.Delay(1300);
+
+        }
+        catch(Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo uložit ";
+        }
+
+        RefreshPage();
+
+    }
+
+    private void RefreshPage()
+    {
+        navigationManager.NavigateTo(navigationManager.Uri, true);
+    }
+
+
+
+
+}

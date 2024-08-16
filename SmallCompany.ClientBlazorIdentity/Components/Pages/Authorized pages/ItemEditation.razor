@@ -2,6 +2,8 @@
 
 @attribute [Authorize];
 
+@inject ITypeOfItemService typeOfItemService;
+@inject IUnitService unitService;	
 @inject IStockService stockService;
 @inject NavigationManager navigationManager;
 
@@ -11,10 +13,11 @@
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
 <EditForm Model ="NewBlazorItem" FormName="itemEditation">
+	<DataAnnotationsValidator/>
 	<table class="table">
 		<tbody>
 				<td>
-					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId" placeholder="Vyberte typ položku">
+					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId">
 						@foreach (var type in BlazorTypesOfItemInDb)
 							{
 							<option value="@type.Id">@type.Name</option>
@@ -22,7 +25,8 @@
 					</InputSelect>
 				</td>
 				<td>
-					<InputText class="form-text" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Napište název položky" />
+					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Název položky" />
+					<ValidationMessage For="@( () => NewBlazorItem.Name)" />
 				</td>
 				<td>
 					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId" placeholder="Vyberte měrnou jednotku">
@@ -46,7 +50,27 @@
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPorpertiesInDb { get; set; } = new List<BlazorProperty>();
+	private string? notification;
+	private string? exceptionMessage;
 
+	protected override async Task OnInitializedAsync()
+	{
+		List<ServiceTypeOfItem> serviceTypesOfItemInDb = new List<ServiceTypeOfItem>();
+		List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>(); 
 
+		try
+		{
+			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
+			serviceUnitsInDb = await unitService.GetUnitsFromDao();
+			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+			notification = "Nepodařilo se načíst podklady z databáze. ";
+		}
+
+	}
 
 }

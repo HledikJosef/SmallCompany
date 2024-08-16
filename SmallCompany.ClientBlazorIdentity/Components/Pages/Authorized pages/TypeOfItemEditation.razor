@@ -39,6 +39,24 @@
     </button>
 }
 
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
+
 
 
 @code {

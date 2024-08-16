@@ -1,0 +1,135 @@
+﻿@page "/propertyEditation"
+@attribute [Authorize]
+
+@inject IPropertyService propertyService;
+@inject IDateTypeService dateTypeService;
+@inject NavigationManager navigationManager;
+
+<h1>Editace vlastností skladových položek.</h1>
+<h5>Vytvořte záznam vlastnosti položky (např.výška, hmotnost, barva, atd.).
+	Tyto vlastnosti se párují ke skladovaným položkám. Dodržujte formát : název vlastnosti(jednotka vlastnosti). Např. "Hmotnost(kg)"
+</h5>
+
+<EditForm Model="NewBlazorProperty" OnValidSubmit="AddProperty" FormName="propertyEditation">
+	<DataAnnotationsValidator/>
+	<table class="table">
+		<tr>
+			<td>
+				<InputText class="form-control" @bind-Value="NewBlazorProperty.Name" id="propertyName" placeholder="Název vlastnosti(jednotka)"/>
+				<ValidationMessage For="@(() => NewBlazorProperty.Name)"/>
+			</td>
+			<td>
+				<InputSelect class="form-select" @bind-Value="NewBlazorProperty.BlazorDateTypeId" id="dateTypeId">
+					@foreach(var dateType in BlazorDateTypesInDb)
+					{
+						<option value="@dateType.Id">@dateType.Name</option>
+					}
+				</InputSelect>
+				<ValidationMessage For="@( () => NewBlazorProperty.BlazorDateTypeId)"/>
+			</td>
+			
+		</tr>
+	</table>
+
+	<button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených vlastností.</h5>
+@foreach(var prop in blazorPropertiesInDb)
+{
+	var dateType = BlazorDateTypesInDb.FirstOrDefault(dt => dt.Id == prop.BlazorDateTypeId);
+
+	<p>
+		<button class="btn btn-outline-primary">@prop.Name</button>
+		<button class="btn btn-outline-primary">@dateType?.Name</button>
+	</p>
+}
+
+@if (notification != null)
+{
+	if (exceptionMessage != null)
+	{
+		<div class="alert alert-danger" role="alert">
+			@notification: @exceptionMessage
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-success" role="alert">
+			@notification
+		</div>
+	}
+
+}
+
+
+
+
+@code {
+
+	[SupplyParameterFromForm]
+	BlazorProperty NewBlazorProperty { get; set; } = new BlazorProperty();
+
+	List<BlazorDateType> BlazorDateTypesInDb { get; set; } = new List<BlazorDateType>();
+	List<BlazorProperty> blazorPropertiesInDb = new List<BlazorProperty>();
+	private string? notification;
+	private string? exceptionMessage;
+
+	protected override async Task OnInitializedAsync()
+	{
+		List<ServiceDateType> serviceDateTypesInDb = new();
+		List<ServiceProperty> servicePropertiesInDb = new();
+
+		try
+		{
+			serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDao();
+			BlazorDateTypesInDb = serviceDateTypesInDb.Select(dateType => DateTypeMapper.MapServiceBlazorDateType(dateType)).OrderBy(dateType => dateType.Name).ToList();
+			servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
+			blazorPropertiesInDb = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+			notification = "Nepodařilo se načíst data o měrných jednotkách z databáze. ";
+		}
+	}
+
+	private async Task AddProperty()
+	{
+		if((string.IsNullOrEmpty(NewBlazorProperty.Name)) || (NewBlazorProperty.BlazorDateTypeId == 0))
+		{
+			throw new InvalidOperationException();			
+		}
+
+		try
+		{
+			ServiceProperty serviceProperty = new ServiceProperty();
+			serviceProperty = PropertyMapper.MapBlazorServicePorperty(NewBlazorProperty);
+
+			await propertyService.AddProperty(serviceProperty);
+
+			notification = "Uloženo";
+			StateHasChanged();
+			await Task.Delay(1300);
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+			notification = "Záznam se nepodařilo uložit ";
+		}
+
+		RefreshPage();
+
+	}
+
+	private void RefreshPage()
+    {
+        navigationManager.NavigateTo(navigationManager.Uri,true);
+    }
+
+
+
+}
