@@ -8,6 +8,7 @@ namespace SmallCompany.ServiceLayer.Mappers
 		public static ServiceProperty MapServicePropertyFromDao(Property property)
 		{
 			ServiceProperty serviceProperty = new ServiceProperty();
+			serviceProperty.Id = property.Id;
 			serviceProperty.Name = property.Name;
 			serviceProperty.ServiceDateTypeId = property.DateTypeId;
 
@@ -17,6 +18,7 @@ namespace SmallCompany.ServiceLayer.Mappers
 		public static Property MapServicePropertyToDao(ServiceProperty serviceProperty)
 		{
 			Property property = new Property();
+			property.Id = serviceProperty.Id;
 			property.Name = serviceProperty.Name;
 			property.DateTypeId = serviceProperty.ServiceDateTypeId;
 

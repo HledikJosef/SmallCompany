@@ -8,8 +8,8 @@
 		public int ItemId { get; set; }
 		public int PropertyId { get; set; }
 
-		//public Item Item { get; set; } = null!;
-		//public Property Property { get; set; } = null!;
+		public Item Item { get; set; } = null!;
+		public Property Property { get; set; } = null!;
 
 	}
 }

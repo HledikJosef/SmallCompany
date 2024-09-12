@@ -5,6 +5,7 @@
 @inject ITypeOfItemService typeOfItemService;
 @inject IUnitService unitService;	
 @inject IStockService stockService;
+@inject IPropertyService propertyService;
 @inject NavigationManager navigationManager;
 
 <PageTitle>Item editation</PageTitle>
@@ -12,58 +13,93 @@
 <h1>Vytvoř skladovou položku</h1>
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
-<EditForm Model ="NewBlazorItem" FormName="itemEditation">
-	<DataAnnotationsValidator/>
+
+<EditForm Model="BlazorItemModel" OnValidSubmit="AddItem" FormName="itemEditation">
+	<DataAnnotationsValidator />
 	<table class="table">
 		<tbody>
-				<td>
-					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId">
-						@foreach (var type in BlazorTypesOfItemInDb)
-							{
-							<option value="@type.Id">@type.Name</option>
-							}
-					</InputSelect>
-				</td>
-				<td>
-					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Název položky" />
-					<ValidationMessage For="@( () => NewBlazorItem.Name)" />
-				</td>
-				<td>
-					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId" placeholder="Vyberte měrnou jednotku">
-							@foreach (var unit in BlazorUnitsInDb)
-							{
-							<option value="@unit.Id">@unit.Name</option>
-							}
-					</InputSelect>
-				</td>
-		</tbody>
+		<tr>
+			<td>
+				<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
+					<option value="" disabled selected>Vyber druh položky</option>
+					@foreach (var type in BlazorTypesOfItemInDb)
+					{
+						<option value="@type.Id">@type.Name</option>
+					}
+				</InputSelect>
+			</td>
+			<td>
+				<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
+				<ValidationMessage For="@( () => BlazorItemModel.Name)" />
+			</td>
+			<td>
+				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">
+					<option value="" disabled selected>Vyber měrnou jednotku</option>
+					@foreach (var unit in BlazorUnitsInDb)
+					{
+						<option value="@unit.Id">@unit.Name</option>
+					}
+				</InputSelect>
+			</td>
+		</tr>
 			
+		</tbody>
 	</table>
 
-	<button type="submit" class="btn btn-primary">Ulož záznam</button>
-</EditForm>
+
+	@if (BlazorPropertiesInDb != null)
+	{
+		@foreach (var prop in BlazorItemModel.ItemProperties)
+		{
+			<p>
+				<label for="itemProperty">@prop.Name</label>
+				<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>
+			</p>
+		}
+	}
+
+	<button Type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>		
+
+
+	
+
+
 
 @code {
+
 	[SupplyParameterFromForm]
-	private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
+	private BlazorItem BlazorItemModel { get; set; } = new BlazorItem();
+
 
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
-	private List<BlazorProperty> BlazorPorpertiesInDb { get; set; } = new List<BlazorProperty>();
+	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
 	private string? notification;
 	private string? exceptionMessage;
 
 	protected override async Task OnInitializedAsync()
 	{
 		List<ServiceTypeOfItem> serviceTypesOfItemInDb = new List<ServiceTypeOfItem>();
-		List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>(); 
+		List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
+		List<ServiceProperty> servicePropertiesInDb = new List<ServiceProperty>();
 
 		try
 		{
-			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
-			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
-			serviceUnitsInDb = await unitService.GetUnitsFromDao();
-			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
+			if(BlazorItemModel.ItemProperties is null)
+			{
+				BlazorItemModel.ItemProperties = new List<BlazorProperty>();
+				serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+				BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
+				serviceUnitsInDb = await unitService.GetUnitsFromDao();
+				BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
+				servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
+				BlazorItemModel.ItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			}
+			
+			
+
 		}
 		catch(Exception ex)
 		{
@@ -71,6 +107,48 @@
 			notification = "Nepodařilo se načíst podklady z databáze. ";
 		}
 
+	}
+
+	
+
+	private async Task AddItem()
+	{
+		if ((BlazorItemModel is null) || (BlazorPropertiesInDb is null))
+		{
+			throw new InvalidOperationException();
+		}
+		// foreach(var prop in NewBlazorItem.BlazorPropertiesOfItem)
+		// {
+		// 	if (String.IsNullOrEmpty(prop.Value))
+		// 	{
+		// 		NewBlazorItem.BlazorPropertiesOfItem.Remove(prop);
+		// 	}
+		// }
+
+		// try
+		// {
+		// 	ServiceItem serviceItem = new ServiceItem();
+		// 	serviceItem = 
+		// 	serviceStock = StockMapper.MappBlazorServisStock(NewBlazorStock);
+
+		// 	await stockService.AddStock(serviceStock);
+
+		// 	notification = "Vloženo ";
+		// 	await Task.Delay(1300);
+		// }
+		// catch (Exception ex)
+		// {
+		// 	exceptionMessage = ex.Message;
+		// 	notification = "Záznam se nepodařilo uložit ";
+		// }
+
+		// RefreshPage();
+
+	} 
+
+	private void RefreshPage()
+	{
+		navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
 	}
 
 }
