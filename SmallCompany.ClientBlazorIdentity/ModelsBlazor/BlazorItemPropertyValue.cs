@@ -11,8 +11,5 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 		public int BlazorItemId { get; set; }
 
 		public int BlazorPropertyId { get; set; }
-
-		public BlazorItem BlazorItem { get; set; } = new();
-		public BlazorProperty BlazorProperty { get; set; } = new();
 	}
 }

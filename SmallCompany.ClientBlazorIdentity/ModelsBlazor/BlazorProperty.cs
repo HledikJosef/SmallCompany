@@ -11,8 +11,5 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 		public int BlazorDateTypeId { get; set; } //např. text(string), číslo(float)..
 		public string Value { get; set; } = String.Empty; //mapovat do ItemPropertyValue!!
 
-		public BlazorDateType BlazorDateType { get; set; } = new BlazorDateType();
-		public List<BlazorItemPropertyValue> BlazorItemPropertyValues { get; } = new List<BlazorItemPropertyValue>();
-
 	}
 }

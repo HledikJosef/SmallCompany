@@ -2,9 +2,9 @@
 
 namespace SmallCompany.DataLayer
 {
-    public interface IItemDao
-    {
-        public List<Item> GetItemsFromSql();
-        public void AddItemToSql(Item item);
-    }
+	public interface IItemDao
+	{
+		public Task<List<Item>> GetItemsFromSqlAsync();
+		public Task AddItemWithPropertiesToDbAsync(Item itemWithProperties);
+	}
 }

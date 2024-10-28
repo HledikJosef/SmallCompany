@@ -6,7 +6,9 @@
 @inject IUnitService unitService;	
 @inject IStockService stockService;
 @inject IPropertyService propertyService;
+@inject IItemService itemService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
 
 <PageTitle>Item editation</PageTitle>
 
@@ -17,16 +19,16 @@
 <EditForm Model="BlazorItemModel" OnValidSubmit="AddItem" FormName="itemEditation">
 	<DataAnnotationsValidator />
 	<table class="table">
-		<tbody>
 		<tr>
 			<td>
 				<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
-					<option value="" disabled selected>Vyber druh položky</option>
+					<option disabled selected value="">Vyber druh položky</option>
 					@foreach (var type in BlazorTypesOfItemInDb)
 					{
 						<option value="@type.Id">@type.Name</option>
 					}
 				</InputSelect>
+					<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
 			</td>
 			<td>
 				<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
@@ -34,16 +36,15 @@
 			</td>
 			<td>
 				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">
-					<option value="" disabled selected>Vyber měrnou jednotku</option>
+					<option disabled selected value="">Vyber měrnou jednotku</option>
 					@foreach (var unit in BlazorUnitsInDb)
 					{
 						<option value="@unit.Id">@unit.Name</option>
 					}
 				</InputSelect>
+					<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
 			</td>
 		</tr>
-			
-		</tbody>
 	</table>
 
 
@@ -57,9 +58,7 @@
 			</p>
 		}
 	}
-
 	<button Type="submit" class="btn btn-primary">Ulož záznam</button>
-
 </EditForm>		
 
 
@@ -87,18 +86,13 @@
 
 		try
 		{
-			if(BlazorItemModel.ItemProperties is null)
-			{
-				BlazorItemModel.ItemProperties = new List<BlazorProperty>();
-				serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
-				BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
-				serviceUnitsInDb = await unitService.GetUnitsFromDao();
-				BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
-				servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
-				BlazorItemModel.ItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
-			}
-			
-			
+			BlazorItemModel.ItemProperties = new List<BlazorProperty>();
+			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
+			serviceUnitsInDb = await unitService.GetUnitsFromDao();
+			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
+			servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
+			BlazorItemModel.ItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
 
 		}
 		catch(Exception ex)
@@ -109,42 +103,38 @@
 
 	}
 
-	
+
 
 	private async Task AddItem()
 	{
-		if ((BlazorItemModel is null) || (BlazorPropertiesInDb is null))
+		try
 		{
-			throw new InvalidOperationException();
+			RemoveUnusedProperties(BlazorItemModel.ItemProperties);
+
+			ServiceItem serviceItem = new ServiceItem();
+			serviceItem = ItemMapper.MapBlazorServiceItem(BlazorItemModel);
+			serviceItem.ServiceItemPropertyValues = BlazorItemModel.ItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+
+			await itemService.AddItemWithProperties(serviceItem);
+
+			notification = "Vloženo ";
+			await Task.Delay(1300);
 		}
-		// foreach(var prop in NewBlazorItem.BlazorPropertiesOfItem)
-		// {
-		// 	if (String.IsNullOrEmpty(prop.Value))
-		// 	{
-		// 		NewBlazorItem.BlazorPropertiesOfItem.Remove(prop);
-		// 	}
-		// }
+		catch (Exception ex)
+		{
+			exceptionMessage = ex.Message;
+			notification = "Záznam se nepodařilo uložit ";
+		}
 
-		// try
-		// {
-		// 	ServiceItem serviceItem = new ServiceItem();
-		// 	serviceItem = 
-		// 	serviceStock = StockMapper.MappBlazorServisStock(NewBlazorStock);
+		RefreshPage();
 
-		// 	await stockService.AddStock(serviceStock);
+	}
 
-		// 	notification = "Vloženo ";
-		// 	await Task.Delay(1300);
-		// }
-		// catch (Exception ex)
-		// {
-		// 	exceptionMessage = ex.Message;
-		// 	notification = "Záznam se nepodařilo uložit ";
-		// }
+	private void RemoveUnusedProperties(List<BlazorProperty> properties)
+	{
+		properties.RemoveAll(property => string.IsNullOrWhiteSpace(property.Value));
+	}
 
-		// RefreshPage();
-
-	} 
 
 	private void RefreshPage()
 	{

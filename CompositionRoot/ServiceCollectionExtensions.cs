@@ -27,6 +27,7 @@ namespace SmallCompany.CompositionRoot
 			services.AddTransient<ITypeOfItemService, TypeOfItemService>();
 			services.AddTransient<IDateTypeService, DateTypeService>();
 			services.AddTransient<IPropertyService, PropertyService>();
+			services.AddTransient<IItemService, ItemService>();
 
 		}
 	}
