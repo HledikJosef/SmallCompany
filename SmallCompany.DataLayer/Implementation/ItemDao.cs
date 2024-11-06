@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmallCompany.Models;
 using SmallCompany.Models.Data;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace SmallCompany.DataLayer.Implementation
 {
 	public class ItemDao : IItemDao
 	{
 		private readonly ApplicationDbContext context;
-
+		private readonly string connectionString;
 		public ItemDao(ApplicationDbContext context)
 		{
 			this.context = context;
+			connectionString = context.Database.GetDbConnection().ConnectionString;
 		}
 
 		public async Task<List<Item>> GetItemsFromSqlAsync()
@@ -23,91 +26,77 @@ namespace SmallCompany.DataLayer.Implementation
 
 		public async Task AddItemWithPropertiesToDbAsync(Item itemWithProperties)
 		{
-			bool itemExist = false;
-			List<Item> existingItems = await CheckExistingItems(itemWithProperties);
+			List<Item> existingItems = await CheckExistingItemAsync(itemWithProperties);
 
-			if (!itemExist)
+			if (existingItems.Count() == 0)
 			{
 				await context.Items.AddAsync(itemWithProperties);
 				await context.SaveChangesAsync();
 			}
 		}
 
-		private async Task<bool> CheckExistingItems(Item item)
+		private async Task<List<Item>> CheckExistingItemAsync(Item item)
 		{
-			bool itemExist = false;
-
-
 			List<Item> existingItems = new List<Item>();
-			existingItems = await context.Items.Where(i => i.Name == item.Name).Include(i => i.ItemPropertyValues).ToListAsync();
 
+			string sqlQuery = @"SELECT i.Id FROM Items i INNER JOIN ItemsPropertyValue ipv ON i.Id = ipv.ItemId WHERE i.Name = @Name";
 
-			foreach (Item existingItem in existingItems)
+			int index = 1;
+
+			foreach (var ipv in item.ItemPropertyValues)
 			{
-				itemExist = existingItem.ItemPropertyValues.Count == item.ItemPropertyValues.Count &&
-							existingItem.ItemPropertyValues.All(existingIpv =>
-							item.ItemPropertyValues.Any(newIpv =>
-							existingIpv.PropertyId == newIpv.PropertyId &&
-							existingIpv.Value == newIpv.Value));
+				sqlQuery += ($" AND EXISTS( SELECT 1 FROM ItemsPropertyValue ipv{index} WHERE ipv{index}.ItemId = i.Id AND ipv{index}.PropertyId = @PropertyId{index} AND ipv{index}.Value = @Value{index} )");
 
-				if (itemExist)
-					break;
+				index++;
+			}
+
+			index = 1;
+
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+				{
+
+					command.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar));
+					command.Parameters["@Name"].Value = item.Name;
+
+					foreach (var ipv in item.ItemPropertyValues)
+					{
+						command.Parameters.Add(new SqlParameter($"@PropertyId{index}", SqlDbType.Int));
+						command.Parameters[$"@PropertyId{index}"].Value = ipv.PropertyId;
+
+						command.Parameters.Add(new SqlParameter($"@Value{index}", SqlDbType.NVarChar));
+						command.Parameters[$"@Value{index}"].Value = ipv.Value;
+
+						index++;
+					}
+					await connection.OpenAsync();
+
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							Item existingItem = new Item
+							{
+								Id = reader.GetInt32(reader.GetOrdinal("Id")),
+							};
+							existingItems.Add(existingItem);
+
+						}
+
+					}
+
+
+				}
 
 			}
 
-			return itemExist;
 
+			return existingItems;
 		}
 
-		//private async Task<List<Item>> CheckExistingItems2(Item item)
-		//{
-		//	bool itemExist = false;
 
-		//	var nameParam = new SqlParameter("@Name", item.Name);
-		//	var propertyCountParam = new SqlParameter("@PropertyCount", item.ItemPropertyValues.Count);
-		//	var uniquePropertyCountParam = new SqlParameter("@UniquePropertyCount", item.ItemPropertyValues
-		//		.Select(x => new { x.PropertyId, x.Value })
-		//		.Distinct().Count());
-
-		//	var result = await context.Items.FromSqlRaw(@"WITH PropertyCounts AS (
-		//												SELECT
-		//													i.Id AS ItemId,
-		//													COUNT(*) AS PropertyCount,
-		//													COUNT(DISTINCT ipv.PropertyId, ipv.Value) AS UniquePropertyCount
-		//												FROM Items i
-		//												INNER JOIN ItemsPropertyValue ipv ON i.Id = ipv.ItemId
-		//												WHERE i.Name = @Name
-		//												GROUP BY i.Id
-		//											),
-		//											MatchingItems AS (
-		//												SELECT
-		//													i.Id
-		//												FROM Items i
-		//												INNER JOIN ItemsPropertyValue ipv ON i.Id = ipv.ItemId
-		//												INNER JOIN PropertyCounts pc ON i.Id = pc.ItemId
-		//												WHERE
-		//													i.Name = @Name AND
-		//													pc.PropertyCount = @PropertyCount AND
-		//													pc.UniquePropertyCount = @UniquePropertyCount AND
-		//													NOT EXISTS (
-		//														SELECT 1
-		//														FROM ItemsPropertyValue ipv2
-		//														WHERE ipv2.ItemId = i.Id
-		//														AND NOT EXISTS (
-		//															SELECT 1
-		//															FROM @ItemsPropertyValue ipv1
-		//															WHERE ipv1.PropertyId = ipv2.PropertyId
-		//															AND ipv1.Value = ipv2.Value
-		//														)
-		//													)
-		//												GROUP BY i.Id
-		//											)
-		//											SELECT * FROM Items WHERE Id IN (SELECT Id FROM MatchingItems);
-
-		//											", nameParam, propertyCountParam, uniquePropertyCountParam).ToListAsync();
-
-		//	return result;
 
 	}
 }
-}
+
