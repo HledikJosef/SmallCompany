@@ -72,7 +72,7 @@ namespace SmallCompany.DataLayer.Implementation
 					}
 					await connection.OpenAsync();
 
-					using (var reader = command.ExecuteReader())
+					using (var reader = await command.ExecuteReaderAsync())
 					{
 						while (reader.Read())
 						{
