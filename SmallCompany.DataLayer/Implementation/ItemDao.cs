@@ -17,7 +17,7 @@ namespace SmallCompany.DataLayer.Implementation
         public async Task<List<Item>> GetItemsFromSqlAsync()
         {
             List<Item> itemsFromSql = new List<Item>();
-            itemsFromSql = await context.Items.ToListAsync();
+            itemsFromSql = await context.Items.Include(i => i.ItemPropertyValues).ThenInclude(ipv => ipv.Property).ToListAsync();
 
             return itemsFromSql;
         }
@@ -61,7 +61,7 @@ namespace SmallCompany.DataLayer.Implementation
             sqlQuery += $"GROUP BY ipv1.ItemId HAVING COUNT(DISTINCT ipv1.PropertyId) = {index} )";
 
 
-            existingItems = context.Items.FromSqlRaw(sqlQuery).ToList();
+            existingItems = await context.Items.FromSqlRaw(sqlQuery).ToListAsync();
 
             return existingItems;
         }
