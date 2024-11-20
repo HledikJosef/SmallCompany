@@ -10,6 +10,7 @@
 @inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
+
 <PageTitle>Item editation</PageTitle>
 
 <h1>Vytvoř skladovou položku</h1>
@@ -22,7 +23,7 @@
 		<tr>
 			<td>
 				<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
-					<option disabled selected value="">Vyber druh položky</option>
+					<option disabled selected value="0">Vyber druh položky</option>
 					@foreach (var type in BlazorTypesOfItemInDb)
 					{
 						<option value="@type.Id">@type.Name</option>
@@ -35,8 +36,9 @@
 				<ValidationMessage For="@( () => BlazorItemModel.Name)" />
 			</td>
 			<td>
-				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">
-					<option disabled selected value="">Vyber měrnou jednotku</option>
+				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">					
+					<option disabled selected value="0">Vyber měrnou jednotku</option>
+					
 					@foreach (var unit in BlazorUnitsInDb)
 					{
 						<option value="@unit.Id">@unit.Name</option>
