@@ -4,7 +4,7 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IDateTypeService
     {
-        public Task<List<ServiceDateType>> GetDateTypesFromDao();
-        public Task AddDateType(ServiceDateType serviceDateType);
+        public Task<List<ServiceDateType>> GetDateTypesFromDaoAsync();
+        public Task AddDateTypeAsync(ServiceDateType serviceDateType);
     }
 }

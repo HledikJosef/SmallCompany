@@ -10,7 +10,7 @@
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
 
-<EditForm Model="NewBlazorStock" OnValidSubmit="AddStock" FormName="StockEditation">
+<EditForm Model="NewBlazorStock" OnValidSubmit="AddStockAsync" FormName="StockEditation">
     <DataAnnotationsValidator/>
     <table class="table">
         <tbody>
@@ -86,7 +86,7 @@
         List<ServiceStock> serviceStockinDb = new List<ServiceStock>();
         try
         {
-            serviceStockinDb = await stockService.GetStocksFromDao();
+            serviceStockinDb = await stockService.GetStocksFromDaoAsync();
             blazorStocksInDb = serviceStockinDb.Select(stock => StockMapper.MappServiceBlazorStock(stock)).ToList();
         }
         catch(Exception ex)
@@ -96,7 +96,7 @@
         }
     }
 
-    private async Task AddStock()
+    private async Task AddStockAsync()
     {
         if(NewBlazorStock is null)
         {
@@ -107,7 +107,7 @@
             ServiceStock serviceStock = new ServiceStock();
             serviceStock = StockMapper.MappBlazorServisStock(NewBlazorStock);
 
-            await stockService.AddStock(serviceStock);
+            await stockService.AddStockAsync(serviceStock);
 
             notification = "Vloženo ";
             await Task.Delay(1300);            

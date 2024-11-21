@@ -5,33 +5,33 @@ using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
-	public class PropertyService : IPropertyService
-	{
-		private readonly IPropertyDao propertyDao;
+    public class PropertyService : IPropertyService
+    {
+        private readonly IPropertyDao propertyDao;
 
-		public PropertyService(IPropertyDao propertyDao)
-		{
-			this.propertyDao = propertyDao;
-		}
+        public PropertyService(IPropertyDao propertyDao)
+        {
+            this.propertyDao = propertyDao;
+        }
 
-		public async Task<List<ServiceProperty>> GetPropertiesFromDao()
-		{
-			List<Property> propertiesFromDao = new List<Property>();
-			propertiesFromDao = await propertyDao.GetPropertiesFromDbAsync();
+        public async Task<List<ServiceProperty>> GetPropertiesFromDaoAsync()
+        {
+            List<Property> propertiesFromDao = new List<Property>();
+            propertiesFromDao = await propertyDao.GetPropertiesFromDbAsync();
 
-			List<ServiceProperty> servicePropertiesFromDao = new List<ServiceProperty>();
-			servicePropertiesFromDao = propertiesFromDao.Select(prop => ServicePropertyMapper.MapServicePropertyFromDao(prop)).ToList();
+            List<ServiceProperty> servicePropertiesFromDao = new List<ServiceProperty>();
+            servicePropertiesFromDao = propertiesFromDao.Select(prop => ServicePropertyMapper.MapServicePropertyFromDao(prop)).ToList();
 
-			return servicePropertiesFromDao;
+            return servicePropertiesFromDao;
 
-		}
+        }
 
-		public Task AddProperty(ServiceProperty serviceProperty)
-		{
-			Property property = new Property();
-			property = ServicePropertyMapper.MapServicePropertyToDao(serviceProperty);
+        public Task AddPropertyAsync(ServiceProperty serviceProperty)
+        {
+            Property property = new Property();
+            property = ServicePropertyMapper.MapServicePropertyToDao(serviceProperty);
 
-			return propertyDao.AddPropertyToDb(property);
-		}
-	}
+            return propertyDao.AddPropertyToDbAsync(property);
+        }
+    }
 }

@@ -24,16 +24,12 @@ namespace SmallCompany.DataLayer.Implementation
 
         public async Task AddItemWithPropertiesToDbAsync(Item itemWithProperties)
         {
-            List<Item> existingItems = await CheckExistingItemAsync(itemWithProperties);
+            await context.Items.AddAsync(itemWithProperties);
+            await context.SaveChangesAsync();
 
-            if (existingItems.Count() == 0)
-            {
-                await context.Items.AddAsync(itemWithProperties);
-                await context.SaveChangesAsync();
-            }
         }
 
-        private async Task<List<Item>> CheckExistingItemAsync(Item item)
+        public async Task<List<Item>> CheckExistingItemAsync(Item item)
         {
             List<Item> existingItems = new List<Item>();
 

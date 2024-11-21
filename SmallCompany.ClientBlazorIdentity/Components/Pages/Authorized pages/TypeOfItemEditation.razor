@@ -10,7 +10,7 @@
 <h1>Editace typů skladových položek.</h1>
 <h5>Zde můžete vytvořit záznam typu skladové položky jako např.: materiál, polotovar, výrobek, služba atd.</h5>
 
-<EditForm Model="NewBlazorTypeOfItem" OnValidSubmit="AddTypeOfItem" FormName="typeOfItemEditation">
+<EditForm Model="NewBlazorTypeOfItem" OnValidSubmit="AddTypeOfItemAsync" FormName="typeOfItemEditation">
     <DataAnnotationsValidator />    
     <table class="table">
         <tbody>
@@ -73,7 +73,7 @@
 
         try
         {
-            serviceTypesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+            serviceTypesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
             blazorTypesOfItemsInDb = serviceTypesOfItemsInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy( Type => Type.Name).ToList();
         }
         catch(Exception ex)
@@ -83,7 +83,7 @@
         }
     }
 
-    private async Task AddTypeOfItem()
+    private async Task AddTypeOfItemAsync()
     {
         if (string.IsNullOrEmpty(NewBlazorTypeOfItem.Name))
         {
@@ -94,7 +94,7 @@
             ServiceTypeOfItem serviceTypeOfItem = new ServiceTypeOfItem();
             serviceTypeOfItem = TypeOfItemMapper.MapBlazorServiceTypeOfItem(NewBlazorTypeOfItem);
 
-            await typeOfItemService.AddTypeOfItem(serviceTypeOfItem);
+            await typeOfItemService.AddTypeOfItemAsync(serviceTypeOfItem);
 
             notification = "Vloženo";
             await Task.Delay(1300);

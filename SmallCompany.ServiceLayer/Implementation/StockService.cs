@@ -16,7 +16,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.stockWriterDao = stockWriterDao;
         }
 
-        public async Task<List<ServiceStock>> GetStocksFromDao()
+        public async Task<List<ServiceStock>> GetStocksFromDaoAsync()
         {
             List<Stock> stocksFromSql = new List<Stock>();
             stocksFromSql = await stockReaderDao.GetStocksFromDbAsync();
@@ -27,7 +27,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             return serviceStocks;
         }
 
-        public Task AddStock(ServiceStock serviceStock)
+        public Task AddStockAsync(ServiceStock serviceStock)
         {
             Stock stock = new Stock();
             stock = ServiceStockMapper.MapServiceStockToDao(serviceStock);

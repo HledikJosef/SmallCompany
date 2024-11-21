@@ -10,7 +10,7 @@
 <h1>Editace datového typu vlastnosti.</h1>
 <h5>Zde můžete vytvořit záznam datového typu vlastnosti, jako např.: string (text), float (číslo) atd.</h5>
 
-<EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateType" FormName="dateTypeEditation">
+<EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateTypeAsync" FormName="dateTypeEditation">
     <DataAnnotationsValidator />
     <table class="table">
         <tbody>
@@ -70,7 +70,7 @@
         List<ServiceDateType> serviceDateTypesInDb = new List<ServiceDateType>();
         try
         {
-            serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDao();
+            serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
             blazorDateTypesInDb = serviceDateTypesInDb.Select(type => DateTypeMapper.MapServiceBlazorDateType(type)).OrderBy(type => type.Name).ToList();
 
         }
@@ -82,7 +82,7 @@
 
     }
 
-    private async Task AddDateType()
+    private async Task AddDateTypeAsync()
     {
         if (string.IsNullOrEmpty(NewBlazorDateType.Name))
         {
@@ -94,7 +94,7 @@
             ServiceDateType serviceDateType = new ServiceDateType();
             serviceDateType = DateTypeMapper.MapBlazorServiceDateType(NewBlazorDateType);
 
-            await dateTypeService.AddDateType(serviceDateType);
+            await dateTypeService.AddDateTypeAsync(serviceDateType);
 
             notification = "Vloženo";
             await Task.Delay(1300);

@@ -14,7 +14,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.dateTypeDao = dateTypeDao;
         }
 
-        public async Task<List<ServiceDateType>> GetDateTypesFromDao()
+        public async Task<List<ServiceDateType>> GetDateTypesFromDaoAsync()
         {
             List<DateType> dateTypesFromDb = new List<DateType>();
             dateTypesFromDb = await dateTypeDao.GetDateTypesFromDbAsync();
@@ -26,7 +26,7 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         }
 
-        public Task AddDateType(ServiceDateType serviceDateType)
+        public Task AddDateTypeAsync(ServiceDateType serviceDateType)
         {
             DateType dateType = new DateType();
             dateType = ServiceDateTypeMapper.MapServiceDateTypToDao(serviceDateType);

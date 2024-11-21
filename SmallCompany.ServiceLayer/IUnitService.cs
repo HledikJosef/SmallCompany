@@ -4,7 +4,7 @@ namespace SmallCompany.ServiceLayer
 {
     public interface IUnitService
     {
-        public Task<List<ServiceUnit>> GetUnitsFromDao();
-        public Task AddUnit(ServiceUnit serviceUnit);
+        public Task<List<ServiceUnit>> GetUnitsFromDaoAsync();
+        public Task AddUnitAsync(ServiceUnit serviceUnit);
     }
 }

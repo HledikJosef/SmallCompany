@@ -4,8 +4,8 @@ namespace SmallCompany.ServiceLayer
 {
     public interface ITypeOfItemService
     {
-        public Task<List<ServiceTypeOfItem>> GetTypesOfItemsFromDao();
-        public Task AddTypeOfItem(ServiceTypeOfItem serviceTypeOfItem);
+        public Task<List<ServiceTypeOfItem>> GetTypesOfItemsFromDaoAsync();
+        public Task AddTypeOfItemAsync(ServiceTypeOfItem serviceTypeOfItem);
 
     }
 }

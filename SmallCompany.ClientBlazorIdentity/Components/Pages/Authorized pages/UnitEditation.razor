@@ -8,7 +8,7 @@
 <h1>Editace jednotek skladovaných položek.</h1>
 <h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
 
-<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnit" FormName="unitEditation">
+<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnitAsync" FormName="unitEditation">
     <DataAnnotationsValidator />    
     <table class="table">
         <tbody>
@@ -75,7 +75,7 @@
 
         try
         {
-            serviceUnitsInDb = await unitService.GetUnitsFromDao();
+            serviceUnitsInDb = await unitService.GetUnitsFromDaoAsync();
             blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).OrderBy(unit=> unit.Name).ToList();
 
         }
@@ -87,7 +87,7 @@
 
     }
 
-    private async Task AddUnit()
+    private async Task AddUnitAsync()
     {
         if (string.IsNullOrEmpty(NewBlazorUnit.Name))
         {
@@ -98,7 +98,7 @@
             ServiceUnit serviceUnit = new ServiceUnit();
             serviceUnit = UnitMapper.MapBlazorServiceUnit(NewBlazorUnit);
 
-            await unitService.AddUnit(serviceUnit);
+            await unitService.AddUnitAsync(serviceUnit);
 
             notification = "Vloženo ";
             await Task.Delay(1300);

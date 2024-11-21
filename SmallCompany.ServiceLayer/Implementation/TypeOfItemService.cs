@@ -14,7 +14,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.typeOfItemDao = typeOfItemDao;
         }
 
-        public async Task<List<ServiceTypeOfItem>> GetTypesOfItemsFromDao()
+        public async Task<List<ServiceTypeOfItem>> GetTypesOfItemsFromDaoAsync()
         {
             List<TypeOfItem> typesOfItemsFromDb = new List<TypeOfItem>();
             typesOfItemsFromDb = await typeOfItemDao.GetTypeOfItemsFromDbAsync();
@@ -25,7 +25,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             return serviceTypesOfItemsFromDb;
         }
 
-        public Task AddTypeOfItem(ServiceTypeOfItem serviceTypeOfItem)
+        public Task AddTypeOfItemAsync(ServiceTypeOfItem serviceTypeOfItem)
         {
             TypeOfItem typeOfItem = new TypeOfItem();
             typeOfItem = ServiceTypeOfItemMapper.MapServiceTypeOfItemToDao(serviceTypeOfItem);

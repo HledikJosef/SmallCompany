@@ -6,6 +6,6 @@ namespace SmallCompany.DataLayer
 	{
 		public Task<List<Property>> GetPropertiesFromDbAsync();
 
-		public Task AddPropertyToDb(Property property);
+		public Task AddPropertyToDbAsync(Property property);
 	}
 }

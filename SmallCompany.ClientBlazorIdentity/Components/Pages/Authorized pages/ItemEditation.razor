@@ -17,7 +17,7 @@
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
 
-<EditForm Model="BlazorItemModel" OnValidSubmit="AddItem" FormName="itemEditation">
+<EditForm Model="BlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
 	<DataAnnotationsValidator />
 	<table class="table">
 		<tr>
@@ -29,7 +29,7 @@
 						<option value="@type.Id">@type.Name</option>
 					}
 				</InputSelect>
-					<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
+				<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
 			</td>
 			<td>
 				<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
@@ -38,13 +38,13 @@
 			<td>
 				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">					
 					<option disabled selected value="0">Vyber měrnou jednotku</option>
-					
+
 					@foreach (var unit in BlazorUnitsInDb)
 					{
 						<option value="@unit.Id">@unit.Name</option>
 					}
 				</InputSelect>
-					<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
+				<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
 			</td>
 		</tr>
 	</table>
@@ -61,10 +61,16 @@
 		}
 	}
 	<button Type="submit" class="btn btn-primary">Ulož záznam</button>
-</EditForm>		
+</EditForm>	
+
+@if(existingBlazorItems.Any())
+{
+	<p>Tento záznam již existuje. Parametry můžete upravit a opět zkusit uložit . </p>
+
+}
 
 
-	
+
 
 
 
@@ -77,6 +83,7 @@
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
+	List<BlazorItem> existingBlazorItems = new List<BlazorItem>();
 	private string? notification;
 	private string? exceptionMessage;
 
@@ -89,11 +96,11 @@
 		try
 		{
 			BlazorItemModel.ItemProperties = new List<BlazorProperty>();
-			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDao();
+			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
 			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
-			serviceUnitsInDb = await unitService.GetUnitsFromDao();
+			serviceUnitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
-			servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
+			servicePropertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			BlazorItemModel.ItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
 
 		}
@@ -107,7 +114,7 @@
 
 
 
-	private async Task AddItem()
+	private async Task AddItemAsync()
 	{
 		try
 		{
@@ -117,10 +124,18 @@
 			serviceItem = ItemMapper.MapBlazorServiceItem(BlazorItemModel);
 			serviceItem.ServiceItemPropertyValues = BlazorItemModel.ItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
 
-			await itemService.AddItemWithProperties(serviceItem);
+			await CheckItemDuplicityAsync(serviceItem);
 
-			notification = "Vloženo ";
-			await Task.Delay(1300);
+			if (!existingBlazorItems.Any())
+			{
+				await itemService.AddItemWithPropertiesAsync(serviceItem);
+
+				notification = "Vloženo ";
+				await Task.Delay(1300);
+
+				RefreshPage();
+			}
+			
 		}
 		catch (Exception ex)
 		{
@@ -128,8 +143,14 @@
 			notification = "Záznam se nepodařilo uložit ";
 		}
 
-		RefreshPage();
+		// RefreshPage();
 
+	}
+
+	private async Task CheckItemDuplicityAsync(ServiceItem serviceItem)
+	{
+		List<ServiceItem>existingServiceItems = await itemService.CheckItemDuplicityAsync(serviceItem);
+		existingBlazorItems = existingServiceItems.Select(item => ItemMapper.MapServiceBlazorItem(item)).ToList();
 	}
 
 	private void RemoveUnusedProperties(List<BlazorProperty> properties)

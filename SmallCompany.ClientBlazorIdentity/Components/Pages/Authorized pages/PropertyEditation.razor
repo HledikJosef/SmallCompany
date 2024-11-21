@@ -10,7 +10,7 @@
 	Tyto vlastnosti se párují ke skladovaným položkám. Dodržujte formát : název vlastnosti(jednotka vlastnosti). Např. "Hmotnost(kg)"
 </h5>
 
-<EditForm Model="NewBlazorProperty" OnValidSubmit="AddProperty" FormName="propertyEditation">
+<EditForm Model="NewBlazorProperty" OnValidSubmit="AddPropertyAsync" FormName="propertyEditation">
 	<DataAnnotationsValidator/>
 	<table class="table">
 		<tr>
@@ -85,9 +85,9 @@
 
 		try
 		{
-			serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDao();
+			serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
 			BlazorDateTypesInDb = serviceDateTypesInDb.Select(dateType => DateTypeMapper.MapServiceBlazorDateType(dateType)).OrderBy(dateType => dateType.Name).ToList();
-			servicePropertiesInDb = await propertyService.GetPropertiesFromDao();
+			servicePropertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			blazorPropertiesInDb = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
 		}
 		catch(Exception ex)
@@ -97,7 +97,7 @@
 		}
 	}
 
-	private async Task AddProperty()
+	private async Task AddPropertyAsync()
 	{
 		if((string.IsNullOrEmpty(NewBlazorProperty.Name)) || (NewBlazorProperty.BlazorDateTypeId == 0))
 		{
@@ -109,7 +109,7 @@
 			ServiceProperty serviceProperty = new ServiceProperty();
 			serviceProperty = PropertyMapper.MapBlazorServicePorperty(NewBlazorProperty);
 
-			await propertyService.AddProperty(serviceProperty);
+			await propertyService.AddPropertyAsync(serviceProperty);
 
 			notification = "Uloženo";
 			StateHasChanged();

@@ -16,7 +16,7 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.unitWriterDao = unitWriterDao;
         }
 
-        public async Task<List<ServiceUnit>> GetUnitsFromDao()
+        public async Task<List<ServiceUnit>> GetUnitsFromDaoAsync()
         {
             List<Unit> unitsFromSql = new List<Unit>();
             unitsFromSql = await unitReaderDao.GetUnitsFromDbAsync();
@@ -27,13 +27,12 @@ namespace SmallCompany.ServiceLayer.Implementation
             return serviceUnits;
         }
 
-        public Task AddUnit(ServiceUnit serviceUnit)
+        public Task AddUnitAsync(ServiceUnit serviceUnit)
         {
             Unit unit = new Unit();
             unit = ServiceUnitMapper.MapServiceUnitsToDao(serviceUnit);
 
             return unitWriterDao.AddUnitToDbAsync(unit);
-
         }
     }
 }
