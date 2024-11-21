@@ -4,11 +4,31 @@
 
 @inject IStockService stockService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
 
 <PageTitle>Stock editation</PageTitle>
 
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
+
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
 
 <EditForm Model="NewBlazorStock" OnValidSubmit="AddStockAsync" FormName="StockEditation">
     <DataAnnotationsValidator/>
@@ -53,23 +73,7 @@
             </p>
         }
     
-@if (notification != null)
-{
-    if (exceptionMessage != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
-        </div>
 
-    }
-    else
-    {
-        <div class="alert alert-success" role="alert">
-            @notification
-        </div>
-    }
-
-}
 
 
 @code {
@@ -110,7 +114,10 @@
             await stockService.AddStockAsync(serviceStock);
 
             notification = "Vloženo ";
-            await Task.Delay(1300);            
+            StateHasChanged();
+            await Task.Delay(1300);
+            
+            RefreshPage();
         }
         catch (Exception ex)
         {
@@ -118,7 +125,7 @@
             notification = "Záznam se nepodařilo uložit ";
         }
         
-        RefreshPage();
+        
 
     }
 

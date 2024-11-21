@@ -4,40 +4,13 @@
 
 @inject ITypeOfItemService typeOfItemService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
 
 <PageTitle>TypeOfItem editation</PageTitle>
 
 <h1>Editace typů skladových položek.</h1>
 <h5>Zde můžete vytvořit záznam typu skladové položky jako např.: materiál, polotovar, výrobek, služba atd.</h5>
-
-<EditForm Model="NewBlazorTypeOfItem" OnValidSubmit="AddTypeOfItemAsync" FormName="typeOfItemEditation">
-    <DataAnnotationsValidator />    
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>
-                    <InputText class="form-text" @bind-Value="NewBlazorTypeOfItem.Name" id="typeOfItemName" placeholder="Název typu" />
-                    <ValidationMessage For="@(() => NewBlazorTypeOfItem.Name)" />
-                </td>
-
-            </tr>
-            
-        </tbody>
-    </table>
-
-    <button type="submit" class="btn btn-primary">Ulož záznam</button>
-
-</EditForm>
-
-<hr class="my-4">
-<h5>Níže je vypsán seznam všech již vytvořených typů položek.</h5>
-
-@foreach(var type in blazorTypesOfItemsInDb)
-{
-    <button class="btn btn-outline-primary">
-        @type.Name
-    </button>
-}
 
 @if (notification != null)
 {
@@ -56,6 +29,37 @@
     }
 
 }
+
+<EditForm Model="NewBlazorTypeOfItem" OnValidSubmit="AddTypeOfItemAsync" FormName="typeOfItemEditation">
+    <DataAnnotationsValidator />    
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <InputText class="form-control" @bind-Value="NewBlazorTypeOfItem.Name" id="typeOfItemName" placeholder="Název typu" />
+                    <ValidationMessage For="@(() => NewBlazorTypeOfItem.Name)" />
+                </td>
+
+            </tr>
+
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených typů položek.</h5>
+
+@foreach(var type in blazorTypesOfItemsInDb)
+{
+    <button class="btn btn-outline-primary">
+        @type.Name
+    </button>
+}
+
+
 
 
 
@@ -97,7 +101,10 @@
             await typeOfItemService.AddTypeOfItemAsync(serviceTypeOfItem);
 
             notification = "Vloženo";
+            StateHasChanged();
             await Task.Delay(1300);
+
+            RefreshPage();
         }
         catch(Exception ex)
         {
@@ -105,7 +112,7 @@
             notification = "Záznam se nepodařilo uložit ";            
         }
 
-        RefreshPage();
+        
 
     }
 

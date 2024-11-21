@@ -34,17 +34,16 @@ namespace SmallCompany.ServiceLayer.Implementation
             return itemDao.AddItemWithPropertiesToDbAsync(item);
         }
 
-        public async Task<List<ServiceItem>> CheckItemDuplicityAsync(ServiceItem serviceItem)
+        public async Task<List<int>> CheckItemDuplicityAsync(ServiceItem serviceItem)
         {
             Item item = new Item();
 
             item = ServiceItemMapper.MapServiceItemToDao(serviceItem);
             item.ItemPropertyValues = serviceItem.ServiceItemPropertyValues.Select(x => ServiceItemPropValueMapper.MapItemPropertyValueToDao(x)).ToList();
 
-            List<Item> existingItemsFromDao = await itemDao.CheckExistingItemAsync(item);
-            List<ServiceItem> existingServiceItems = existingItemsFromDao.Select(x => ServiceItemMapper.MapServiceItemFromDao(x)).ToList();
+            List<int> existingItemsFromDao = await itemDao.CheckExistingItemAsync(item);
 
-            return existingServiceItems;
+            return existingItemsFromDao;
 
         }
 

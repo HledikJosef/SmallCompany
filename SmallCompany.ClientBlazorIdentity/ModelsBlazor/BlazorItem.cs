@@ -12,6 +12,11 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         [Required(ErrorMessage = "Typ položky musí být zvolen.")]
         public int TypeOfItemId { get; set; }
 
-        public List<BlazorProperty> ItemProperties { get; set; } = new List<BlazorProperty>();
+        public BlazorUnit BlazorUnit { get; set; } = null!;
+        public BlazorTypeOfItem BlazorTypeOfItem { get; set; } = null!;
+
+        public List<BlazorProperty> BlazorItemProperties { get; set; } = new List<BlazorProperty>();
+
+        public List<BlazorItemPropertyValue> BlazorItemPropertyValues { get; set; } = new List<BlazorItemPropertyValue>();
     }
 }

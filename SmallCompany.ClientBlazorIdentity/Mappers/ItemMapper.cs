@@ -25,6 +25,9 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             blazorItem.Name = serviceItem.Name;
             blazorItem.UnitId = serviceItem.UnitId;
             blazorItem.TypeOfItemId = serviceItem.TypeOfItemId;
+            blazorItem.BlazorUnit = UnitMapper.MapServiceBlazorUnit(serviceItem.ServiceUnit);
+            blazorItem.BlazorTypeOfItem = TypeOfItemMapper.MapServiceBlazorTypeOfItem(serviceItem.ServiceTypeOfItem);
+            blazorItem.BlazorItemPropertyValues = serviceItem.ServiceItemPropertyValues.Select(x => ItemPropertyValueMapper.MapServiceBlazorItemPropValue(x)).ToList();
 
             return blazorItem;
         }

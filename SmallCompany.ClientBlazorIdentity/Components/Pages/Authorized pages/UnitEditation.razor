@@ -3,40 +3,11 @@
 
 @inject IUnitService unitService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
 
 
 <h1>Editace jednotek skladovaných položek.</h1>
 <h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
-
-<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnitAsync" FormName="unitEditation">
-    <DataAnnotationsValidator />    
-    <table class="table">
-        <tbody>
-            <tr>                
-                <InputText class="form-text" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
-                <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>      
-
-            </tr>
-            
-        </tbody>
-    </table>
-
-    <button type="submit" class="btn btn-primary">Ulož záznam</button>
-
-</EditForm>
-
-<hr class="my-4">
-<h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
-
-        @foreach(var unit in blazorUnitsInDb)
-        {
-            <button class="btn btn-outline-primary">
-                @unit.Name              
-            </button>
-        }
-
-
-
 
 @if (notification != null)
 {
@@ -56,8 +27,32 @@
 
 }
 
+<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnitAsync" FormName="unitEditation">
+    <DataAnnotationsValidator />    
+    <table class="table">
+        <tbody>
+            <tr>                
+                <InputText class="form-control" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
+                <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>      
 
+            </tr>
 
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+
+</EditForm>
+
+<hr class="my-4">
+<h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
+
+@foreach(var unit in blazorUnitsInDb)
+{
+    <button class="btn btn-outline-primary">
+        @unit.Name              
+    </button>
+}
 
 
 @code {
@@ -101,16 +96,16 @@
             await unitService.AddUnitAsync(serviceUnit);
 
             notification = "Vloženo ";
+            StateHasChanged();
             await Task.Delay(1300);
             
+            RefreshPage();
         }
         catch (Exception ex)
         {
             exceptionMessage = ex.Message;
             notification = "Záznam se nepodařilo uložit ";
         }
-
-        RefreshPage();
 
     }
 

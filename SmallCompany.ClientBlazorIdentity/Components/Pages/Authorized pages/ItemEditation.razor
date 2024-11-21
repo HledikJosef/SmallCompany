@@ -16,6 +16,23 @@
 <h1>Vytvoř skladovou položku</h1>
 <h5>Zvol skupinu a vyplň požadované parametry</h5>
 
+@if (!string.IsNullOrEmpty(notification))
+{
+	if (!string.IsNullOrEmpty(exceptionMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			@notification @exceptionMessage
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-success" role="alert">
+			@notification
+		</div>
+	}
+
+}
 
 <EditForm Model="BlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
 	<DataAnnotationsValidator />
@@ -52,7 +69,7 @@
 
 	@if (BlazorPropertiesInDb != null)
 	{
-		@foreach (var prop in BlazorItemModel.ItemProperties)
+		@foreach (var prop in BlazorItemModel.BlazorItemProperties)
 		{
 			<p>
 				<label for="itemProperty">@prop.Name</label>
@@ -63,11 +80,7 @@
 	<button Type="submit" class="btn btn-primary">Ulož záznam</button>
 </EditForm>	
 
-@if(existingBlazorItems.Any())
-{
-	<p>Tento záznam již existuje. Parametry můžete upravit a opět zkusit uložit . </p>
 
-}
 
 
 
@@ -83,7 +96,7 @@
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
-	List<BlazorItem> existingBlazorItems = new List<BlazorItem>();
+	List<int> existingItems = new List<int>();
 	private string? notification;
 	private string? exceptionMessage;
 
@@ -95,13 +108,13 @@
 
 		try
 		{
-			BlazorItemModel.ItemProperties = new List<BlazorProperty>();
+			BlazorItemModel.BlazorItemProperties = new List<BlazorProperty>();
 			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
 			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
 			serviceUnitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
 			servicePropertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
-			BlazorItemModel.ItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			BlazorItemModel.BlazorItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
 
 		}
 		catch(Exception ex)
@@ -113,44 +126,54 @@
 	}
 
 
-
 	private async Task AddItemAsync()
 	{
 		try
 		{
-			RemoveUnusedProperties(BlazorItemModel.ItemProperties);
+			exceptionMessage = "";
+
+			RemoveUnusedProperties(BlazorItemModel.BlazorItemProperties);
 
 			ServiceItem serviceItem = new ServiceItem();
 			serviceItem = ItemMapper.MapBlazorServiceItem(BlazorItemModel);
-			serviceItem.ServiceItemPropertyValues = BlazorItemModel.ItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+			serviceItem.ServiceItemPropertyValues = BlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapBlazorServiceItemPropValue(prop)).ToList();
 
 			await CheckItemDuplicityAsync(serviceItem);
 
-			if (!existingBlazorItems.Any())
+			if (existingItems.Count == 0 )
 			{
 				await itemService.AddItemWithPropertiesAsync(serviceItem);
 
-				notification = "Vloženo ";
+				
+				notification = "Vloženo.";
+				StateHasChanged();
 				await Task.Delay(1300);
 
 				RefreshPage();
+
 			}
-			
+
 		}
 		catch (Exception ex)
 		{
 			exceptionMessage = ex.Message;
 			notification = "Záznam se nepodařilo uložit ";
+			StateHasChanged();
 		}
 
-		// RefreshPage();
+
 
 	}
 
 	private async Task CheckItemDuplicityAsync(ServiceItem serviceItem)
 	{
-		List<ServiceItem>existingServiceItems = await itemService.CheckItemDuplicityAsync(serviceItem);
-		existingBlazorItems = existingServiceItems.Select(item => ItemMapper.MapServiceBlazorItem(item)).ToList();
+		existingItems = await itemService.CheckItemDuplicityAsync(serviceItem);
+
+		if(existingItems.Count>0)
+		{
+			notification = "Tento záznam již existuje. ";
+			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
+		}
 	}
 
 	private void RemoveUnusedProperties(List<BlazorProperty> properties)

@@ -4,11 +4,30 @@
 @inject IPropertyService propertyService;
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
 
 <h1>Editace vlastností skladových položek.</h1>
 <h5>Vytvořte záznam vlastnosti položky (např.výška, hmotnost, barva, atd.).
 	Tyto vlastnosti se párují ke skladovaným položkám. Dodržujte formát : název vlastnosti(jednotka vlastnosti). Např. "Hmotnost(kg)"
 </h5>
+
+@if (notification != null)
+{
+	if (exceptionMessage != null)
+	{
+		<div class="alert alert-danger" role="alert">
+			@notification: @exceptionMessage
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-success" role="alert">
+			@notification
+		</div>
+	}
+
+}
 
 <EditForm Model="NewBlazorProperty" OnValidSubmit="AddPropertyAsync" FormName="propertyEditation">
 	<DataAnnotationsValidator/>
@@ -20,6 +39,7 @@
 			</td>
 			<td>
 				<InputSelect class="form-select" @bind-Value="NewBlazorProperty.BlazorDateTypeId" id="dateTypeId">
+					<option disabled selected value="0">Vyber typ vlastnosti.</option>
 					@foreach(var dateType in BlazorDateTypesInDb)
 					{
 						<option value="@dateType.Id">@dateType.Name</option>
@@ -46,26 +66,6 @@
 		<button class="btn btn-outline-primary">@dateType?.Name</button>
 	</p>
 }
-
-@if (notification != null)
-{
-	if (exceptionMessage != null)
-	{
-		<div class="alert alert-danger" role="alert">
-			@notification: @exceptionMessage
-		</div>
-
-	}
-	else
-	{
-		<div class="alert alert-success" role="alert">
-			@notification
-		</div>
-	}
-
-}
-
-
 
 
 @code {
@@ -114,6 +114,8 @@
 			notification = "Uloženo";
 			StateHasChanged();
 			await Task.Delay(1300);
+
+			RefreshPage();
 		}
 		catch(Exception ex)
 		{
@@ -121,7 +123,7 @@
 			notification = "Záznam se nepodařilo uložit ";
 		}
 
-		RefreshPage();
+		
 
 	}
 

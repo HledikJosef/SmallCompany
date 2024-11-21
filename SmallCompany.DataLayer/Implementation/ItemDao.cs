@@ -29,9 +29,11 @@ namespace SmallCompany.DataLayer.Implementation
 
         }
 
-        public async Task<List<Item>> CheckExistingItemAsync(Item item)
+        public async Task<List<int>> CheckExistingItemAsync(Item item)
         {
             List<Item> existingItems = new List<Item>();
+
+            List<int> existingId = new List<int>();
 
             string sqlQuery = $"SELECT i.* FROM Items i WHERE i.Name = '{item.Name}' AND i.Id IN ( SELECT ipv1.ItemId FROM ItemsPropertyValue ipv1 WHERE ";
 
@@ -59,7 +61,9 @@ namespace SmallCompany.DataLayer.Implementation
 
             existingItems = await context.Items.FromSqlRaw(sqlQuery).ToListAsync();
 
-            return existingItems;
+            existingId = existingItems.Select(i => i.Id).ToList();
+
+            return existingId;
         }
 
 

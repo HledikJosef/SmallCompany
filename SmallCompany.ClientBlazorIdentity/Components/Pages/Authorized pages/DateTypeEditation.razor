@@ -4,11 +4,30 @@
 
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
+@rendermode InteractiveServer
 
 <PageTitle>DateType editation</PageTitle>
 
 <h1>Editace datového typu vlastnosti.</h1>
 <h5>Zde můžete vytvořit záznam datového typu vlastnosti, jako např.: string (text), float (číslo) atd.</h5>
+
+@if (notification != null)
+{
+    if (exceptionMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @notification: @exceptionMessage
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            @notification
+        </div>
+    }
+
+}
 
 <EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateTypeAsync" FormName="dateTypeEditation">
     <DataAnnotationsValidator />
@@ -16,7 +35,7 @@
         <tbody>
             <tr>
                 <td>
-                    <InputText class="form-text" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
+                    <InputText class="form-control" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
                     <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
                 </td>
 
@@ -39,23 +58,7 @@
     </button>
 }
 
-@if (notification != null)
-{
-    if (exceptionMessage != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
-        </div>
 
-    }
-    else
-    {
-        <div class="alert alert-success" role="alert">
-            @notification
-        </div>
-    }
-
-}
 
 @code {
     [SupplyParameterFromForm]
@@ -86,7 +89,7 @@
     {
         if (string.IsNullOrEmpty(NewBlazorDateType.Name))
         {
-            throw new InvalidOperationException();
+            return;
         }
 
         try
@@ -97,7 +100,11 @@
             await dateTypeService.AddDateTypeAsync(serviceDateType);
 
             notification = "Vloženo";
+            StateHasChanged();
             await Task.Delay(1300);
+            
+
+            RefreshPage();
 
         }
         catch(Exception ex)
@@ -106,7 +113,7 @@
             notification = "Záznam se nepodařilo uložit ";
         }
 
-        RefreshPage();
+        
 
     }
 
