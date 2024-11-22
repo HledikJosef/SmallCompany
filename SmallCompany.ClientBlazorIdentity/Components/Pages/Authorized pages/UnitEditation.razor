@@ -48,10 +48,8 @@
 <h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
 
 @foreach(var unit in blazorUnitsInDb)
-{
-    <button class="btn btn-outline-primary">
-        @unit.Name              
-    </button>
+{    
+    <p class="btn btn-outline-primary">@unit.Name</p>    
 }
 
 

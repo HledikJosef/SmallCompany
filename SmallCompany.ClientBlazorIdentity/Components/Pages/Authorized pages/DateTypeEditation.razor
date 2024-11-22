@@ -34,10 +34,8 @@
     <table class="table">
         <tbody>
             <tr>
-                <td>
-                    <InputText class="form-control" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
-                    <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
-                </td>
+                <InputText class="form-control" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
+                <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
 
             </tr>
 
@@ -53,9 +51,7 @@
 
 @foreach (var type in blazorDateTypesInDb)
 {
-    <button class="btn btn-outline-primary">
-        @type.Name
-    </button>
+    <p class="btn btn-outline-primary">@type.Name</p>  
 }
 
 

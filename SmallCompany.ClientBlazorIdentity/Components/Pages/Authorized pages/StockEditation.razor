@@ -35,23 +35,16 @@
     <table class="table">
         <tbody>
             <tr>
-                <td>
-                    <InputText @bind-Value="NewBlazorStock.Name" class="form-control" placeholder="Název skladu" id="title" />
-                    <ValidationMessage For="@( () => NewBlazorStock.Name)"/>
-                </td>
+                <InputText @bind-Value="NewBlazorStock.Name" class="form-control" placeholder="Název skladu" id="title" />
+                <ValidationMessage For="@( () => NewBlazorStock.Name)"/>
             </tr>
             <tr>
-                <td>
-                    <InputText @bind-Value="NewBlazorStock.Location" class="form-control" placeholder="Lokace skladu" id="location" />
-                    <ValidationMessage For="@( () => NewBlazorStock.Location)"/>
-                </td>
+                <InputText @bind-Value="NewBlazorStock.Location" class="form-control" placeholder="Lokace skladu" id="location" />
+                <ValidationMessage For="@( () => NewBlazorStock.Location)"/>
             </tr>
             <tr>
-                <td>
-                    <InputText @bind-Value="NewBlazorStock.Description" class="form-control" placeholder="Stručný popis skladu" id="description" />
-                    <ValidationMessage For="@( () => NewBlazorStock.Description)" />
-                </td>
-
+                <InputText @bind-Value="NewBlazorStock.Description" class="form-control" placeholder="Stručný popis skladu" id="description" />
+                <ValidationMessage For="@( () => NewBlazorStock.Description)" />
             </tr>
         </tbody>
     </table>
@@ -65,12 +58,12 @@
 
         @foreach (var stock in blazorStocksInDb)
         {
-            <p>
-                <button class="btn btn-outline-primary">@stock.Id</button>
-                <button class="btn btn-outline-primary">@stock.Name</button>
-                <button class="btn btn-outline-primary">@stock.Location</button>
-                <button class="btn btn-outline-primary">@stock.Description</button>
-            </p>
+            <div>
+                <p class="btn btn-outline-primary">@stock.Id</p>
+                <p class="btn btn-outline-primary">@stock.Name</p>
+                <p class="btn btn-outline-primary">@stock.Location</p>
+                <p class="btn btn-outline-primary">@stock.Description</p>
+            </div>
         }
     
 

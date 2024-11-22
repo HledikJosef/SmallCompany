@@ -35,10 +35,8 @@
     <table class="table">
         <tbody>
             <tr>
-                <td>
-                    <InputText class="form-control" @bind-Value="NewBlazorTypeOfItem.Name" id="typeOfItemName" placeholder="Název typu" />
-                    <ValidationMessage For="@(() => NewBlazorTypeOfItem.Name)" />
-                </td>
+                <InputText class="form-control" @bind-Value="NewBlazorTypeOfItem.Name" id="typeOfItemName" placeholder="Název typu" />
+                <ValidationMessage For="@(() => NewBlazorTypeOfItem.Name)" />               
 
             </tr>
 
@@ -54,9 +52,7 @@
 
 @foreach(var type in blazorTypesOfItemsInDb)
 {
-    <button class="btn btn-outline-primary">
-        @type.Name
-    </button>
+    <p class="btn btn-outline-primary">@type.Name</p> 
 }
 
 

@@ -1,6 +1,7 @@
 ﻿@implements IDisposable
-
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -16,17 +17,29 @@
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
-        </div>
+        </div>       
 
         <AuthorizeView>
             <Authorized>
-
                 <div class="nav-item px-3">
+                    <button class="nav-link" @onclick="ToggleSubMenu">Admin vstupy</button>
+                </div>
+                @if(Shown) 
+                {
+                    <a class="nav-link" href="propertyEditation">Nová vlastnost položky</a>
+                    <a class="nav-link" href="typeOfItemEditation">Nový typ položky</a>
+                    <a class="nav-link" href="dateTypeEditation">Nový datový typ</a>
+                    <a class="nav-link" href="unitEditation">Nová měrná jednotka</a>
+                    <a class="nav-link" href="stockEditation">Nový sklad</a>
+                    <a class="nav-link" href="itemEditation">Nová skladová položka</a>            
+                }
+              
+                @* <div class="nav-item px-3">
                     <NavLink class="nav-link" href="propertyEditation">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Nová vlastnost položky
                     </NavLink>
                 </div>
-                
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="typeOfItemEditation">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Nový typ položky
@@ -55,7 +68,8 @@
                     <NavLink class="nav-link" href="itemEditation">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Nová skladová položka
                     </NavLink>
-                </div>
+                </div> *@
+
 
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
@@ -91,6 +105,8 @@
 @code {
     private string? currentUrl;
 
+    bool Shown { get; set; } = false;
+
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
@@ -106,6 +122,11 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+    private void ToggleSubMenu()
+    {
+        Shown = !Shown;
     }
 }
 

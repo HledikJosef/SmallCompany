@@ -61,10 +61,10 @@
 {
 	var dateType = BlazorDateTypesInDb.FirstOrDefault(dt => dt.Id == prop.BlazorDateTypeId);
 
-	<p>
-		<button class="btn btn-outline-primary">@prop.Name</button>
-		<button class="btn btn-outline-primary">@dateType?.Name</button>
-	</p>
+	<div>
+		<p class="btn btn-outline-primary">@prop.Name</p>
+		<p class="btn btn-outline-primary">@dateType?.Name</p>
+	</div>
 }
 
 

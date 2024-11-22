@@ -103,7 +103,9 @@
 
 .nav-scrollable {
     display: none;
+    pointer-events: auto;
 }
+
 
 .navbar-toggler:checked ~ .nav-scrollable {
     display: block;

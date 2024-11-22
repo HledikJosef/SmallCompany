@@ -134,6 +134,8 @@
 
 			RemoveUnusedProperties(BlazorItemModel.BlazorItemProperties);
 
+			ModifyFloatProperty(BlazorItemModel.BlazorItemProperties);
+
 			ServiceItem serviceItem = new ServiceItem();
 			serviceItem = ItemMapper.MapBlazorServiceItem(BlazorItemModel);
 			serviceItem.ServiceItemPropertyValues = BlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapBlazorServiceItemPropValue(prop)).ToList();
@@ -144,7 +146,7 @@
 			{
 				await itemService.AddItemWithPropertiesAsync(serviceItem);
 
-				
+
 				notification = "Vloženo.";
 				StateHasChanged();
 				await Task.Delay(1300);
@@ -176,9 +178,23 @@
 		}
 	}
 
+
 	private void RemoveUnusedProperties(List<BlazorProperty> properties)
 	{
 		properties.RemoveAll(property => string.IsNullOrWhiteSpace(property.Value));
+	}
+
+
+	private void ModifyFloatProperty(List<BlazorProperty> properties)
+	{
+		foreach(var prop in properties)
+		{
+			if(float.TryParse(prop.Value,NumberStyles.Any,CultureInfo.InvariantCulture, out float parsedFloatValue)) 
+			{
+				string value = prop.Value.Replace('.',',');
+				prop.Value = value;
+			}
+		}
 	}
 
 
