@@ -102,19 +102,18 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		List<ServiceTypeOfItem> serviceTypesOfItemInDb = new List<ServiceTypeOfItem>();
-		List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
-		List<ServiceProperty> servicePropertiesInDb = new List<ServiceProperty>();
+		List<TypeOfItem> typesOfItemsInDb = new();
+		List<Unit> unitsInDb = new();
+		List<Property> propertiesInDb = new();
 
 		try
 		{
-			BlazorItemModel.BlazorItemProperties = new List<BlazorProperty>();
-			serviceTypesOfItemInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
-			BlazorTypesOfItemInDb = serviceTypesOfItemInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy(type => type.Name).ToList();
-			serviceUnitsInDb = await unitService.GetUnitsFromDaoAsync();
-			BlazorUnitsInDb = serviceUnitsInDb.Select(unit => UnitMapper.MapServiceBlazorUnit(unit)).OrderBy(unit => unit.Name).ToList();
-			servicePropertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
-			BlazorItemModel.BlazorItemProperties = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			typesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
+			BlazorTypesOfItemInDb = typesOfItemsInDb.Select(type => TypeOfItemMapper.MapTypeOfItem(type)).OrderBy(type => type.Name).ToList();
+			unitsInDb = await unitService.GetUnitsFromDaoAsync();
+			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
+			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
+			BlazorItemModel.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
 
 		}
 		catch(Exception ex)
@@ -136,15 +135,15 @@
 
 			ModifyFloatProperty(BlazorItemModel.BlazorItemProperties);
 
-			ServiceItem serviceItem = new ServiceItem();
-			serviceItem = ItemMapper.MapBlazorServiceItem(BlazorItemModel);
-			serviceItem.ServiceItemPropertyValues = BlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapBlazorServiceItemPropValue(prop)).ToList();
+			Item newItem = new Item();
+			newItem = ItemMapper .MapItem(BlazorItemModel);
+			newItem.ItemPropertyValues = BlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
 
-			await CheckItemDuplicityAsync(serviceItem);
+			await CheckItemDuplicityAsync(newItem);
 
 			if (existingItems.Count == 0 )
 			{
-				await itemService.AddItemWithPropertiesAsync(serviceItem);
+				await itemService.AddItemWithPropertiesAsync(newItem);
 
 
 				notification = "Vloženo.";
@@ -167,9 +166,9 @@
 
 	}
 
-	private async Task CheckItemDuplicityAsync(ServiceItem serviceItem)
+	private async Task CheckItemDuplicityAsync(Item item)
 	{
-		existingItems = await itemService.CheckItemDuplicityAsync(serviceItem);
+		existingItems = await itemService.CheckItemDuplicityAsync(item);
 
 		if(existingItems.Count>0)
 		{
@@ -189,6 +188,8 @@
 	{
 		foreach(var prop in properties)
 		{
+			prop.Value.ToLower();
+
 			if(float.TryParse(prop.Value,NumberStyles.Any,CultureInfo.InvariantCulture, out float parsedFloatValue)) 
 			{
 				string value = prop.Value.Replace('.',',');

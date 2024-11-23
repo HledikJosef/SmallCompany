@@ -1,29 +1,26 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
-    public static class DateTypeMapper
+    public class DateTypeMapper
     {
-        public static BlazorDateType MapServiceBlazorDateType(ServiceDateType serviceDateType)
+        public static DateType MapDateType(BlazorDateType blazorDateType)
+        {
+            DateType dateType = new DateType();
+            dateType.Id = blazorDateType.Id;
+            dateType.Name = blazorDateType.Name;
+
+            return dateType;
+        }
+
+        public static BlazorDateType MapDateType(DateType dateType)
         {
             BlazorDateType blazorDateType = new BlazorDateType();
-
-            blazorDateType.Id = serviceDateType.Id;
-            blazorDateType.Name = serviceDateType.Name;
+            blazorDateType.Id = dateType.Id;
+            blazorDateType.Name = dateType.Name;
 
             return blazorDateType;
         }
-
-        public static ServiceDateType MapBlazorServiceDateType(BlazorDateType blazorDateType)
-        {
-            ServiceDateType serviceDateType = new ServiceDateType();
-
-            serviceDateType.Id = blazorDateType.Id;
-            serviceDateType.Name = blazorDateType.Name;
-
-            return serviceDateType;
-        }
-
     }
 }

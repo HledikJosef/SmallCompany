@@ -47,7 +47,7 @@
 				</InputSelect>
 				<ValidationMessage For="@( () => NewBlazorProperty.BlazorDateTypeId)"/>
 			</td>
-			
+
 		</tr>
 	</table>
 
@@ -80,15 +80,15 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		List<ServiceDateType> serviceDateTypesInDb = new();
-		List<ServiceProperty> servicePropertiesInDb = new();
+		List<DateType> dateTypesInDb = new();
+		List<Property> propertiesInDb = new();
 
 		try
 		{
-			serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
-			BlazorDateTypesInDb = serviceDateTypesInDb.Select(dateType => DateTypeMapper.MapServiceBlazorDateType(dateType)).OrderBy(dateType => dateType.Name).ToList();
-			servicePropertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
-			blazorPropertiesInDb = servicePropertiesInDb.Select(prop => PropertyMapper.MapServiceBlazorProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
+			BlazorDateTypesInDb = dateTypesInDb.Select(dateType => DateTypeMapper.MapDateType(dateType)).OrderBy(dateType => dateType.Name).ToList();
+			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
+			blazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
 		}
 		catch(Exception ex)
 		{
@@ -106,10 +106,10 @@
 
 		try
 		{
-			ServiceProperty serviceProperty = new ServiceProperty();
-			serviceProperty = PropertyMapper.MapBlazorServicePorperty(NewBlazorProperty);
+			Property newProperty = new Property();
+			newProperty = PropertyMapper.MapProperty(NewBlazorProperty);
 
-			await propertyService.AddPropertyAsync(serviceProperty);
+			await propertyService.AddPropertyAsync(newProperty);
 
 			notification = "Uloženo";
 			StateHasChanged();

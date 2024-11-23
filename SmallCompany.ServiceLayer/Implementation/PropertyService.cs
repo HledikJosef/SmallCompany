@@ -1,7 +1,5 @@
 ﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
-using SmallCompany.ServiceLayer.Mappers;
-using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -14,23 +12,17 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.propertyDao = propertyDao;
         }
 
-        public async Task<List<ServiceProperty>> GetPropertiesFromDaoAsync()
+        public async Task<List<Property>> GetPropertiesFromDaoAsync()
         {
             List<Property> propertiesFromDao = new List<Property>();
             propertiesFromDao = await propertyDao.GetPropertiesFromDbAsync();
 
-            List<ServiceProperty> servicePropertiesFromDao = new List<ServiceProperty>();
-            servicePropertiesFromDao = propertiesFromDao.Select(prop => ServicePropertyMapper.MapServicePropertyFromDao(prop)).ToList();
-
-            return servicePropertiesFromDao;
+            return propertiesFromDao;
 
         }
 
-        public Task AddPropertyAsync(ServiceProperty serviceProperty)
+        public Task AddPropertyAsync(Property property)
         {
-            Property property = new Property();
-            property = ServicePropertyMapper.MapServicePropertyToDao(serviceProperty);
-
             return propertyDao.AddPropertyToDbAsync(property);
         }
     }

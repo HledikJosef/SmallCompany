@@ -1,7 +1,5 @@
 ﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
-using SmallCompany.ServiceLayer.Mappers;
-using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -16,22 +14,16 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.stockWriterDao = stockWriterDao;
         }
 
-        public async Task<List<ServiceStock>> GetStocksFromDaoAsync()
+        public async Task<List<Stock>> GetStocksFromDaoAsync()
         {
-            List<Stock> stocksFromSql = new List<Stock>();
-            stocksFromSql = await stockReaderDao.GetStocksFromDbAsync();
+            List<Stock> stocksFromDb = new List<Stock>();
+            stocksFromDb = await stockReaderDao.GetStocksFromDbAsync();
 
-            List<ServiceStock> serviceStocks = new List<ServiceStock>();
-            serviceStocks = stocksFromSql.Select(stock => ServiceStockMapper.MapServiceStockFromDao(stock)).ToList();
-
-            return serviceStocks;
+            return stocksFromDb;
         }
 
-        public Task AddStockAsync(ServiceStock serviceStock)
+        public Task AddStockAsync(Stock stock)
         {
-            Stock stock = new Stock();
-            stock = ServiceStockMapper.MapServiceStockToDao(serviceStock);
-
             return stockWriterDao.AddStockToDbAsync(stock);
         }
     }

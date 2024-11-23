@@ -1,12 +1,12 @@
-﻿using SmallCompany.ServiceLayer.ModelsService;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer
 {
     public interface IDateTypeService
     {
-        public Task<List<ServiceDateType>> GetDateTypesFromDaoAsync();
-        public Task AddDateTypeAsync(ServiceDateType serviceDateType);
-        public Task UpdateDateTypeAsync(ServiceDateType serviceDateType);
+        public Task<List<DateType>> GetDateTypesFromDaoAsync();
+        public Task AddDateTypeAsync(DateType dateType);
+        public Task UpdateDateTypeAsync(DateType dateType);
 
     }
 }

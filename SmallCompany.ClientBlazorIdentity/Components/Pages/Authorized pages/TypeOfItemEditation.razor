@@ -69,12 +69,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        List<ServiceTypeOfItem> serviceTypesOfItemsInDb = new();
+        List<TypeOfItem> typesOfItemsInDb = new();
 
         try
         {
-            serviceTypesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
-            blazorTypesOfItemsInDb = serviceTypesOfItemsInDb.Select(type => TypeOfItemMapper.MapServiceBlazorTypeOfItem(type)).OrderBy( Type => Type.Name).ToList();
+            typesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
+            blazorTypesOfItemsInDb = typesOfItemsInDb.Select(type => TypeOfItemMapper.MapTypeOfItem(type)).OrderBy( type => type.Name).ToList();
         }
         catch(Exception ex)
         {
@@ -91,10 +91,10 @@
         }
         try
         {
-            ServiceTypeOfItem serviceTypeOfItem = new ServiceTypeOfItem();
-            serviceTypeOfItem = TypeOfItemMapper.MapBlazorServiceTypeOfItem(NewBlazorTypeOfItem);
+            TypeOfItem newTypeOfItem = new TypeOfItem();
+            newTypeOfItem = TypeOfItemMapper.MapTypeOfItem(NewBlazorTypeOfItem);
 
-            await typeOfItemService.AddTypeOfItemAsync(serviceTypeOfItem);
+            await typeOfItemService.AddTypeOfItemAsync(newTypeOfItem);
 
             notification = "Vloženo";
             StateHasChanged();

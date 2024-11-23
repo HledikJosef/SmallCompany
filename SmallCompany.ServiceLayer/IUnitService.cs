@@ -1,10 +1,10 @@
-﻿using SmallCompany.ServiceLayer.ModelsService;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer
 {
     public interface IUnitService
     {
-        public Task<List<ServiceUnit>> GetUnitsFromDaoAsync();
-        public Task AddUnitAsync(ServiceUnit serviceUnit);
+        public Task<List<Unit>> GetUnitsFromDaoAsync();
+        public Task AddUnitAsync(Unit unit);
     }
 }

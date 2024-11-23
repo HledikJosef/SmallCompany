@@ -1,26 +1,26 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class UnitMapper
     {
-        public static BlazorUnit MapServiceBlazorUnit(ServiceUnit serviceUnit)
+        public static BlazorUnit MapUnit(Unit unit)
         {
             BlazorUnit blazorUnit = new BlazorUnit();
-            blazorUnit.Id = serviceUnit.Id;
-            blazorUnit.Name = serviceUnit.Name;
+            blazorUnit.Id = unit.Id;
+            blazorUnit.Name = unit.Name;
 
             return blazorUnit;
         }
 
-        public static ServiceUnit MapBlazorServiceUnit(BlazorUnit blazorUnit)
+        public static Unit MapUnit(BlazorUnit blazorUnit)
         {
-            ServiceUnit serviceUnit = new ServiceUnit();
-            serviceUnit.Id = blazorUnit.Id;
-            serviceUnit.Name = blazorUnit.Name;
+            Unit unit = new Unit();
+            unit.Id = blazorUnit.Id;
+            unit.Name = blazorUnit.Name;
 
-            return serviceUnit;
+            return unit;
         }
     }
 }

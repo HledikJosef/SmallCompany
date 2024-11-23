@@ -1,30 +1,30 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class StockMapper
     {
-        public static BlazorStock MappServiceBlazorStock(ServiceStock serviceStock)
+        public static BlazorStock MapStock(Stock stock)
         {
             BlazorStock blazorStock = new BlazorStock();
-            blazorStock.Id = serviceStock.Id;
-            blazorStock.Name = serviceStock.Name;
-            blazorStock.Location = serviceStock.Location;
-            blazorStock.Description = serviceStock.Description;
+            blazorStock.Id = stock.Id;
+            blazorStock.Name = stock.Name;
+            blazorStock.Location = stock.Location;
+            blazorStock.Description = stock.Description;
 
             return blazorStock;
         }
 
-        public static ServiceStock MappBlazorServisStock(BlazorStock blazorStock)
+        public static Stock MapStock(BlazorStock blazorStock)
         {
-            ServiceStock serviceStock = new ServiceStock();
-            serviceStock.Id = blazorStock.Id;
-            serviceStock.Name = blazorStock.Name;
-            serviceStock.Location = blazorStock.Location;
-            serviceStock.Description = blazorStock.Description;
+            Stock stock = new Stock();
+            stock.Id = blazorStock.Id;
+            stock.Name = blazorStock.Name;
+            stock.Location = blazorStock.Location;
+            stock.Description = blazorStock.Description;
 
-            return serviceStock;
+            return stock;
         }
     }
 }

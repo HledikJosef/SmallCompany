@@ -64,7 +64,7 @@
         <button type="submit" class="btn btn-warning">Uprav záznam</button>
     </EditForm>
 
-    
+
 
 }
 
@@ -81,11 +81,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        List<ServiceDateType> serviceDateTypesInDb = new List<ServiceDateType>();
         try
         {
-            serviceDateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
-            blazorDateTypesInDb = serviceDateTypesInDb.Select(type => DateTypeMapper.MapServiceBlazorDateType(type)).OrderBy(type => type.Name).ToList();
+            List<DateType> dateTypesInDb = new ();
+            dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
+            blazorDateTypesInDb = dateTypesInDb.Select(type => DateTypeMapper.MapDateType(type)).OrderBy(type => type.Name).ToList();
 
         }
         catch(Exception ex)
@@ -105,10 +105,10 @@
 
         try
         {
-            ServiceDateType serviceDateType = new ServiceDateType();
-            serviceDateType = DateTypeMapper.MapBlazorServiceDateType(NewBlazorDateType);
+            DateType dateType = new ();
+            dateType = DateTypeMapper.MapDateType(NewBlazorDateType);
 
-            await dateTypeService.AddDateTypeAsync(serviceDateType);
+            await dateTypeService.AddDateTypeAsync(dateType);
 
             notification = "Vloženo";
             StateHasChanged();
@@ -140,11 +140,11 @@
             return;
         }
         try 
-        {          
+        {
 
-            ServiceDateType serviceDateTypeToUpdate = new();
-            serviceDateTypeToUpdate = DateTypeMapper.MapBlazorServiceDateType(BlazorDateTypeToUpdate);
-            await dateTypeService.UpdateDateTypeAsync(serviceDateTypeToUpdate);
+            DateType dateTypeToUpdate = DateTypeMapper.MapDateType(BlazorDateTypeToUpdate);
+
+            await dateTypeService.UpdateDateTypeAsync(dateTypeToUpdate);
 
             notification = "Záznam byl upraven";
             StateHasChanged();

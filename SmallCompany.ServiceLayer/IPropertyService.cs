@@ -1,10 +1,10 @@
-﻿using SmallCompany.ServiceLayer.ModelsService;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer
 {
-	public interface IPropertyService
-	{
-		public Task<List<ServiceProperty>> GetPropertiesFromDaoAsync();
-		public Task AddPropertyAsync(ServiceProperty serviceProperty);
-	}
+    public interface IPropertyService
+    {
+        public Task<List<Property>> GetPropertiesFromDaoAsync();
+        public Task AddPropertyAsync(Property property);
+    }
 }

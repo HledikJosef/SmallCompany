@@ -1,27 +1,27 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class ItemPropertyValueMapper
     {
-        public static ServiceItemPropertyValue MapBlazorServiceItemPropValue(BlazorProperty blazorProperty)
+        public static ItemPropertyValue MapItemPropValue(BlazorProperty blazorProperty)
         {
-            ServiceItemPropertyValue serviceItemPropertyValue = new ServiceItemPropertyValue();
+            ItemPropertyValue itemPropertyValue = new ItemPropertyValue();
 
-            serviceItemPropertyValue.Value = blazorProperty.Value;
-            serviceItemPropertyValue.ServicePropertyId = blazorProperty.Id;
-            //ServiceItemId se doplní v servisní vrstvě, až bude známo po uložení Item do SQL.
+            itemPropertyValue.Value = blazorProperty.Value;
+            itemPropertyValue.PropertyId = blazorProperty.Id;
+            //ItemId se doplní po uložení Item do SQL.
 
-            return serviceItemPropertyValue;
+            return itemPropertyValue;
         }
 
-        public static BlazorItemPropertyValue MapServiceBlazorItemPropValue(ServiceItemPropertyValue serviceItemPropertyValue)
+        public static BlazorItemPropertyValue MapItemPropValue(ItemPropertyValue itemPropertyValue)
         {
             BlazorItemPropertyValue blazorItemPropertyValue = new BlazorItemPropertyValue();
-            blazorItemPropertyValue.Value = serviceItemPropertyValue.Value;
-            blazorItemPropertyValue.BlazorItemId = serviceItemPropertyValue.ServiceItemId;
-            blazorItemPropertyValue.BlazorPropertyId = serviceItemPropertyValue.ServicePropertyId;
+            blazorItemPropertyValue.Value = itemPropertyValue.Value;
+            blazorItemPropertyValue.BlazorItemId = itemPropertyValue.ItemId;
+            blazorItemPropertyValue.BlazorPropertyId = itemPropertyValue.PropertyId;
 
             return blazorItemPropertyValue;
         }

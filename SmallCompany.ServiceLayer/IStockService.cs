@@ -1,10 +1,10 @@
-﻿using SmallCompany.ServiceLayer.ModelsService;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer
 {
     public interface IStockService
     {
-        public Task<List<ServiceStock>> GetStocksFromDaoAsync();
-        public Task AddStockAsync(ServiceStock serviceStock);
+        public Task<List<Stock>> GetStocksFromDaoAsync();
+        public Task AddStockAsync(Stock stock);
     }
 }

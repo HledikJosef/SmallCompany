@@ -1,11 +1,11 @@
-﻿using SmallCompany.ServiceLayer.ModelsService;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer
 {
     public interface ITypeOfItemService
     {
-        public Task<List<ServiceTypeOfItem>> GetTypesOfItemsFromDaoAsync();
-        public Task AddTypeOfItemAsync(ServiceTypeOfItem serviceTypeOfItem);
+        public Task<List<TypeOfItem>> GetTypesOfItemsFromDaoAsync();
+        public Task AddTypeOfItemAsync(TypeOfItem typeOfItem);
 
     }
 }

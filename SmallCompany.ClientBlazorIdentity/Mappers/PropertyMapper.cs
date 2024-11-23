@@ -1,29 +1,29 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
-	public static class PropertyMapper
-	{
-		public static BlazorProperty MapServiceBlazorProperty(ServiceProperty serviceProperty)
-		{
-			BlazorProperty blazorProperty = new BlazorProperty();
-			blazorProperty.Id = serviceProperty.Id;
-			blazorProperty.Name = serviceProperty.Name;
-			blazorProperty.BlazorDateTypeId = serviceProperty.ServiceDateTypeId;
+    public static class PropertyMapper
+    {
+        public static BlazorProperty MapProperty(Property property)
+        {
+            BlazorProperty blazorProperty = new BlazorProperty();
+            blazorProperty.Id = property.Id;
+            blazorProperty.Name = property.Name;
+            blazorProperty.BlazorDateTypeId = property.DateTypeId;
 
-			return blazorProperty;
+            return blazorProperty;
 
-		}
+        }
 
-		public static ServiceProperty MapBlazorServicePorperty(BlazorProperty blazorProperty)
-		{
-			ServiceProperty serviceProperty = new ServiceProperty();
-			serviceProperty.Id = blazorProperty.Id;
-			serviceProperty.Name = blazorProperty.Name;
-			serviceProperty.ServiceDateTypeId = blazorProperty.BlazorDateTypeId;
+        public static Property MapProperty(BlazorProperty blazorProperty)
+        {
+            Property property = new Property();
+            property.Id = blazorProperty.Id;
+            property.Name = blazorProperty.Name;
+            property.DateTypeId = blazorProperty.BlazorDateTypeId;
 
-			return serviceProperty;
-		}
-	}
+            return property;
+        }
+    }
 }

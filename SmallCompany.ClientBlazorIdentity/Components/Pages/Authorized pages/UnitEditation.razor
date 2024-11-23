@@ -64,12 +64,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        List<ServiceUnit> serviceUnitsInDb = new List<ServiceUnit>();
+        List<Unit> unitsInDb = new List<Unit>();
 
         try
         {
-            serviceUnitsInDb = await unitService.GetUnitsFromDaoAsync();
-            blazorUnitsInDb = serviceUnitsInDb.Select(serviceUnit => UnitMapper.MapServiceBlazorUnit(serviceUnit)).OrderBy(unit=> unit.Name).ToList();
+            unitsInDb = await unitService.GetUnitsFromDaoAsync();
+            blazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit=> unit.Name).ToList();
 
         }
         catch (Exception ex)
@@ -88,10 +88,10 @@
         }
         try
         {
-            ServiceUnit serviceUnit = new ServiceUnit();
-            serviceUnit = UnitMapper.MapBlazorServiceUnit(NewBlazorUnit);
+            Unit newUnit = new Unit();
+            newUnit = UnitMapper.MapUnit(NewBlazorUnit);
 
-            await unitService.AddUnitAsync(serviceUnit);
+            await unitService.AddUnitAsync(newUnit);
 
             notification = "Vloženo ";
             StateHasChanged();

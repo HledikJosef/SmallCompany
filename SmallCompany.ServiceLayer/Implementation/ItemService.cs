@@ -1,7 +1,5 @@
 ﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
-using SmallCompany.ServiceLayer.Mappers;
-using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -16,34 +14,22 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public async Task<List<Item>> GetItemsFromDaoAsync()
         {
-            List<Item> itemsFromDao = new List<Item>();
-            itemsFromDao = await itemDao.GetItemsFromSqlAsync();
+            List<Item> itemsFromDb = new List<Item>();
+            itemsFromDb = await itemDao.GetItemsFromSqlAsync();
 
-            List<ServiceItem> serviceItemsFromDao = new List<ServiceItem>();
-
-            return itemsFromDao;
+            return itemsFromDb;
         }
 
-        public Task AddItemWithPropertiesAsync(ServiceItem serviceItem)
+        public Task AddItemWithPropertiesAsync(Item item)
         {
-            Item item = new Item();
-
-            item = ServiceItemMapper.MapServiceItemToDao(serviceItem);
-            item.ItemPropertyValues = serviceItem.ServiceItemPropertyValues.Select(x => ServiceItemPropValueMapper.MapItemPropertyValueToDao(x)).ToList();
-
             return itemDao.AddItemWithPropertiesToDbAsync(item);
         }
 
-        public async Task<List<int>> CheckItemDuplicityAsync(ServiceItem serviceItem)
+        public async Task<List<int>> CheckItemDuplicityAsync(Item item)
         {
-            Item item = new Item();
+            List<int> existingItemsFromDb = await itemDao.CheckExistingItemAsync(item);
 
-            item = ServiceItemMapper.MapServiceItemToDao(serviceItem);
-            item.ItemPropertyValues = serviceItem.ServiceItemPropertyValues.Select(x => ServiceItemPropValueMapper.MapItemPropertyValueToDao(x)).ToList();
-
-            List<int> existingItemsFromDao = await itemDao.CheckExistingItemAsync(item);
-
-            return existingItemsFromDao;
+            return existingItemsFromDb;
 
         }
 

@@ -1,7 +1,5 @@
 ﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
-using SmallCompany.ServiceLayer.Mappers;
-using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -14,30 +12,23 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.dateTypeDao = dateTypeDao;
         }
 
-        public async Task<List<ServiceDateType>> GetDateTypesFromDaoAsync()
+        public async Task<List<DateType>> GetDateTypesFromDaoAsync()
         {
             List<DateType> dateTypesFromDb = new List<DateType>();
             dateTypesFromDb = await dateTypeDao.GetDateTypesFromDbAsync();
 
-            List<ServiceDateType> serviceDateTypesFromDb = new List<ServiceDateType>();
-            serviceDateTypesFromDb = dateTypesFromDb.Select(dateType => ServiceDateTypeMapper.MapServiceDateTypFromDao(dateType)).ToList();
-
-            return serviceDateTypesFromDb;
+            return dateTypesFromDb;
 
         }
 
-        public Task AddDateTypeAsync(ServiceDateType serviceDateType)
+        public Task AddDateTypeAsync(DateType dateType)
         {
-            DateType dateType = new DateType();
-            dateType = ServiceDateTypeMapper.MapServiceDateTypToDao(serviceDateType);
-
             return dateTypeDao.AddDateTypeToDbAsync(dateType);
         }
 
-        public Task UpdateDateTypeAsync(ServiceDateType serviceDateType)
+        public Task UpdateDateTypeAsync(DateType dateType)
         {
-            DateType dateTypeToUpdate = ServiceDateTypeMapper.MapServiceDateTypToDao(serviceDateType);
-            return dateTypeDao.UpdateDateTypeInDbAsync(dateTypeToUpdate);
+            return dateTypeDao.UpdateDateTypeInDbAsync(dateType);
         }
     }
 }

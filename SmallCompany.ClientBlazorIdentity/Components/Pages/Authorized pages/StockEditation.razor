@@ -56,16 +56,16 @@
 <hr class="my-4">
 <h5>Níže je vypsán seznam všech již vytvořených skladů.</h5>
 
-        @foreach (var stock in blazorStocksInDb)
-        {
-            <div>
-                <p class="btn btn-outline-primary">@stock.Id</p>
-                <p class="btn btn-outline-primary">@stock.Name</p>
-                <p class="btn btn-outline-primary">@stock.Location</p>
-                <p class="btn btn-outline-primary">@stock.Description</p>
-            </div>
-        }
-    
+@foreach (var stock in blazorStocksInDb)
+{
+    <div>
+        <p class="btn btn-outline-primary">@stock.Id</p>
+        <p class="btn btn-outline-primary">@stock.Name</p>
+        <p class="btn btn-outline-primary">@stock.Location</p>
+        <p class="btn btn-outline-primary">@stock.Description</p>
+    </div>
+}
+
 
 
 
@@ -80,11 +80,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        List<ServiceStock> serviceStockinDb = new List<ServiceStock>();
+        List<Stock> stocksInDb = new List<Stock>();
         try
         {
-            serviceStockinDb = await stockService.GetStocksFromDaoAsync();
-            blazorStocksInDb = serviceStockinDb.Select(stock => StockMapper.MappServiceBlazorStock(stock)).ToList();
+            stocksInDb = await stockService.GetStocksFromDaoAsync();
+            blazorStocksInDb = stocksInDb.Select(stock => StockMapper.MapStock(stock)).OrderBy(stock=> stock.Name).ToList();
         }
         catch(Exception ex)
         {
@@ -97,14 +97,14 @@
     {
         if(NewBlazorStock is null)
         {
-            throw new InvalidOperationException();
+            return;
         }
         try
         {
-            ServiceStock serviceStock = new ServiceStock();
-            serviceStock = StockMapper.MappBlazorServisStock(NewBlazorStock);
+            Stock newStock = new Stock();
+            newStock = StockMapper.MapStock(NewBlazorStock);
 
-            await stockService.AddStockAsync(serviceStock);
+            await stockService.AddStockAsync(newStock);
 
             notification = "Vloženo ";
             StateHasChanged();

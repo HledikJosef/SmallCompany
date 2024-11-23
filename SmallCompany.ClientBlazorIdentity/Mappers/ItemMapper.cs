@@ -1,33 +1,33 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class ItemMapper
     {
-        public static ServiceItem MapBlazorServiceItem(BlazorItem blazorItem)
+        public static Item MapItem(BlazorItem blazorItem)
         {
-            ServiceItem serviceItem = new ServiceItem();
+            Item item = new Item();
 
-            serviceItem.Id = blazorItem.Id;
-            serviceItem.Name = blazorItem.Name;
-            serviceItem.UnitId = blazorItem.UnitId;
-            serviceItem.TypeOfItemId = blazorItem.TypeOfItemId;
+            item.Id = blazorItem.Id;
+            item.Name = blazorItem.Name;
+            item.UnitId = blazorItem.UnitId;
+            item.TypeOfItemId = blazorItem.TypeOfItemId;
 
-            return serviceItem;
+            return item;
         }
 
-        public static BlazorItem MapServiceBlazorItem(ServiceItem serviceItem)
+        public static BlazorItem MapServiceBlazorItem(Item item)
         {
             BlazorItem blazorItem = new BlazorItem();
 
-            blazorItem.Id = serviceItem.Id;
-            blazorItem.Name = serviceItem.Name;
-            blazorItem.UnitId = serviceItem.UnitId;
-            blazorItem.TypeOfItemId = serviceItem.TypeOfItemId;
-            blazorItem.BlazorUnit = UnitMapper.MapServiceBlazorUnit(serviceItem.ServiceUnit);
-            blazorItem.BlazorTypeOfItem = TypeOfItemMapper.MapServiceBlazorTypeOfItem(serviceItem.ServiceTypeOfItem);
-            blazorItem.BlazorItemPropertyValues = serviceItem.ServiceItemPropertyValues.Select(x => ItemPropertyValueMapper.MapServiceBlazorItemPropValue(x)).ToList();
+            blazorItem.Id = item.Id;
+            blazorItem.Name = item.Name;
+            blazorItem.UnitId = item.UnitId;
+            blazorItem.TypeOfItemId = item.TypeOfItemId;
+            blazorItem.BlazorUnit = UnitMapper.MapUnit(item.Unit);
+            blazorItem.BlazorTypeOfItem = TypeOfItemMapper.MapTypeOfItem(item.TypeOfItem);
+            blazorItem.BlazorItemPropertyValues = item.ItemPropertyValues.Select(x => ItemPropertyValueMapper.MapItemPropValue(x)).ToList();
 
             return blazorItem;
         }

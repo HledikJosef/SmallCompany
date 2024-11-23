@@ -1,28 +1,28 @@
 ﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor;
-using SmallCompany.ServiceLayer.ModelsService;
+using SmallCompany.Models;
 
 namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class TypeOfItemMapper
     {
-        public static BlazorTypeOfItem MapServiceBlazorTypeOfItem(ServiceTypeOfItem serviceTypeOfItem)
+        public static BlazorTypeOfItem MapTypeOfItem(TypeOfItem typeOfItem)
         {
             BlazorTypeOfItem blazorTypeOfItem = new BlazorTypeOfItem();
 
-            blazorTypeOfItem.Id = serviceTypeOfItem.Id;
-            blazorTypeOfItem.Name = serviceTypeOfItem.Name;
+            blazorTypeOfItem.Id = typeOfItem.Id;
+            blazorTypeOfItem.Name = typeOfItem.Name;
 
             return blazorTypeOfItem;
         }
 
-        public static ServiceTypeOfItem MapBlazorServiceTypeOfItem(BlazorTypeOfItem blazorTypeOfItem)
+        public static TypeOfItem MapTypeOfItem(BlazorTypeOfItem blazorTypeOfItem)
         {
-            ServiceTypeOfItem serviceTypeOfItem = new ServiceTypeOfItem();
+            TypeOfItem typeOfItem = new TypeOfItem();
 
-            serviceTypeOfItem.Id = blazorTypeOfItem.Id;
-            serviceTypeOfItem.Name = blazorTypeOfItem.Name;
+            typeOfItem.Id = blazorTypeOfItem.Id;
+            typeOfItem.Name = blazorTypeOfItem.Name;
 
-            return serviceTypeOfItem;
+            return typeOfItem;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using SmallCompany.DataLayer;
 using SmallCompany.Models;
-using SmallCompany.ServiceLayer.Mappers;
-using SmallCompany.ServiceLayer.ModelsService;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -16,22 +14,16 @@ namespace SmallCompany.ServiceLayer.Implementation
             this.unitWriterDao = unitWriterDao;
         }
 
-        public async Task<List<ServiceUnit>> GetUnitsFromDaoAsync()
+        public async Task<List<Unit>> GetUnitsFromDaoAsync()
         {
-            List<Unit> unitsFromSql = new List<Unit>();
-            unitsFromSql = await unitReaderDao.GetUnitsFromDbAsync();
+            List<Unit> unitsFromDb = new List<Unit>();
+            unitsFromDb = await unitReaderDao.GetUnitsFromDbAsync();
 
-            List<ServiceUnit> serviceUnits = new List<ServiceUnit>();
-            serviceUnits = unitsFromSql.Select(unit => ServiceUnitMapper.MapServiceUnitsFromDao(unit)).ToList();
-
-            return serviceUnits;
+            return unitsFromDb;
         }
 
-        public Task AddUnitAsync(ServiceUnit serviceUnit)
+        public Task AddUnitAsync(Unit unit)
         {
-            Unit unit = new Unit();
-            unit = ServiceUnitMapper.MapServiceUnitsToDao(serviceUnit);
-
             return unitWriterDao.AddUnitToDbAsync(unit);
         }
     }
