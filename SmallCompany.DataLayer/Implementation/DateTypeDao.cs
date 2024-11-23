@@ -26,5 +26,15 @@ namespace SmallCompany.DataLayer.Implementation
             await context.DateTypes.AddAsync(dateType);
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdateDateTypeInDbAsync(DateType dateType)
+        {
+            DateType? dateTypeToChange = (DateType?)await context.FindAsync(typeof(DateType), dateType.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Entry(dateTypeToChange).CurrentValues.SetValues(dateType);
+
+            await context.SaveChangesAsync();
+        }
     }
 }

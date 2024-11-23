@@ -51,7 +51,21 @@
 
 @foreach (var type in blazorDateTypesInDb)
 {
-    <p class="btn btn-outline-primary">@type.Name</p>  
+    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(type)" >@type.Name</button> 
+}
+
+@if(!string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name))
+{
+    <EditForm class="form-control" Model="BlazorDateTypeToUpdate" OnValidSubmit="UpdateDateTypeAsync" FormName="dateTypeUpdate">
+        <DataAnnotationsValidator />
+        <InputText class="form-control" @bind-Value="BlazorDateTypeToUpdate.Name" id="dateTypeNameUpdate"></InputText>
+        <ValidationMessage For="@(() => BlazorDateTypeToUpdate.Name)" />
+
+        <button type="submit" class="btn btn-warning">Uprav záznam</button>
+    </EditForm>
+
+    
+
 }
 
 
@@ -59,6 +73,7 @@
 @code {
     [SupplyParameterFromForm]
     BlazorDateType NewBlazorDateType { get; set; } = new BlazorDateType();
+    BlazorDateType BlazorDateTypeToUpdate { get; set; } = new BlazorDateType();
 
     private List<BlazorDateType> blazorDateTypesInDb = new List<BlazorDateType>();
     private string? notification;
@@ -98,7 +113,7 @@
             notification = "Vloženo";
             StateHasChanged();
             await Task.Delay(1300);
-            
+
 
             RefreshPage();
 
@@ -109,7 +124,40 @@
             notification = "Záznam se nepodařilo uložit ";
         }
 
-        
+
+
+    }
+
+    private void PrepareUpdateForm(BlazorDateType type)
+    {
+        BlazorDateTypeToUpdate = type;
+    }
+
+    private async Task UpdateDateTypeAsync()
+    {
+        if(string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name))
+        {
+            return;
+        }
+        try 
+        {          
+
+            ServiceDateType serviceDateTypeToUpdate = new();
+            serviceDateTypeToUpdate = DateTypeMapper.MapBlazorServiceDateType(BlazorDateTypeToUpdate);
+            await dateTypeService.UpdateDateTypeAsync(serviceDateTypeToUpdate);
+
+            notification = "Záznam byl upraven";
+            StateHasChanged();
+            await Task.Delay(1300);
+
+
+            RefreshPage();
+        }
+        catch (Exception ex) 
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo upravit.";
+        } 
 
     }
 

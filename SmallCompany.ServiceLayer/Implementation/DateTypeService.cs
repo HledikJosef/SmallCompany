@@ -33,5 +33,11 @@ namespace SmallCompany.ServiceLayer.Implementation
 
             return dateTypeDao.AddDateTypeToDbAsync(dateType);
         }
+
+        public Task UpdateDateTypeAsync(ServiceDateType serviceDateType)
+        {
+            DateType dateTypeToUpdate = ServiceDateTypeMapper.MapServiceDateTypToDao(serviceDateType);
+            return dateTypeDao.UpdateDateTypeInDbAsync(dateTypeToUpdate);
+        }
     }
 }
