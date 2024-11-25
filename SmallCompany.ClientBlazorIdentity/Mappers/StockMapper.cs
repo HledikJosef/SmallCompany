@@ -12,6 +12,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             blazorStock.Name = stock.Name;
             blazorStock.Location = stock.Location;
             blazorStock.Description = stock.Description;
+            blazorStock.IsActive = stock.IsActive;
 
             return blazorStock;
         }
@@ -23,6 +24,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             stock.Name = blazorStock.Name;
             stock.Location = blazorStock.Location;
             stock.Description = blazorStock.Description;
+            stock.IsActive = blazorStock.IsActive;
 
             return stock;
         }

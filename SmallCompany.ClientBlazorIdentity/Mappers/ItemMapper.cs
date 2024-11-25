@@ -13,6 +13,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             item.Name = blazorItem.Name;
             item.UnitId = blazorItem.UnitId;
             item.TypeOfItemId = blazorItem.TypeOfItemId;
+            item.IsActive = blazorItem.IsActive;
 
             return item;
         }
@@ -28,6 +29,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             blazorItem.BlazorUnit = UnitMapper.MapUnit(item.Unit);
             blazorItem.BlazorTypeOfItem = TypeOfItemMapper.MapTypeOfItem(item.TypeOfItem);
             blazorItem.BlazorItemPropertyValues = item.ItemPropertyValues.Select(x => ItemPropertyValueMapper.MapItemPropValue(x)).ToList();
+            blazorItem.IsActive = item.IsActive;
 
             return blazorItem;
         }

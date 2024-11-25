@@ -12,15 +12,15 @@ using SmallCompany.Models.Data;
 namespace SmallCompany.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813182808_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241124163921_[SmallComp]")]
+    partial class SmallComp
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -231,6 +231,9 @@ namespace SmallCompany.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -248,6 +251,9 @@ namespace SmallCompany.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -259,6 +265,10 @@ namespace SmallCompany.Models.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TypeOfItemId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Items");
                 });
@@ -301,11 +311,16 @@ namespace SmallCompany.Models.Migrations
                     b.Property<int>("DateTypeId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DateTypeId");
 
                     b.ToTable("Properties");
                 });
@@ -321,6 +336,9 @@ namespace SmallCompany.Models.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -343,6 +361,9 @@ namespace SmallCompany.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -359,6 +380,9 @@ namespace SmallCompany.Models.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -420,29 +444,63 @@ namespace SmallCompany.Models.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SmallCompany.Models.Item", b =>
+                {
+                    b.HasOne("SmallCompany.Models.TypeOfItem", "TypeOfItem")
+                        .WithMany()
+                        .HasForeignKey("TypeOfItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmallCompany.Models.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TypeOfItem");
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("SmallCompany.Models.ItemPropertyValue", b =>
                 {
-                    b.HasOne("SmallCompany.Models.Item", null)
-                        .WithMany("itemPropertyValues")
+                    b.HasOne("SmallCompany.Models.Item", "Item")
+                        .WithMany("ItemPropertyValues")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SmallCompany.Models.Property", null)
-                        .WithMany("itemPropertyValues")
+                    b.HasOne("SmallCompany.Models.Property", "Property")
+                        .WithMany("ItemPropertyValues")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("SmallCompany.Models.Item", b =>
-                {
-                    b.Navigation("itemPropertyValues");
+                    b.Navigation("Item");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("SmallCompany.Models.Property", b =>
                 {
-                    b.Navigation("itemPropertyValues");
+                    b.HasOne("SmallCompany.Models.DateType", "DateType")
+                        .WithMany()
+                        .HasForeignKey("DateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DateType");
+                });
+
+            modelBuilder.Entity("SmallCompany.Models.Item", b =>
+                {
+                    b.Navigation("ItemPropertyValues");
+                });
+
+            modelBuilder.Entity("SmallCompany.Models.Property", b =>
+                {
+                    b.Navigation("ItemPropertyValues");
                 });
 #pragma warning restore 612, 618
         }

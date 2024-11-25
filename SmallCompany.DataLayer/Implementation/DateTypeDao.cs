@@ -36,5 +36,15 @@ namespace SmallCompany.DataLayer.Implementation
 
             await context.SaveChangesAsync();
         }
+
+        public async Task DeleteDateTypeAsync(DateType dateType)
+        {
+            DateType? dateTypeToDelete = (DateType?)await context.FindAsync(typeof(DateType), dateType.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Remove(dateTypeToDelete);
+
+            await context.SaveChangesAsync();
+        }
     }
 }

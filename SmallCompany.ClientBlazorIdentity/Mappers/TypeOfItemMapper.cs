@@ -11,6 +11,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
 
             blazorTypeOfItem.Id = typeOfItem.Id;
             blazorTypeOfItem.Name = typeOfItem.Name;
+            blazorTypeOfItem.IsActive = typeOfItem.IsActive;
 
             return blazorTypeOfItem;
         }
@@ -21,6 +22,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
 
             typeOfItem.Id = blazorTypeOfItem.Id;
             typeOfItem.Name = blazorTypeOfItem.Name;
+            typeOfItem.IsActive = blazorTypeOfItem.IsActive;
 
             return typeOfItem;
         }

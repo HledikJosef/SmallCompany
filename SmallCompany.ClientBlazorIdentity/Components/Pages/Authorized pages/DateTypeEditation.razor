@@ -4,6 +4,7 @@
 
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
+@inject IJSRuntime JsRuntime;
 @rendermode InteractiveServer
 
 <PageTitle>DateType editation</PageTitle>
@@ -51,7 +52,7 @@
 
 @foreach (var type in blazorDateTypesInDb)
 {
-    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(type)" >@type.Name</button> 
+    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(type)" >@type.Name activní?: @type.IsActive</button> 
 }
 
 @if(!string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name))
@@ -62,9 +63,8 @@
         <ValidationMessage For="@(() => BlazorDateTypeToUpdate.Name)" />
 
         <button type="submit" class="btn btn-warning">Uprav záznam</button>
+        <button type="button" class="btn btn-danger" @onclick="DeleteDateTypeAsync">Vymaž záznam</button>
     </EditForm>
-
-
 
 }
 
@@ -107,6 +107,7 @@
         {
             DateType dateType = new ();
             dateType = DateTypeMapper.MapDateType(NewBlazorDateType);
+            dateType.IsActive = true;
 
             await dateTypeService.AddDateTypeAsync(dateType);
 
@@ -161,12 +162,39 @@
 
     }
 
+    private async Task DeleteDateTypeAsync()
+    {
+        if ((string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name)) || (!await JsRuntime.InvokeAsync<bool>("confirm", "Potvrďte vymazání záznamu")))
+        {
+            return;
+        }
+
+        try
+        {
+            DateType dateTypeToDelete = DateTypeMapper.MapDateType(BlazorDateTypeToUpdate);
+
+            await dateTypeService.DeleteDateTypeAsync(dateTypeToDelete);
+
+            notification = "Záznam byl smazán";
+            StateHasChanged();
+            await Task.Delay(1300);
+
+
+            RefreshPage();
+
+        }
+        catch (Exception ex)
+        {
+            exceptionMessage = ex.Message;
+            notification = "Záznam se nepodařilo vymazat.";
+        }
+        
+    }
+
     private void RefreshPage()
     {
         navigationManager.NavigateTo(navigationManager.Uri, true);
     }
-
-
 
 
 }

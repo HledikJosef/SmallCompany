@@ -10,6 +10,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             BlazorUnit blazorUnit = new BlazorUnit();
             blazorUnit.Id = unit.Id;
             blazorUnit.Name = unit.Name;
+            blazorUnit.IsActive = unit.IsActive;
 
             return blazorUnit;
         }
@@ -19,6 +20,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             Unit unit = new Unit();
             unit.Id = blazorUnit.Id;
             unit.Name = blazorUnit.Name;
+            unit.IsActive = blazorUnit.IsActive;
 
             return unit;
         }

@@ -14,4 +14,5 @@ namespace SmallCompany.Models.Data
         public DbSet<Unit> Units { get; set; }
 
     }
+
 }

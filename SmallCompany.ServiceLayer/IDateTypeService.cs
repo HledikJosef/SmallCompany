@@ -7,6 +7,7 @@ namespace SmallCompany.ServiceLayer
         public Task<List<DateType>> GetDateTypesFromDaoAsync();
         public Task AddDateTypeAsync(DateType dateType);
         public Task UpdateDateTypeAsync(DateType dateType);
+        public Task DeleteDateTypeAsync(DateType dateType);
 
     }
 }

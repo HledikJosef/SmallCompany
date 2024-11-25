@@ -133,7 +133,7 @@
 
 			RemoveUnusedProperties(BlazorItemModel.BlazorItemProperties);
 
-			ModifyFloatProperty(BlazorItemModel.BlazorItemProperties);
+			ModifyProperty(BlazorItemModel.BlazorItemProperties);
 
 			Item newItem = new Item();
 			newItem = ItemMapper .MapItem(BlazorItemModel);
@@ -184,7 +184,7 @@
 	}
 
 
-	private void ModifyFloatProperty(List<BlazorProperty> properties)
+	private void ModifyProperty(List<BlazorProperty> properties)
 	{
 		foreach(var prop in properties)
 		{

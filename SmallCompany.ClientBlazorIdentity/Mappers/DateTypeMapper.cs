@@ -10,6 +10,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             DateType dateType = new DateType();
             dateType.Id = blazorDateType.Id;
             dateType.Name = blazorDateType.Name;
+            dateType.IsActive = blazorDateType.IsActive;
 
             return dateType;
         }
@@ -19,6 +20,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             BlazorDateType blazorDateType = new BlazorDateType();
             blazorDateType.Id = dateType.Id;
             blazorDateType.Name = dateType.Name;
+            blazorDateType.IsActive = dateType.IsActive;
 
             return blazorDateType;
         }
