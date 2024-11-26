@@ -24,5 +24,10 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             return typeOfItemDao.AddTypeOfItemToDbAsync(typeOfItem);
         }
+
+        public Task UpdateTypeOfItemAsync(TypeOfItem typeOfItem)
+        {
+            return typeOfItemDao.UpdateTypeOfItemInDbAsync(typeOfItem);
+        }
     }
 }

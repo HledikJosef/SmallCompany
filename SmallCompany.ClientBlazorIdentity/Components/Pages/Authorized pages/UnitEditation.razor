@@ -27,35 +27,60 @@
 
 }
 
-<EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnitAsync" FormName="unitEditation">
-    <DataAnnotationsValidator />    
-    <table class="table">
-        <tbody>
-            <tr>                
-                <InputText class="form-control" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
-                <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>      
+<div>
+    <EditForm Model="NewBlazorUnit" OnValidSubmit="AddUnitAsync" FormName="unitEditation">
+        <DataAnnotationsValidator />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <InputText class="form-control" @bind-Value="NewBlazorUnit.Name" id="unitName" placeholder="Název jednotky" />
+                    <ValidationMessage For="@(() => NewBlazorUnit.Name)"></ValidationMessage>
 
-            </tr>
+                </tr>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+        <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
-</EditForm>
+    </EditForm>
+</div>
 
-<hr class="my-4">
+
+<hr class="my-4" style="visibility: hidden">
 <h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
 
 @foreach(var unit in blazorUnitsInDb)
 {    
-    <p class="btn btn-outline-primary">@unit.Name</p>    
+    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(unit)">@unit.Name, aktivní:@unit.IsActive</button>    
+}
+
+<hr class="my-1" style="visibility: hidden">
+
+@if(!string.IsNullOrEmpty(BlazorUnitToUpdate.Name))
+{
+    <div>
+        <EditForm class="form-control" Model="BlazorUnitToUpdate" OnValidSubmit="UpdateUnit" FormName="unitUpdate">
+            <DataAnnotationsValidator />
+            <InputText class="form-control form-check-inline" @bind-Value="BlazorUnitToUpdate.Name" style="width: 30%" id="unitName" placeholder="Název jednotky" />
+            <ValidationMessage For="@(() => BlazorUnitToUpdate.Name)"></ValidationMessage>
+            <label class="form-check-label" for="IsActive">Aktivní</label>
+            <InputCheckbox class="form-check form-check-inline" id="IsActive" @bind-Value="BlazorUnitToUpdate.IsActive"></InputCheckbox>
+
+            <button type="submit" class="btn btn-warning">Ulož záznam</button>
+
+        </EditForm>
+    </div>
+    
+
 }
 
 
 @code {
     [SupplyParameterFromForm]
     private BlazorUnit NewBlazorUnit { get; set; } = new BlazorUnit();
+
+    private BlazorUnit BlazorUnitToUpdate { get; set; } = new();
 
     private List<BlazorUnit> blazorUnitsInDb = new List<BlazorUnit>();    
     private string? notification;
@@ -88,15 +113,15 @@
         }
         try
         {
-            Unit newUnit = new Unit();
-            newUnit = UnitMapper.MapUnit(NewBlazorUnit);
+            NewBlazorUnit.IsActive = true;
+            Unit newUnit = UnitMapper.MapUnit(NewBlazorUnit);
 
             await unitService.AddUnitAsync(newUnit);
 
             notification = "Vloženo ";
             StateHasChanged();
             await Task.Delay(1300);
-            
+
             RefreshPage();
         }
         catch (Exception ex)
@@ -106,6 +131,41 @@
         }
 
     }
+
+    private void PrepareUpdateForm(BlazorUnit unit)
+    {
+        BlazorUnitToUpdate = unit.CopyUnit();
+    }
+
+    private async Task UpdateUnit()
+    {
+        if(string.IsNullOrEmpty(BlazorUnitToUpdate.Name))
+        {
+            return;
+        }
+
+        try 
+        {
+            Unit uniToUpdate = UnitMapper.MapUnit(BlazorUnitToUpdate);
+
+            await unitService.UpdateUnitAsync(uniToUpdate);
+
+            notification = "Záznam byl změněn";
+            StateHasChanged();
+            await Task.Delay(1300);
+
+            RefreshPage();
+
+        }
+        catch(Exception ex)
+        {
+            notification = "Záznam se nepodařilo upravit";
+            exceptionMessage = ex.Message;
+        }
+
+    }
+
+
 
     private void RefreshPage()
     {

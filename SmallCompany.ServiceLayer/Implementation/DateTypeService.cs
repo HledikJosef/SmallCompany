@@ -30,10 +30,5 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             return dateTypeDao.UpdateDateTypeInDbAsync(dateType);
         }
-
-        public Task DeleteDateTypeAsync(DateType dateType)
-        {
-            return dateTypeDao.DeleteDateTypeAsync(dateType);
-        }
     }
 }

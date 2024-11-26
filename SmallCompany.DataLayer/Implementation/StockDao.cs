@@ -27,5 +27,15 @@ namespace SmallCompany.DataLayer.Implementation
             await context.Stocks.AddAsync(stock);
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdateStockInDbAsync(Stock stock)
+        {
+            Stock? stockToUpdate = (Stock?)await context.FindAsync(typeof(Stock), stock.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Entry(stockToUpdate).CurrentValues.SetValues(stock);
+            await context.SaveChangesAsync();
+        }
+
     }
 }

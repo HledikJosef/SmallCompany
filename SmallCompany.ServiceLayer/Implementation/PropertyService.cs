@@ -25,5 +25,10 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             return propertyDao.AddPropertyToDbAsync(property);
         }
+
+        public Task UpdatePropertyAsync(Property property)
+        {
+            return propertyDao.UpdatePropertyInDbAsync(property);
+        }
     }
 }

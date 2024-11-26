@@ -34,51 +34,53 @@
 
 }
 
-<EditForm Model="BlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
-	<DataAnnotationsValidator />
-	<table class="table">
-		<tr>
-			<td>
-				<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
-					<option disabled selected value="0">Vyber druh položky</option>
-					@foreach (var type in BlazorTypesOfItemInDb)
-					{
-						<option value="@type.Id">@type.Name</option>
-					}
-				</InputSelect>
-				<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
-			</td>
-			<td>
-				<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
-				<ValidationMessage For="@( () => BlazorItemModel.Name)" />
-			</td>
-			<td>
-				<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">					
-					<option disabled selected value="0">Vyber měrnou jednotku</option>
+<div>
+	<EditForm Model="BlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
+		<DataAnnotationsValidator />
+		<table class="table">
+			<tr>
+				<td>
+					<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
+						<option disabled selected value="0">Vyber druh položky</option>
+						@foreach (var type in BlazorTypesOfItemInDb)
+						{
+							<option value="@type.Id">@type.Name</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
+				</td>
+				<td>
+					<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
+					<ValidationMessage For="@( () => BlazorItemModel.Name)" />
+				</td>
+				<td>
+					<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">
+						<option disabled selected value="0">Vyber měrnou jednotku</option>
 
-					@foreach (var unit in BlazorUnitsInDb)
-					{
-						<option value="@unit.Id">@unit.Name</option>
-					}
-				</InputSelect>
-				<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
-			</td>
-		</tr>
-	</table>
+						@foreach (var unit in BlazorUnitsInDb)
+						{
+							<option value="@unit.Id">@unit.Name</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
+				</td>
+			</tr>
+		</table>
 
 
-	@if (BlazorPropertiesInDb != null)
-	{
-		@foreach (var prop in BlazorItemModel.BlazorItemProperties)
+		@if (BlazorPropertiesInDb != null)
 		{
-			<p>
-				<label for="itemProperty">@prop.Name</label>
-				<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>
-			</p>
+			@foreach (var prop in BlazorItemModel.BlazorItemProperties)
+			{
+				<p>
+					<label for="itemProperty">@prop.Name</label>
+					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>
+				</p>
+			}
 		}
-	}
-	<button Type="submit" class="btn btn-primary">Ulož záznam</button>
-</EditForm>	
+		<button Type="submit" class="btn btn-primary">Ulož záznam</button>
+	</EditForm>
+</div>
 
 
 

@@ -6,5 +6,6 @@ namespace SmallCompany.DataLayer
     {
         public Task<List<TypeOfItem>> GetTypeOfItemsFromDbAsync();
         public Task AddTypeOfItemToDbAsync(TypeOfItem typeOfItem);
+        public Task UpdateTypeOfItemInDbAsync(TypeOfItem typeOfItem);
     }
 }

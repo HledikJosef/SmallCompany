@@ -26,5 +26,14 @@ namespace SmallCompany.DataLayer.Implementation
             await context.Properties.AddAsync(property);
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdatePropertyInDbAsync(Property property)
+        {
+            Property? propertyToUpdate = (Property?)await context.FindAsync(typeof(Property), property.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Entry(propertyToUpdate).CurrentValues.SetValues(property);
+            await context.SaveChangesAsync();
+        }
     }
 }

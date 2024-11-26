@@ -6,5 +6,6 @@ namespace SmallCompany.ServiceLayer
     {
         public Task<List<Unit>> GetUnitsFromDaoAsync();
         public Task AddUnitAsync(Unit unit);
+        public Task UpdateUnitAsync(Unit unit);
     }
 }

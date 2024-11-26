@@ -6,6 +6,7 @@ namespace SmallCompany.ServiceLayer
     {
         public Task<List<TypeOfItem>> GetTypesOfItemsFromDaoAsync();
         public Task AddTypeOfItemAsync(TypeOfItem typeOfItem);
+        public Task UpdateTypeOfItemAsync(TypeOfItem typeOfItem);
 
     }
 }

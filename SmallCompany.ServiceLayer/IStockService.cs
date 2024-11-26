@@ -6,5 +6,6 @@ namespace SmallCompany.ServiceLayer
     {
         public Task<List<Stock>> GetStocksFromDaoAsync();
         public Task AddStockAsync(Stock stock);
+        public Task UpdateStockAsync(Stock stock);
     }
 }

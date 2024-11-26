@@ -9,5 +9,11 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public string Name { get; set; } = String.Empty;
         public bool IsActive { get; set; }
 
+
+        public BlazorTypeOfItem CopyTypeOfItem()
+        {
+            return (BlazorTypeOfItem)MemberwiseClone();
+        }
+
     }
 }

@@ -26,5 +26,11 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             return stockWriterDao.AddStockToDbAsync(stock);
         }
+
+        public Task UpdateStockAsync(Stock stock)
+        {
+            return stockWriterDao.UpdateStockInDbAsync(stock);
+        }
+
     }
 }

@@ -30,48 +30,80 @@
 
 }
 
-<EditForm Model="NewBlazorStock" OnValidSubmit="AddStockAsync" FormName="StockEditation">
-    <DataAnnotationsValidator/>
-    <table class="table">
-        <tbody>
-            <tr>
-                <InputText @bind-Value="NewBlazorStock.Name" class="form-control" placeholder="Název skladu" id="title" />
-                <ValidationMessage For="@( () => NewBlazorStock.Name)"/>
-            </tr>
-            <tr>
-                <InputText @bind-Value="NewBlazorStock.Location" class="form-control" placeholder="Lokace skladu" id="location" />
-                <ValidationMessage For="@( () => NewBlazorStock.Location)"/>
-            </tr>
-            <tr>
-                <InputText @bind-Value="NewBlazorStock.Description" class="form-control" placeholder="Stručný popis skladu" id="description" />
-                <ValidationMessage For="@( () => NewBlazorStock.Description)" />
-            </tr>
-        </tbody>
-    </table>
+<div>
+    <EditForm Model="NewBlazorStock" OnValidSubmit="AddStockAsync" FormName="StockEditation">
+        <DataAnnotationsValidator />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <InputText @bind-Value="NewBlazorStock.Name" class="form-control" style="width: 20%" placeholder="Název skladu" id="title" />
+                    <ValidationMessage For="@( () => NewBlazorStock.Name)" />
+                </tr>
+                <tr>
+                    <InputText @bind-Value="NewBlazorStock.Location" class="form-control" style="width: 20%" placeholder="Lokace skladu" id="location" />
+                    <ValidationMessage For="@( () => NewBlazorStock.Location)" />
+                </tr>
+                <tr>
+                    <InputText @bind-Value="NewBlazorStock.Description" class="form-control" style="width: 20%" placeholder="Stručný popis skladu" id="description" />
+                    <ValidationMessage For="@( () => NewBlazorStock.Description)" />
+                </tr>
+            </tbody>
+        </table>
 
-    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+        <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
-</EditForm>
+    </EditForm>
+</div>
 
-<hr class="my-4">
+
+<hr class="my-4" style="visibility: hidden">
 <h5>Níže je vypsán seznam všech již vytvořených skladů.</h5>
+
 
 @foreach (var stock in blazorStocksInDb)
 {
     <div>
-        <p class="btn btn-outline-primary">@stock.Id</p>
-        <p class="btn btn-outline-primary">@stock.Name</p>
-        <p class="btn btn-outline-primary">@stock.Location</p>
-        <p class="btn btn-outline-primary">@stock.Description</p>
+        <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(stock)">@stock.Name,  @stock.Location,  @stock.Description, aktivní:@stock.IsActive</button>
     </div>
 }
 
+<hr class="my-1" style="visibility: hidden">
+
+@if(!string.IsNullOrEmpty(BlazorStockToUpdate.Name))
+{
+    <div>
+        <EditForm class="form-control" Model="BlazorStockToUpdate" OnValidSubmit="UpdateStockAsync" FormName="stockUpdate">
+            <DataAnnotationsValidator />
+            <div>
+                <InputText @bind-Value="BlazorStockToUpdate.Name" class="form-control form-check-inline" style="width: 20%" placeholder="Název skladu" id="title" />
+                <ValidationMessage For="@( () => BlazorStockToUpdate.Name)" />
+
+                <InputText @bind-Value="BlazorStockToUpdate.Location" class="form-control form-check-inline" style="width: 20%" placeholder="Lokace skladu" id="location" />
+                <ValidationMessage For="@( () => BlazorStockToUpdate.Location)" />
+
+                <InputText @bind-Value="BlazorStockToUpdate.Description" class="form-control form-check-inline" style="width: 20%" placeholder="Stručný popis skladu" id="description" />
+                <ValidationMessage For="@( () => BlazorStockToUpdate.Description)" />
+
+                <label class="form-check-label" for="isActive">Aktivní</label>
+                <InputCheckbox class="form-check form-check-inline" id="isActive" @bind-Value="BlazorStockToUpdate.IsActive"></InputCheckbox>
+            </div>
+
+
+            <button type="submit" class="btn btn-warning">Ulož záznam</button>
+
+
+        </EditForm>
+    </div>
+    
+}
 
 
 
 @code {
     [SupplyParameterFromForm]
     private BlazorStock NewBlazorStock { get; set; } = new BlazorStock();
+
+    private BlazorStock BlazorStockToUpdate { get; set; } = new();
 
     private List<BlazorStock> blazorStocksInDb = new List<BlazorStock>();
 
@@ -101,6 +133,7 @@
         }
         try
         {
+            NewBlazorStock.IsActive = true;
             Stock newStock = new Stock();
             newStock = StockMapper.MapStock(NewBlazorStock);
 
@@ -109,7 +142,7 @@
             notification = "Vloženo ";
             StateHasChanged();
             await Task.Delay(1300);
-            
+
             RefreshPage();
         }
         catch (Exception ex)
@@ -117,8 +150,39 @@
             exceptionMessage = ex.Message;
             notification = "Záznam se nepodařilo uložit ";
         }
-        
-        
+
+    }
+
+
+    private void PrepareUpdateForm(BlazorStock stock)
+    {
+        BlazorStockToUpdate = stock.CopyBlazorStock();
+    }
+
+    private void UpdateStockAsync()
+    {
+        if (string.IsNullOrEmpty(BlazorStockToUpdate.Name)) 
+        {
+            return;
+        }
+
+        try 
+        {
+            Stock stockToUpdate = StockMapper.MapStock(BlazorStockToUpdate);
+
+            stockService.UpdateStockAsync(stockToUpdate);
+
+            notification = "Záznam byl upraven";
+            StateHasChanged();
+            Task.Delay(1300);
+
+            RefreshPage();
+        }
+        catch(Exception ex)
+        {
+            notification = "Záznam se nepodařilo upravit.";
+            exceptionMessage = ex.Message;
+        }  
 
     }
 

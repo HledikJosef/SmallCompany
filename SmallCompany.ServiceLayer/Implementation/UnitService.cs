@@ -26,5 +26,10 @@ namespace SmallCompany.ServiceLayer.Implementation
         {
             return unitWriterDao.AddUnitToDbAsync(unit);
         }
+
+        public Task UpdateUnitAsync(Unit unit)
+        {
+            return unitWriterDao.UpdateUnitInDbAsync(unit);
+        }
     }
 }

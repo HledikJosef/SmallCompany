@@ -12,5 +12,11 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         [Required(ErrorMessage = "Popis skladu musí být vyplněn a jeho maximální délka musí být 50 znaků."), MaxLength(50, ErrorMessage = "Maximální délka musí být 50 znaků.")]
         public string Description { get; set; } = String.Empty;
         public bool IsActive { get; set; }
+
+
+        public BlazorStock CopyBlazorStock()
+        {
+            return (BlazorStock)MemberwiseClone();
+        }
     }
 }

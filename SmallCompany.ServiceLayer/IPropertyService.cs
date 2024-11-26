@@ -6,5 +6,6 @@ namespace SmallCompany.ServiceLayer
     {
         public Task<List<Property>> GetPropertiesFromDaoAsync();
         public Task AddPropertyAsync(Property property);
+        public Task UpdatePropertyAsync(Property property);
     }
 }

@@ -29,43 +29,54 @@
     }
 
 }
+<div>
+    <EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateTypeAsync" FormName="dateTypeEditation">
+        <DataAnnotationsValidator />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <InputText class="form-control" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
+                    <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
 
-<EditForm Model="NewBlazorDateType" OnValidSubmit="AddDateTypeAsync" FormName="dateTypeEditation">
-    <DataAnnotationsValidator />
-    <table class="table">
-        <tbody>
-            <tr>
-                <InputText class="form-control" @bind-Value="NewBlazorDateType.Name" id="typeOfItemName" placeholder="Název datového typu" />
-                <ValidationMessage For="@(() => NewBlazorDateType.Name)" />
+                </tr>
 
-            </tr>
+            </tbody>
+        </table>
 
-        </tbody>
-    </table>
+        <button type="submit" class="btn btn-primary">Ulož záznam</button>
 
-    <button type="submit" class="btn btn-primary">Ulož záznam</button>
+    </EditForm>
+</div>
 
-</EditForm>
 
-<hr class="my-4">
+<hr class="my-4" style="visibility: hidden">
 <h5>Níže je vypsán seznam všech již vytvořených typů položek.</h5>
 
 @foreach (var type in blazorDateTypesInDb)
 {
-    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(type)" >@type.Name activní?: @type.IsActive</button> 
+    <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(type)" >@type.Name   -aktivní prvek: @type.IsActive</button> 
 }
+
+<hr class="my-1" style="visibility: hidden">
 
 @if(!string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name))
 {
-    <EditForm class="form-control" Model="BlazorDateTypeToUpdate" OnValidSubmit="UpdateDateTypeAsync" FormName="dateTypeUpdate">
-        <DataAnnotationsValidator />
-        <InputText class="form-control" @bind-Value="BlazorDateTypeToUpdate.Name" id="dateTypeNameUpdate"></InputText>
-        <ValidationMessage For="@(() => BlazorDateTypeToUpdate.Name)" />
+    <div>
+        <EditForm class="form-control" Model="BlazorDateTypeToUpdate" OnValidSubmit="UpdateDateTypeAsync" FormName="dateTypeUpdate">
+            <DataAnnotationsValidator />
+            <div>
+                <InputText class="form-control form-check-inline" style="width: 20%" @bind-Value="BlazorDateTypeToUpdate.Name" id="dateTypeNameUpdate" width="50%"></InputText>
+                <ValidationMessage For="@(() => BlazorDateTypeToUpdate.Name)" />
+                <label class="form-check-label" for="isActive">Aktivní</label>
+                <InputCheckbox class="form-check" @bind-Value="BlazorDateTypeToUpdate.IsActive" id="isActive"></InputCheckbox>
 
-        <button type="submit" class="btn btn-warning">Uprav záznam</button>
-        <button type="button" class="btn btn-danger" @onclick="DeleteDateTypeAsync">Vymaž záznam</button>
-    </EditForm>
+            </div>
 
+            <button type="submit" class="btn btn-warning">Uprav záznam</button>
+        </EditForm>
+
+    </div>
+    
 }
 
 
@@ -105,9 +116,9 @@
 
         try
         {
+            NewBlazorDateType.IsActive = true;
             DateType dateType = new ();
             dateType = DateTypeMapper.MapDateType(NewBlazorDateType);
-            dateType.IsActive = true;
 
             await dateTypeService.AddDateTypeAsync(dateType);
 
@@ -131,7 +142,7 @@
 
     private void PrepareUpdateForm(BlazorDateType type)
     {
-        BlazorDateTypeToUpdate = type;
+        BlazorDateTypeToUpdate =  type.CopyBlazorDateType();
     }
 
     private async Task UpdateDateTypeAsync()
@@ -142,7 +153,6 @@
         }
         try 
         {
-
             DateType dateTypeToUpdate = DateTypeMapper.MapDateType(BlazorDateTypeToUpdate);
 
             await dateTypeService.UpdateDateTypeAsync(dateTypeToUpdate);
@@ -160,36 +170,8 @@
             notification = "Záznam se nepodařilo upravit.";
         } 
 
-    }
-
-    private async Task DeleteDateTypeAsync()
-    {
-        if ((string.IsNullOrEmpty(BlazorDateTypeToUpdate.Name)) || (!await JsRuntime.InvokeAsync<bool>("confirm", "Potvrďte vymazání záznamu")))
-        {
-            return;
-        }
-
-        try
-        {
-            DateType dateTypeToDelete = DateTypeMapper.MapDateType(BlazorDateTypeToUpdate);
-
-            await dateTypeService.DeleteDateTypeAsync(dateTypeToDelete);
-
-            notification = "Záznam byl smazán";
-            StateHasChanged();
-            await Task.Delay(1300);
-
-
-            RefreshPage();
-
-        }
-        catch (Exception ex)
-        {
-            exceptionMessage = ex.Message;
-            notification = "Záznam se nepodařilo vymazat.";
-        }
-        
-    }
+    }    
+    
 
     private void RefreshPage()
     {

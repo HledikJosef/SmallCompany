@@ -26,5 +26,14 @@ namespace SmallCompany.DataLayer.Implementation
             await context.TypesOfItems.AddAsync(typeOfItem);
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdateTypeOfItemInDbAsync(TypeOfItem typeOfItem)
+        {
+            TypeOfItem? typeOfItemToUpdate = (TypeOfItem?)await context.FindAsync(typeof(TypeOfItem), typeOfItem.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Entry(typeOfItemToUpdate).CurrentValues.SetValues(typeOfItem);
+            await context.SaveChangesAsync();
+        }
     }
 }
