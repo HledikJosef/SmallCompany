@@ -12,12 +12,12 @@
 <h1>Editace typů skladových položek.</h1>
 <h5>Zde můžete vytvořit záznam typu skladové položky jako např.: materiál, polotovar, výrobek, služba atd.</h5>
 
-@if (notification != null)
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-    if (exceptionMessage != null)
+    if (!string.IsNullOrWhiteSpace(exceptionMessage))
     {
         <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
+            @notification: <br>@exceptionMessage
         </div>
 
     }

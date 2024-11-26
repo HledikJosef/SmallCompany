@@ -11,12 +11,12 @@
 	Tyto vlastnosti se párují ke skladovaným položkám. Dodržujte formát : název vlastnosti(jednotka vlastnosti). Např. "Hmotnost(kg)"
 </h5>
 
-@if (notification != null)
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-	if (exceptionMessage != null)
+	if (!string.IsNullOrWhiteSpace(exceptionMessage))
 	{
 		<div class="alert alert-danger" role="alert">
-			@notification: @exceptionMessage
+			@notification: <br>@exceptionMessage
 		</div>
 
 	}

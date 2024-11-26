@@ -18,7 +18,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             return item;
         }
 
-        public static BlazorItem MapServiceBlazorItem(Item item)
+        public static BlazorItem MapItem(Item item)
         {
             BlazorItem blazorItem = new BlazorItem();
 

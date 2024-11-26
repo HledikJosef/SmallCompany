@@ -12,12 +12,12 @@
 <h1>Vytvoř nový sklad</h1>
 <h5>Vyplň název skladu, stručný popis a lokaci.</h5>
 
-@if (notification != null)
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-    if (exceptionMessage != null)
+    if (!string.IsNullOrWhiteSpace(exceptionMessage))
     {
         <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
+            @notification: <br>@exceptionMessage
         </div>
 
     }

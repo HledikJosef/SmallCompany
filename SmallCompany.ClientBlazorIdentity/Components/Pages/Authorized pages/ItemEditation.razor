@@ -14,14 +14,14 @@
 <PageTitle>Item editation</PageTitle>
 
 <h1>Vytvoř skladovou položku</h1>
-<h5>Zvol skupinu a vyplň požadované parametry</h5>
+<h5>Zvol skupinu a vyplň požadované vlastnosti. Všechny vlastnosti jsou volitelné. </h5>
 
-@if (!string.IsNullOrEmpty(notification))
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-	if (!string.IsNullOrEmpty(exceptionMessage))
+	if (!string.IsNullOrWhiteSpace(exceptionMessage))
 	{
 		<div class="alert alert-danger" role="alert">
-			@notification @exceptionMessage
+			@notification <br>@exceptionMessage
 		</div>
 
 	}
@@ -35,26 +35,26 @@
 }
 
 <div>
-	<EditForm Model="BlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
+	<EditForm Model="NewBlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
 		<DataAnnotationsValidator />
 		<table class="table">
 			<tr>
 				<td>
-					<InputSelect class="form-select" id="typeOfItem" @bind-Value="BlazorItemModel.TypeOfItemId">
+					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItemModel.TypeOfItemId">
 						<option disabled selected value="0">Vyber druh položky</option>
 						@foreach (var type in BlazorTypesOfItemInDb)
 						{
 							<option value="@type.Id">@type.Name</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="@( () => BlazorItemModel.TypeOfItemId)" />
+					<ValidationMessage For="@( () => NewBlazorItemModel.TypeOfItemId)" />
 				</td>
 				<td>
-					<InputText class="form-control" id="itemName" @bind-Value="BlazorItemModel.Name" placeholder="Název položky" />
-					<ValidationMessage For="@( () => BlazorItemModel.Name)" />
+					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItemModel.Name" placeholder="Název položky" />
+					<ValidationMessage For="@( () => NewBlazorItemModel.Name)" />
 				</td>
 				<td>
-					<InputSelect class="form-select" id="itemUnit" @bind-Value="BlazorItemModel.UnitId">
+					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItemModel.UnitId">
 						<option disabled selected value="0">Vyber měrnou jednotku</option>
 
 						@foreach (var unit in BlazorUnitsInDb)
@@ -62,7 +62,7 @@
 							<option value="@unit.Id">@unit.Name</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="@( () => BlazorItemModel.UnitId)" />
+					<ValidationMessage For="@( () => NewBlazorItemModel.UnitId)" />
 				</td>
 			</tr>
 		</table>
@@ -70,7 +70,7 @@
 
 		@if (BlazorPropertiesInDb != null)
 		{
-			@foreach (var prop in BlazorItemModel.BlazorItemProperties)
+			@foreach (var prop in NewBlazorItemModel.BlazorItemProperties)
 			{
 				<p>
 					<label for="itemProperty">@prop.Name</label>
@@ -89,16 +89,18 @@
 
 
 
+
+
 @code {
 
 	[SupplyParameterFromForm]
-	private BlazorItem BlazorItemModel { get; set; } = new BlazorItem();
+	private BlazorItem NewBlazorItemModel { get; set; } = new BlazorItem();
 
 
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
-	List<int> existingItems = new List<int>();
+	List<BlazorItem> existingBlazorItems = new List<BlazorItem>();
 	private string? notification;
 	private string? exceptionMessage;
 
@@ -115,7 +117,7 @@
 			unitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
-			BlazorItemModel.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			NewBlazorItemModel.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
 
 		}
 		catch(Exception ex)
@@ -131,19 +133,21 @@
 	{
 		try
 		{
+			notification = "";
 			exceptionMessage = "";
+			existingBlazorItems = new();
 
-			RemoveUnusedProperties(BlazorItemModel.BlazorItemProperties);
+			RemoveUnusedProperties(NewBlazorItemModel.BlazorItemProperties);
 
-			ModifyProperty(BlazorItemModel.BlazorItemProperties);
+			ModifyProperty(NewBlazorItemModel.BlazorItemProperties);
 
 			Item newItem = new Item();
-			newItem = ItemMapper .MapItem(BlazorItemModel);
-			newItem.ItemPropertyValues = BlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+			newItem = ItemMapper .MapItem(NewBlazorItemModel);
+			newItem.ItemPropertyValues = NewBlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
 
 			await CheckItemDuplicityAsync(newItem);
 
-			if (existingItems.Count == 0 )
+			if (existingBlazorItems.Count == 0)
 			{
 				await itemService.AddItemWithPropertiesAsync(newItem);
 
@@ -170,11 +174,22 @@
 
 	private async Task CheckItemDuplicityAsync(Item item)
 	{
+		List<Item> existingItems = new();	
 		existingItems = await itemService.CheckItemDuplicityAsync(item);
 
-		if(existingItems.Count>0)
+		notification = "";
+
+		if(existingItems.Count != 0)
 		{
-			notification = "Tento záznam již existuje. ";
+			existingBlazorItems = existingItems.Select(item => ItemMapper.MapItem(item)).ToList();
+
+			string idOutput = "";
+			foreach (var it in existingBlazorItems) 
+			{
+				idOutput += $"ID {it.Id} {it.Name}   ";
+			}
+
+			notification = $"Tento záznam již existuje: {idOutput}  ";
 			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
 		}
 	}

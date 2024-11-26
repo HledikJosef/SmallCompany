@@ -9,12 +9,12 @@
 <h1>Editace jednotek skladovaných položek.</h1>
 <h5>Zde můžete vytvořit záznam měrné jednotky (např.milimetr, litr, kilogram, atd.). Tyto jednotky se používají při uskladnění jakékoli položky na sklad.</h5>
 
-@if (notification != null)
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-    if (exceptionMessage != null)
+    if (!string.IsNullOrWhiteSpace(exceptionMessage))
     {
         <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
+            @notification: <br>@exceptionMessage
         </div>
 
     }
@@ -47,19 +47,19 @@
 </div>
 
 
-<hr class="my-4" style="visibility: hidden">
-<h5>Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
+
+<h5 class="mt-5">Níže je vypsán seznam všech již vytvořených měrných jednotek.</h5>
 
 @foreach(var unit in blazorUnitsInDb)
 {    
     <button class="btn btn-outline-primary" title="Upravit záznam" @onclick="()=>PrepareUpdateForm(unit)">@unit.Name, aktivní:@unit.IsActive</button>    
 }
 
-<hr class="my-1" style="visibility: hidden">
+
 
 @if(!string.IsNullOrEmpty(BlazorUnitToUpdate.Name))
 {
-    <div>
+    <div class="mt-2">
         <EditForm class="form-control" Model="BlazorUnitToUpdate" OnValidSubmit="UpdateUnit" FormName="unitUpdate">
             <DataAnnotationsValidator />
             <InputText class="form-control form-check-inline" @bind-Value="BlazorUnitToUpdate.Name" style="width: 30%" id="unitName" placeholder="Název jednotky" />

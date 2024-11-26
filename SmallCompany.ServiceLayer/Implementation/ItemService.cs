@@ -25,11 +25,12 @@ namespace SmallCompany.ServiceLayer.Implementation
             return itemDao.AddItemWithPropertiesToDbAsync(item);
         }
 
-        public async Task<List<int>> CheckItemDuplicityAsync(Item item)
+        public async Task<List<Item>> CheckItemDuplicityAsync(Item item)
         {
-            List<int> existingItemsFromDb = await itemDao.CheckExistingItemAsync(item);
+            List<Item> existingItemFromDb = new();
+            existingItemFromDb = await itemDao.CheckExistingItemAsync(item);
 
-            return existingItemsFromDb;
+            return existingItemFromDb;
 
         }
 

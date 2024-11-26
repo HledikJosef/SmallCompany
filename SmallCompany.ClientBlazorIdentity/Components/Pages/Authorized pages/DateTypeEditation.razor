@@ -4,7 +4,6 @@
 
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
-@inject IJSRuntime JsRuntime;
 @rendermode InteractiveServer
 
 <PageTitle>DateType editation</PageTitle>
@@ -12,12 +11,12 @@
 <h1>Editace datového typu vlastnosti.</h1>
 <h5>Zde můžete vytvořit záznam datového typu vlastnosti, jako např.: string (text), float (číslo) atd.</h5>
 
-@if (notification != null)
+@if (!string.IsNullOrWhiteSpace(notification))
 {
-    if (exceptionMessage != null)
+    if (!string.IsNullOrWhiteSpace(exceptionMessage))
     {
         <div class="alert alert-danger" role="alert">
-            @notification: @exceptionMessage
+            @notification: <br>@exceptionMessage
         </div>
 
     }
@@ -68,7 +67,7 @@
                 <InputText class="form-control form-check-inline" style="width: 20%" @bind-Value="BlazorDateTypeToUpdate.Name" id="dateTypeNameUpdate" width="50%"></InputText>
                 <ValidationMessage For="@(() => BlazorDateTypeToUpdate.Name)" />
                 <label class="form-check-label" for="isActive">Aktivní</label>
-                <InputCheckbox class="form-check" @bind-Value="BlazorDateTypeToUpdate.IsActive" id="isActive"></InputCheckbox>
+                <InputCheckbox class="form-check form-check-inline" @bind-Value="BlazorDateTypeToUpdate.IsActive" id="isActive"></InputCheckbox>
 
             </div>
 
@@ -76,7 +75,7 @@
         </EditForm>
 
     </div>
-    
+
 }
 
 
@@ -87,6 +86,7 @@
     BlazorDateType BlazorDateTypeToUpdate { get; set; } = new BlazorDateType();
 
     private List<BlazorDateType> blazorDateTypesInDb = new List<BlazorDateType>();
+    private BlazorDateType existingBlazorDateType = new();
     private string? notification;
     private string? exceptionMessage;
 
@@ -94,8 +94,7 @@
     {
         try
         {
-            List<DateType> dateTypesInDb = new ();
-            dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
+            List<DateType> dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
             blazorDateTypesInDb = dateTypesInDb.Select(type => DateTypeMapper.MapDateType(type)).OrderBy(type => type.Name).ToList();
 
         }
@@ -107,6 +106,7 @@
 
     }
 
+
     private async Task AddDateTypeAsync()
     {
         if (string.IsNullOrEmpty(NewBlazorDateType.Name))
@@ -116,18 +116,28 @@
 
         try
         {
+            notification = "";
+            exceptionMessage = "";
+            existingBlazorDateType = new();
+
             NewBlazorDateType.IsActive = true;
             DateType dateType = new ();
             dateType = DateTypeMapper.MapDateType(NewBlazorDateType);
 
-            await dateTypeService.AddDateTypeAsync(dateType);
+            await CheckDuplicityAsync(dateType);
 
-            notification = "Vloženo";
-            StateHasChanged();
-            await Task.Delay(1300);
+            if(existingBlazorDateType.Id == 0)
+            {
+                await dateTypeService.AddDateTypeAsync(dateType);
+
+                notification = "Vloženo";
+                StateHasChanged();
+                await Task.Delay(1300);
 
 
-            RefreshPage();
+                RefreshPage();
+            }
+            
 
         }
         catch(Exception ex)
@@ -139,6 +149,22 @@
 
 
     }
+
+
+    private async Task CheckDuplicityAsync(DateType dateType) 
+    {        
+        DateType existingDateType = await dateTypeService.CheckDateTypeDuplicityAsync(dateType);        
+
+        if(existingDateType != null)
+        {
+            existingBlazorDateType = DateTypeMapper.MapDateType(existingDateType);
+
+            notification = $"Tento záznam již existuje: Id{existingBlazorDateType.Id}.. {existingBlazorDateType.Name}";
+            exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
+        }
+        
+    }
+
 
     private void PrepareUpdateForm(BlazorDateType type)
     {
