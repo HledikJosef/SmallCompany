@@ -31,9 +31,9 @@ namespace SmallCompany.ServiceLayer.Implementation
             return dateTypeDao.UpdateDateTypeInDbAsync(dateType);
         }
 
-        public async Task<DateType> CheckDateTypeDuplicityAsync(DateType dateType)
+        public async Task<DateType?> CheckDateTypeDuplicityAsync(DateType dateType)
         {
-            DateType existingDateType = await dateTypeDao.CheckDateTypeDuplicity(dateType);
+            DateType? existingDateType = await dateTypeDao.CheckDateTypeDuplicity(dateType);
             return existingDateType;
         }
     }

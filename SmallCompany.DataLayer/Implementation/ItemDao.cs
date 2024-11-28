@@ -29,7 +29,7 @@ namespace SmallCompany.DataLayer.Implementation
 
         }
 
-        public async Task<List<Item>> CheckExistingItemAsync(Item item)
+        public async Task<Item?> CheckExistingItemAsync(Item item)
         {
             string sqlQuery = $"SELECT i.* FROM Items i WHERE i.Name = '{item.Name}' AND i.Id IN ( SELECT ipv1.ItemId FROM ItemsPropertyValue ipv1 WHERE ";
 
@@ -54,11 +54,9 @@ namespace SmallCompany.DataLayer.Implementation
 
             sqlQuery += $"GROUP BY ipv1.ItemId HAVING COUNT(DISTINCT ipv1.PropertyId) = {index} )";
 
+            Item? existingItem = await context.Items.FromSqlRaw(sqlQuery).FirstOrDefaultAsync();
 
-            List<Item> existingItems = new List<Item>();
-            existingItems = await context.Items.FromSqlRaw(sqlQuery).ToListAsync();
-
-            return existingItems;
+            return existingItem;
         }
 
 

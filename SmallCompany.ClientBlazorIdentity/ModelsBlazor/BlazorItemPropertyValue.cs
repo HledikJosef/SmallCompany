@@ -11,5 +11,12 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public int BlazorItemId { get; set; }
 
         public int BlazorPropertyId { get; set; }
+
+
+
+        public BlazorItemPropertyValue CopyItemPropertyValue()
+        {
+            return (BlazorItemPropertyValue)MemberwiseClone();
+        }
     }
 }

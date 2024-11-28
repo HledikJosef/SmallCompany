@@ -37,11 +37,9 @@ namespace SmallCompany.DataLayer.Implementation
             await context.SaveChangesAsync();
         }
 
-        public async Task<DateType> CheckDateTypeDuplicity(DateType dateTypeToCheck)
+        public async Task<DateType?> CheckDateTypeDuplicity(DateType dateTypeToCheck)
         {
-            DateType? existingDateType = existingDateType = await context.DateTypes.Where(dt => dt.Name == dateTypeToCheck.Name).FirstOrDefaultAsync()
-                ?? throw new InvalidOperationException();
-
+            DateType? existingDateType = await context.DateTypes.Where(dt => dt.Name == dateTypeToCheck.Name).FirstOrDefaultAsync();
             return existingDateType;
         }
     }

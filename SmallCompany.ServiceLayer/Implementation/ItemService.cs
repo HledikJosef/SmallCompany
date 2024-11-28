@@ -25,14 +25,23 @@ namespace SmallCompany.ServiceLayer.Implementation
             return itemDao.AddItemWithPropertiesToDbAsync(item);
         }
 
-        public async Task<List<Item>> CheckItemDuplicityAsync(Item item)
+        public async Task<Item?> CheckItemDuplicityAsync(Item item)
         {
-            List<Item> existingItemFromDb = new();
-            existingItemFromDb = await itemDao.CheckExistingItemAsync(item);
+            item.Name = StringModifier.ModifyString(item.Name);
+            item.ItemPropertyValues.RemoveAll(ipv => string.IsNullOrWhiteSpace(ipv.Value));
+
+            foreach (var ipv in item.ItemPropertyValues)
+            {
+                string ipvValue = StringModifier.ModifyString(ipv.Value);
+                ipv.Value = ipvValue;
+            }
+
+            Item? existingItemFromDb = await itemDao.CheckExistingItemAsync(item);
 
             return existingItemFromDb;
 
         }
+
 
 
 

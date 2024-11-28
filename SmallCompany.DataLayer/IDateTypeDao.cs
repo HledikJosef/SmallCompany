@@ -7,7 +7,7 @@ namespace SmallCompany.DataLayer
         public Task<List<DateType>> GetDateTypesFromDbAsync();
         public Task AddDateTypeToDbAsync(DateType dateType);
         public Task UpdateDateTypeInDbAsync(DateType dateType);
-        public Task<DateType> CheckDateTypeDuplicity(DateType dateTypeToCheck);
+        public Task<DateType?> CheckDateTypeDuplicity(DateType dateTypeToCheck);
 
     }
 }

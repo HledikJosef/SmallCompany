@@ -6,7 +6,7 @@ namespace SmallCompany.DataLayer
     {
         public Task<List<Item>> GetItemsFromSqlAsync();
         public Task AddItemWithPropertiesToDbAsync(Item itemWithProperties);
-        public Task<List<Item>> CheckExistingItemAsync(Item item);
+        public Task<Item?> CheckExistingItemAsync(Item item);
 
     }
 }

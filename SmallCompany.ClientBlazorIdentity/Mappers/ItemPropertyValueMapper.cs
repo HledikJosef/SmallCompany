@@ -25,5 +25,6 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
 
             return blazorItemPropertyValue;
         }
+
     }
 }

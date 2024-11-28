@@ -35,26 +35,26 @@
 }
 
 <div>
-	<EditForm Model="NewBlazorItemModel" OnValidSubmit="AddItemAsync" FormName="itemEditation">
+	<EditForm Model="NewBlazorItem" OnValidSubmit="AddItemAsync" FormName="itemEditation">
 		<DataAnnotationsValidator />
 		<table class="table">
 			<tr>
 				<td>
-					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItemModel.TypeOfItemId">
+					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId">
 						<option disabled selected value="0">Vyber druh položky</option>
 						@foreach (var type in BlazorTypesOfItemInDb)
 						{
 							<option value="@type.Id">@type.Name</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="@( () => NewBlazorItemModel.TypeOfItemId)" />
+					<ValidationMessage For="@( () => NewBlazorItem.TypeOfItemId)" />
 				</td>
 				<td>
-					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItemModel.Name" placeholder="Název položky" />
-					<ValidationMessage For="@( () => NewBlazorItemModel.Name)" />
+					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Název položky" />
+					<ValidationMessage For="@( () => NewBlazorItem.Name)" />
 				</td>
 				<td>
-					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItemModel.UnitId">
+					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId">
 						<option disabled selected value="0">Vyber měrnou jednotku</option>
 
 						@foreach (var unit in BlazorUnitsInDb)
@@ -62,15 +62,15 @@
 							<option value="@unit.Id">@unit.Name</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="@( () => NewBlazorItemModel.UnitId)" />
+					<ValidationMessage For="@( () => NewBlazorItem.UnitId)" />
 				</td>
 			</tr>
 		</table>
 
 
-		@if (BlazorPropertiesInDb != null)
+		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
 		{
-			@foreach (var prop in NewBlazorItemModel.BlazorItemProperties)
+			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
 			{
 				<p>
 					<label for="itemProperty">@prop.Name</label>
@@ -81,12 +81,69 @@
 		<button Type="submit" class="btn btn-primary">Ulož záznam</button>
 	</EditForm>
 </div>
+	
 
 
+@if (BlazorItemsInDb.Count != 0) 
+{
+
+	@foreach (var it in BlazorItemsInDb) 
+	{
+		string properties = "";
+		@foreach (var ipv in it.BlazorItemPropertyValues)
+		{
+			propertyName = BlazorPropertiesInDb.Find(x => x.Id == ipv.BlazorPropertyId).Name;
+			properties += $"{propertyName}: {ipv.Value}, ";
+		}
+		<button class="btn btn-outline-primary" @onclick="()=>PrepareUpdateForm(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, @properties</button>	
+	}
+}
+
+@if (BlazorItemToUpdate.Id > 0) 
+{
+	<div>
+		<EditForm class="form-control" Model="BlazorItemToUpdate" FormName="itemUpdate">
+			<DataAnnotationsValidator />
+			<InputSelect class="form-select form-check-inline" style="width: 30%" id="typeOfItem" @bind-Value="BlazorItemToUpdate.TypeOfItemId">
+				<option disabled selected value="0">Vyber druh položky</option>
+				@foreach (var type in BlazorTypesOfItemInDb)
+				{
+					<option value="@type.Id">@type.Name</option>
+				}
+			</InputSelect>
+			<ValidationMessage For="@( () => BlazorItemToUpdate.TypeOfItemId)" />
+
+			<InputText class="form-control form-check-inline" style="width: 30%" id="itemName" @bind-Value="BlazorItemToUpdate.Name" placeholder="Název položky" />
+			<ValidationMessage For="@( () => BlazorItemToUpdate.Name)" />
+
+			<InputSelect class="form-select form-check-inline" style="width: 30%" id="itemUnit" @bind-Value="BlazorItemToUpdate.UnitId">
+				<option disabled selected value="0">Vyber měrnou jednotku</option>
+
+				@foreach (var unit in BlazorUnitsInDb)
+				{
+					<option value="@unit.Id">@unit.Name</option>
+				}
+			</InputSelect>
+			<ValidationMessage For="@( () => BlazorItemToUpdate.UnitId)" />
+
+			@if (BlazorPropertiesInDb.Count > 0)
+			{
+				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
+				{
+					propertyUpdateName = BlazorPropertiesInDb.Find(prop => prop.Id == ipv.BlazorPropertyId).Name;
+					<p>
+						<label for="itemProperty">@propertyUpdateName</label>
+						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
+					</p>
+				}
+			}
+
+		</EditForm>
+
+	</div>
 
 
-
-
+}
 
 
 
@@ -94,13 +151,19 @@
 @code {
 
 	[SupplyParameterFromForm]
-	private BlazorItem NewBlazorItemModel { get; set; } = new BlazorItem();
+	private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
+	private BlazorItem BlazorItemToUpdate { get; set; } = new BlazorItem();
 
 
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
-	List<BlazorItem> existingBlazorItems = new List<BlazorItem>();
+
+	private List<BlazorItem> BlazorItemsInDb { get; set; } = new List<BlazorItem>();
+
+	BlazorItem existingBlazorItem = new BlazorItem();
+	string propertyUpdateName = "";
+	string propertyName = "";
 	private string? notification;
 	private string? exceptionMessage;
 
@@ -109,6 +172,7 @@
 		List<TypeOfItem> typesOfItemsInDb = new();
 		List<Unit> unitsInDb = new();
 		List<Property> propertiesInDb = new();
+		List<Item> itemsInDb = new();
 
 		try
 		{
@@ -117,7 +181,10 @@
 			unitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
-			NewBlazorItemModel.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			BlazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop=>prop.Name).ToList();
+			NewBlazorItem.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
+			itemsInDb = await itemService.GetItemsFromDaoAsync();
+			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
 
 		}
 		catch(Exception ex)
@@ -135,19 +202,15 @@
 		{
 			notification = "";
 			exceptionMessage = "";
-			existingBlazorItems = new();
-
-			RemoveUnusedProperties(NewBlazorItemModel.BlazorItemProperties);
-
-			ModifyProperty(NewBlazorItemModel.BlazorItemProperties);
+			existingBlazorItem = new();
 
 			Item newItem = new Item();
-			newItem = ItemMapper .MapItem(NewBlazorItemModel);
-			newItem.ItemPropertyValues = NewBlazorItemModel.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
-
+			newItem = ItemMapper.MapItem(NewBlazorItem);
+			newItem.ItemPropertyValues = NewBlazorItem.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+			
 			await CheckItemDuplicityAsync(newItem);
 
-			if (existingBlazorItems.Count == 0)
+			if (existingBlazorItem.Id == 0)
 			{
 				await itemService.AddItemWithPropertiesAsync(newItem);
 
@@ -172,46 +235,23 @@
 
 	}
 
+	private void PrepareUpdateForm(BlazorItem blazorItem)
+	{
+		BlazorItemToUpdate =  blazorItem.CopyItem();
+	}
+
 	private async Task CheckItemDuplicityAsync(Item item)
 	{
-		List<Item> existingItems = new();	
-		existingItems = await itemService.CheckItemDuplicityAsync(item);
+		Item? existingItem = await itemService.CheckItemDuplicityAsync(item);
 
 		notification = "";
 
-		if(existingItems.Count != 0)
+		if(existingItem != null)
 		{
-			existingBlazorItems = existingItems.Select(item => ItemMapper.MapItem(item)).ToList();
+			existingBlazorItem = ItemMapper.MapItem(existingItem);
 
-			string idOutput = "";
-			foreach (var it in existingBlazorItems) 
-			{
-				idOutput += $"ID {it.Id} {it.Name}   ";
-			}
-
-			notification = $"Tento záznam již existuje: {idOutput}  ";
+			notification = $"Tento záznam již existuje: {existingBlazorItem.Id}.. {existingBlazorItem.Name}";
 			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
-		}
-	}
-
-
-	private void RemoveUnusedProperties(List<BlazorProperty> properties)
-	{
-		properties.RemoveAll(property => string.IsNullOrWhiteSpace(property.Value));
-	}
-
-
-	private void ModifyProperty(List<BlazorProperty> properties)
-	{
-		foreach(var prop in properties)
-		{
-			prop.Value.ToLower();
-
-			if(float.TryParse(prop.Value,NumberStyles.Any,CultureInfo.InvariantCulture, out float parsedFloatValue)) 
-			{
-				string value = prop.Value.Replace('.',',');
-				prop.Value = value;
-			}
 		}
 	}
 
