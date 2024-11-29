@@ -23,11 +23,15 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public Task AddPropertyAsync(Property property)
         {
+            property.Name = StringModifier.ModifyString(property.Name);
+
             return propertyDao.AddPropertyToDbAsync(property);
         }
 
         public Task UpdatePropertyAsync(Property property)
         {
+            property.Name = StringModifier.ModifyString(property.Name);
+
             return propertyDao.UpdatePropertyInDbAsync(property);
         }
     }

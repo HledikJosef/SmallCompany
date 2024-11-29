@@ -7,6 +7,7 @@ namespace SmallCompany.ServiceLayer
         public Task<List<Item>> GetItemsFromDaoAsync();
         public Task AddItemWithPropertiesAsync(Item item);
         public Task<Item?> CheckItemDuplicityAsync(Item item);
+        public Task UpdateItemAsync(Item item);
 
     }
 }

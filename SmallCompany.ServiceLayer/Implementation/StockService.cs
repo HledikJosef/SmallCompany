@@ -24,11 +24,19 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public Task AddStockAsync(Stock stock)
         {
+            stock.Name = StringModifier.ModifyString(stock.Name);
+            stock.Location = StringModifier.ModifyString(stock.Location);
+            stock.Description = StringModifier.ModifyString(stock.Description);
+
             return stockWriterDao.AddStockToDbAsync(stock);
         }
 
         public Task UpdateStockAsync(Stock stock)
         {
+            stock.Name = StringModifier.ModifyString(stock.Name);
+            stock.Location = StringModifier.ModifyString(stock.Location);
+            stock.Description = StringModifier.ModifyString(stock.Description);
+
             return stockWriterDao.UpdateStockInDbAsync(stock);
         }
 

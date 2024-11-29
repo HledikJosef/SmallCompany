@@ -16,6 +16,7 @@
 <h1>Vytvoř skladovou položku</h1>
 <h5>Zvol skupinu a vyplň požadované vlastnosti. Všechny vlastnosti jsou volitelné. </h5>
 
+
 @if (!string.IsNullOrWhiteSpace(notification))
 {
 	if (!string.IsNullOrWhiteSpace(exceptionMessage))
@@ -68,9 +69,9 @@
 		</table>
 
 
-		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
+		@if (BlazorPropertiesInDb.Count != 0)
 		{
-			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
+			@foreach (var prop in BlazorPropertiesInDb)
 			{
 				<p>
 					<label for="itemProperty">@prop.Name</label>
@@ -81,7 +82,7 @@
 		<button Type="submit" class="btn btn-primary">Ulož záznam</button>
 	</EditForm>
 </div>
-	
+
 
 
 @if (BlazorItemsInDb.Count != 0) 
@@ -102,7 +103,7 @@
 @if (BlazorItemToUpdate.Id > 0) 
 {
 	<div>
-		<EditForm class="form-control" Model="BlazorItemToUpdate" FormName="itemUpdate">
+		<EditForm class="form-control" Model="BlazorItemToUpdate" OnValidSubmit="UpdateItemAsync" FormName="itemUpdate">
 			<DataAnnotationsValidator />
 			<InputSelect class="form-select form-check-inline" style="width: 30%" id="typeOfItem" @bind-Value="BlazorItemToUpdate.TypeOfItemId">
 				<option disabled selected value="0">Vyber druh položky</option>
@@ -137,6 +138,8 @@
 					</p>
 				}
 			}
+
+			<button type="submit" class="btn btn-warning">Uprav záznam</button>
 
 		</EditForm>
 
@@ -182,7 +185,6 @@
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			BlazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop=>prop.Name).ToList();
-			NewBlazorItem.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
 			itemsInDb = await itemService.GetItemsFromDaoAsync();
 			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
 
@@ -206,8 +208,8 @@
 
 			Item newItem = new Item();
 			newItem = ItemMapper.MapItem(NewBlazorItem);
-			newItem.ItemPropertyValues = NewBlazorItem.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
-			
+			newItem.ItemPropertyValues = BlazorPropertiesInDb.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+
 			await CheckItemDuplicityAsync(newItem);
 
 			if (existingBlazorItem.Id == 0)
@@ -231,6 +233,35 @@
 			StateHasChanged();
 		}
 
+
+
+	}
+
+	private async Task UpdateItemAsync()
+	{
+		if (string.IsNullOrEmpty(BlazorItemToUpdate.Name))
+		{
+			return;
+		}
+
+		try 
+		{
+			Item itemToUpdate = ItemMapper.MapItem(BlazorItemToUpdate);
+
+			await itemService.UpdateItemAsync(itemToUpdate);
+
+			notification = "Záznam byl upraven";
+			StateHasChanged();
+			await Task.Delay(1300);
+
+
+			RefreshPage();
+		}
+		catch(Exception ex)
+		{
+			notification = "Záznam se nepodařilo upravit.";
+			exceptionMessage = ex.Message;
+		}
 
 
 	}

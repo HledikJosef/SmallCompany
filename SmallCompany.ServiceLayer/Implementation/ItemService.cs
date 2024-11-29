@@ -42,7 +42,19 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         }
 
+        public Task UpdateItemAsync(Item item)
+        {
+            item.Name = StringModifier.ModifyString(item.Name);
+            item.ItemPropertyValues.RemoveAll(ipv => string.IsNullOrWhiteSpace(ipv.Value));
 
+            foreach (var ipv in item.ItemPropertyValues)
+            {
+                string ipvValue = StringModifier.ModifyString(ipv.Value);
+                ipv.Value = ipvValue;
+            }
+
+            return itemDao.UpdateItemInDbAsync(item);
+        }
 
 
 

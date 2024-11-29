@@ -8,6 +8,7 @@ namespace SmallCompany.DataLayer.Implementation
     {
         private readonly ApplicationDbContext context;
         private readonly string connectionString;
+
         public ItemDao(ApplicationDbContext context)
         {
             this.context = context;
@@ -57,6 +58,16 @@ namespace SmallCompany.DataLayer.Implementation
             Item? existingItem = await context.Items.FromSqlRaw(sqlQuery).FirstOrDefaultAsync();
 
             return existingItem;
+        }
+
+        public async Task UpdateItemInDbAsync(Item item)
+        {
+            Item? itemToUpdate = (Item?)await context.FindAsync(typeof(Item), item.Id)
+                ?? throw new InvalidOperationException();
+
+            context.Entry(itemToUpdate).CurrentValues.SetValues(item);
+
+            await context.SaveChangesAsync();
         }
 
 

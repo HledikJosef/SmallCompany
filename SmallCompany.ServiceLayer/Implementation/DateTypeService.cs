@@ -23,16 +23,22 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public Task AddDateTypeAsync(DateType dateType)
         {
+            dateType.Name = StringModifier.ModifyString(dateType.Name);
+
             return dateTypeDao.AddDateTypeToDbAsync(dateType);
         }
 
         public Task UpdateDateTypeAsync(DateType dateType)
         {
+            dateType.Name = StringModifier.ModifyString(dateType.Name);
+
             return dateTypeDao.UpdateDateTypeInDbAsync(dateType);
         }
 
         public async Task<DateType?> CheckDateTypeDuplicityAsync(DateType dateType)
         {
+            dateType.Name = StringModifier.ModifyString(dateType.Name);
+
             DateType? existingDateType = await dateTypeDao.CheckDateTypeDuplicity(dateType);
             return existingDateType;
         }

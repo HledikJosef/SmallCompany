@@ -22,11 +22,15 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public Task AddTypeOfItemAsync(TypeOfItem typeOfItem)
         {
+            typeOfItem.Name = StringModifier.ModifyString(typeOfItem.Name);
+
             return typeOfItemDao.AddTypeOfItemToDbAsync(typeOfItem);
         }
 
         public Task UpdateTypeOfItemAsync(TypeOfItem typeOfItem)
         {
+            typeOfItem.Name = StringModifier.ModifyString(typeOfItem.Name);
+
             return typeOfItemDao.UpdateTypeOfItemInDbAsync(typeOfItem);
         }
     }
