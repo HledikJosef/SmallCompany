@@ -19,7 +19,8 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public BlazorTypeOfItem BlazorTypeOfItem { get; set; } = null!;
 
         public List<BlazorProperty> BlazorItemProperties { get; set; } = new List<BlazorProperty>();
-
+        [BlazorItemValidation(ErrorMessage = "Vyplňte číslo .")]
+        public List<BlazorDateType> BlazorDateTypes { get; set; } = new List<BlazorDateType>();
         public List<BlazorItemPropertyValue> BlazorItemPropertyValues { get; set; } = new List<BlazorItemPropertyValue>();
 
 

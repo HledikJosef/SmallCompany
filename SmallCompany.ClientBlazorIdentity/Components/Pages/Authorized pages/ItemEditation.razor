@@ -7,6 +7,7 @@
 @inject IStockService stockService;
 @inject IPropertyService propertyService;
 @inject IItemService itemService;
+@inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
@@ -68,14 +69,15 @@
 			</tr>
 		</table>
 
-
-		@if (BlazorPropertiesInDb.Count != 0)
+		<ValidationMessage For="@(()=>NewBlazorItem.BlazorItemProperties)" />
+		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
 		{
-			@foreach (var prop in BlazorPropertiesInDb)
+			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
 			{
 				<p>
 					<label for="itemProperty">@prop.Name</label>
-					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>
+					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>			
+
 				</p>
 			}
 		}
@@ -96,7 +98,7 @@
 			propertyName = BlazorPropertiesInDb.Find(x => x.Id == ipv.BlazorPropertyId).Name;
 			properties += $"{propertyName}: {ipv.Value}, ";
 		}
-		<button class="btn btn-outline-primary" @onclick="()=>PrepareUpdateForm(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, @properties</button>	
+		<button class="btn btn-outline-primary" @onclick="()=>PrepareUpdateForm(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
 	}
 }
 
@@ -130,14 +132,18 @@
 			@if (BlazorPropertiesInDb.Count > 0)
 			{
 				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
-				{
-					propertyUpdateName = BlazorPropertiesInDb.Find(prop => prop.Id == ipv.BlazorPropertyId).Name;
+				{					
+					BlazorProperty? property = BlazorPropertiesInDb.Find(prop => prop.Id == ipv.BlazorPropertyId);
+					
 					<p>
-						<label for="itemProperty">@propertyUpdateName</label>
+						<label for="itemProperty">@property.Name</label>
 						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
 					</p>
 				}
 			}
+
+			<label class="form-check-label" for="isActive">Aktivní</label>
+			<InputCheckbox class="form-check-inline" id="isActive" @bind-Value="BlazorItemToUpdate.IsActive"></InputCheckbox>
 
 			<button type="submit" class="btn btn-warning">Uprav záznam</button>
 
@@ -153,11 +159,11 @@
 
 @code {
 
-	[SupplyParameterFromForm]
-	private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
+		[SupplyParameterFromForm]
+		private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
 	private BlazorItem BlazorItemToUpdate { get; set; } = new BlazorItem();
 
-
+	private List<BlazorDateType> BlazorDateTypesIndDb { get; set; } = new List<BlazorDateType>();
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
@@ -172,6 +178,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		List<DateType> dateTypesInDb = new();
 		List<TypeOfItem> typesOfItemsInDb = new();
 		List<Unit> unitsInDb = new();
 		List<Property> propertiesInDb = new();
@@ -179,12 +186,15 @@
 
 		try
 		{
+			dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
+			NewBlazorItem.BlazorDateTypes = dateTypesInDb.Select(dt => DateTypeMapper.MapDateType(dt)).ToList();
 			typesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
 			BlazorTypesOfItemInDb = typesOfItemsInDb.Select(type => TypeOfItemMapper.MapTypeOfItem(type)).OrderBy(type => type.Name).ToList();
 			unitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			BlazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop=>prop.Name).ToList();
+			NewBlazorItem.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
 			itemsInDb = await itemService.GetItemsFromDaoAsync();
 			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
 
@@ -205,6 +215,8 @@
 			notification = "";
 			exceptionMessage = "";
 			existingBlazorItem = new();
+
+			NewBlazorItem.IsActive = true;
 
 			Item newItem = new Item();
 			newItem = ItemMapper.MapItem(NewBlazorItem);
@@ -233,9 +245,8 @@
 			StateHasChanged();
 		}
 
-
-
 	}
+
 
 	private async Task UpdateItemAsync()
 	{
@@ -266,10 +277,12 @@
 
 	}
 
+
 	private void PrepareUpdateForm(BlazorItem blazorItem)
 	{
 		BlazorItemToUpdate =  blazorItem.CopyItem();
 	}
+
 
 	private async Task CheckItemDuplicityAsync(Item item)
 	{
@@ -285,7 +298,7 @@
 			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
 		}
 	}
-
+	
 
 	private void RefreshPage()
 	{
