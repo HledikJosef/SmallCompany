@@ -69,14 +69,21 @@
 			</tr>
 		</table>
 
-		<ValidationMessage For="@(()=>NewBlazorItem.BlazorItemProperties)" />
+		@if (!string.IsNullOrWhiteSpace(NewBlazorItem.BlazorItemPropertiesValidationMessage))
+		{
+			<div class="text-danger">
+				@NewBlazorItem.BlazorItemPropertiesValidationMessage
+			</div>
+		}
+
+		
 		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
 		{
 			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
 			{
 				<p>
 					<label for="itemProperty">@prop.Name</label>
-					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>			
+					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>					
 
 				</p>
 			}
@@ -220,7 +227,7 @@
 
 			Item newItem = new Item();
 			newItem = ItemMapper.MapItem(NewBlazorItem);
-			newItem.ItemPropertyValues = BlazorPropertiesInDb.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+			newItem.ItemPropertyValues = NewBlazorItem.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
 
 			await CheckItemDuplicityAsync(newItem);
 

@@ -1,27 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 
 namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 {
     public class BlazorItemValidation : ValidationAttribute
     {
-
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
+            var listOfProperties = value as IList<BlazorProperty>;
+
             var item = (BlazorItem?)validationContext.ObjectInstance;
 
-            if (item.BlazorItemProperties.All(prop => string.IsNullOrWhiteSpace(prop.Value)))
+            if (listOfProperties.All(prop => string.IsNullOrWhiteSpace(prop.Value)))
             {
-                return new ValidationResult("Musí být vyplněna alespoň jedna vlastnost.");
+                item!.BlazorItemPropertiesValidationMessage = "Vyplňte alespoň jednu vlastnost.";
+                return new ValidationResult("");
             }
 
-            foreach (var prop in item.BlazorItemProperties)
+            foreach (var prop in listOfProperties)
             {
-                if (!string.IsNullOrWhiteSpace(prop.Value) && prop.Id == item.BlazorDateTypes.Find(dt => dt.Name == "number").Id)
+                if ((!string.IsNullOrWhiteSpace(prop.Value)) && (prop.BlazorDateTypeId == item.BlazorDateTypes.Find(dt => dt.Name == "number").Id))
                 {
-                    if (!float.TryParse(prop.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+
+                    if (!float.TryParse(prop.Value, out _))
                     {
-                        return new ValidationResult("Tato hodnota musí být číslo.");
+                        item!.BlazorItemPropertiesValidationMessage = "Zkontrolujte hodnoty vlastností tam, kde má být zadáno číslo.";
+                        return new ValidationResult("");
                     }
                 }
             }
