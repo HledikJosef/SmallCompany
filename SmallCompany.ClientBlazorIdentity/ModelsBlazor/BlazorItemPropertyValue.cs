@@ -12,11 +12,23 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 
         public int BlazorPropertyId { get; set; }
 
+        public BlazorItemNew BlazorItem { get; set; } = new();
+        public BlazorProperty BlazorProperty { get; set; } = new();
+
 
 
         public BlazorItemPropertyValue CopyItemPropertyValue()
         {
-            return (BlazorItemPropertyValue)MemberwiseClone();
+            return new BlazorItemPropertyValue
+            {
+                Id = this.Id,
+                Value = this.Value,
+                BlazorItemId = this.BlazorItemId,
+                BlazorPropertyId = this.BlazorPropertyId,
+                BlazorItem = this.BlazorItem.CopyItem(),
+                BlazorProperty = this.BlazorProperty.CopyProperty()
+
+            };
         }
     }
 }

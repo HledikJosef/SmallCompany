@@ -12,6 +12,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             blazorProperty.Name = property.Name;
             blazorProperty.BlazorDateTypeId = property.DateTypeId;
             blazorProperty.IsActive = property.IsActive;
+            blazorProperty.BlazorDateType = DateTypeMapper.MapDateType(property.DateType);
 
             return blazorProperty;
 

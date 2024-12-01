@@ -76,7 +76,7 @@
 			</div>
 		}
 
-		
+
 		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
 		{
 			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
@@ -136,14 +136,19 @@
 			</InputSelect>
 			<ValidationMessage For="@( () => BlazorItemToUpdate.UnitId)" />
 
+			@if (!string.IsNullOrWhiteSpace(BlazorItemToUpdate.BlazorItemUpdateValidationMessage))
+			{
+				<div class="text-danger">
+					@BlazorItemToUpdate.BlazorItemUpdateValidationMessage
+				</div>
+			}
+
 			@if (BlazorPropertiesInDb.Count > 0)
 			{
 				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
-				{					
-					BlazorProperty? property = BlazorPropertiesInDb.Find(prop => prop.Id == ipv.BlazorPropertyId);
-					
+				{
 					<p>
-						<label for="itemProperty">@property.Name</label>
+						<label for="itemProperty">@ipv.BlazorProperty.Name</label>
 						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
 					</p>
 				}
@@ -166,18 +171,19 @@
 
 @code {
 
-		[SupplyParameterFromForm]
-		private BlazorItem NewBlazorItem { get; set; } = new BlazorItem();
-	private BlazorItem BlazorItemToUpdate { get; set; } = new BlazorItem();
+	[SupplyParameterFromForm]
+	private BlazorItemNew NewBlazorItem { get; set; } = new BlazorItemNew();
+	[SupplyParameterFromForm]
+	private BlazorItemToUpdate BlazorItemToUpdate { get; set; } = new BlazorItemToUpdate();
 
 	private List<BlazorDateType> BlazorDateTypesIndDb { get; set; } = new List<BlazorDateType>();
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
 
-	private List<BlazorItem> BlazorItemsInDb { get; set; } = new List<BlazorItem>();
+	private List<BlazorItemNew> BlazorItemsInDb { get; set; } = new List<BlazorItemNew>();
 
-	BlazorItem existingBlazorItem = new BlazorItem();
+	BlazorItemNew existingBlazorItem = new BlazorItemNew();
 	string propertyUpdateName = "";
 	string propertyName = "";
 	private string? notification;
@@ -195,15 +201,21 @@
 		{
 			dateTypesInDb = await dateTypeService.GetDateTypesFromDaoAsync();
 			NewBlazorItem.BlazorDateTypes = dateTypesInDb.Select(dt => DateTypeMapper.MapDateType(dt)).ToList();
-			typesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();
+
+			typesOfItemsInDb = await typeOfItemService.GetTypesOfItemsFromDaoAsync();			
 			BlazorTypesOfItemInDb = typesOfItemsInDb.Select(type => TypeOfItemMapper.MapTypeOfItem(type)).OrderBy(type => type.Name).ToList();
+
 			unitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
+
+			itemsInDb = await itemService.GetItemsFromDaoAsync();
+			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
+
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			BlazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop=>prop.Name).ToList();
 			NewBlazorItem.BlazorItemProperties = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop => prop.Name).ToList();
-			itemsInDb = await itemService.GetItemsFromDaoAsync();
-			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
+			BlazorItemToUpdate.BlazorItemProperties = NewBlazorItem.BlazorItemProperties.Select(prop => prop.CopyProperty()).ToList();
+
 
 		}
 		catch(Exception ex)
@@ -264,16 +276,24 @@
 
 		try 
 		{
-			Item itemToUpdate = ItemMapper.MapItem(BlazorItemToUpdate);
+			Item itemToUpdate = ItemToUpdateMapper.MapItemToUpdate(BlazorItemToUpdate);
 
-			await itemService.UpdateItemAsync(itemToUpdate);
+			await CheckItemDuplicityAsync(itemToUpdate);
 
-			notification = "Záznam byl upraven";
-			StateHasChanged();
-			await Task.Delay(1300);
+			if(existingBlazorItem.Id == 0)
+			{
+				await itemService.UpdateItemAsync(itemToUpdate);
+
+				notification = "Záznam byl upraven";
+				StateHasChanged();
+				await Task.Delay(1300);
 
 
-			RefreshPage();
+				RefreshPage();
+
+			}
+
+
 		}
 		catch(Exception ex)
 		{
@@ -285,9 +305,9 @@
 	}
 
 
-	private void PrepareUpdateForm(BlazorItem blazorItem)
+	private void PrepareUpdateForm(BlazorItemNew blazorItem)
 	{
-		BlazorItemToUpdate =  blazorItem.CopyItem();
+		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(blazorItem);
 	}
 
 

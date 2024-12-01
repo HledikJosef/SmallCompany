@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 {
-    public class BlazorItem
+    public class BlazorItemNew
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Název položky musí být vyplněna a její délka musí být max 25 znaků."), MaxLength(25, ErrorMessage = "Maximální délka názvu je 25 znaků.")]
@@ -30,9 +30,9 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public string? BlazorItemPropertiesValidationMessage { get; set; }
 
 
-        public BlazorItem CopyItem()
+        public BlazorItemNew CopyItem()
         {
-            return new BlazorItem
+            return new BlazorItemNew
             {
                 Id = this.Id,
                 Name = this.Name,

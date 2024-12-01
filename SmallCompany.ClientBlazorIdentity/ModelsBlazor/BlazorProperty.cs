@@ -12,6 +12,8 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public string Value { get; set; } = String.Empty; //mapovat do ItemPropertyValue!!
         public bool IsActive { get; set; }
 
+        public BlazorDateType BlazorDateType { get; set; } = new();
+
 
         public BlazorProperty CopyProperty()
         {

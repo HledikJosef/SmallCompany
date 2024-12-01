@@ -22,6 +22,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             blazorItemPropertyValue.Value = itemPropertyValue.Value;
             blazorItemPropertyValue.BlazorItemId = itemPropertyValue.ItemId;
             blazorItemPropertyValue.BlazorPropertyId = itemPropertyValue.PropertyId;
+            blazorItemPropertyValue.BlazorProperty = PropertyMapper.MapProperty(itemPropertyValue.Property);
 
             return blazorItemPropertyValue;
         }

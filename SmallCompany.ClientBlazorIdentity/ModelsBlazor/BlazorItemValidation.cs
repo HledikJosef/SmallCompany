@@ -8,7 +8,7 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         {
             var listOfProperties = value as IList<BlazorProperty>;
 
-            var item = (BlazorItem?)validationContext.ObjectInstance;
+            var item = (BlazorItemNew?)validationContext.ObjectInstance;
 
             if (listOfProperties.All(prop => string.IsNullOrWhiteSpace(prop.Value)))
             {

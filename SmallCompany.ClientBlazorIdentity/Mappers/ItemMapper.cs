@@ -5,7 +5,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
 {
     public static class ItemMapper
     {
-        public static Item MapItem(BlazorItem blazorItem)
+        public static Item MapItem(BlazorItemNew blazorItem)
         {
             Item item = new Item();
 
@@ -18,9 +18,10 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             return item;
         }
 
-        public static BlazorItem MapItem(Item item)
+
+        public static BlazorItemNew MapItem(Item item)
         {
-            BlazorItem blazorItem = new BlazorItem();
+            BlazorItemNew blazorItem = new BlazorItemNew();
 
             blazorItem.Id = item.Id;
             blazorItem.Name = item.Name;
