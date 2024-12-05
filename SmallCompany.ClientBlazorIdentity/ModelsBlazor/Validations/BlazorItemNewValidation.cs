@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
+namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor.Validations
 {
-    public class BlazorItemValidation : ValidationAttribute
+    public class BlazorItemNewValidation : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
@@ -18,7 +18,7 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 
             foreach (var prop in listOfProperties)
             {
-                if ((!string.IsNullOrWhiteSpace(prop.Value)) && (prop.BlazorDateTypeId == item.BlazorDateTypes.Find(dt => dt.Name == "number").Id))
+                if (!string.IsNullOrWhiteSpace(prop.Value) && prop.BlazorDateTypeId == item.BlazorDateTypes.Find(dt => dt.Name == "number").Id)
                 {
 
                     if (!float.TryParse(prop.Value, out _))

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
-
+namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor.Validations
 {
     public class BlazorItemToUpdateValidation : ValidationAttribute
     {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SmallCompany.ClientBlazorIdentity.ModelsBlazor.Validations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
@@ -22,7 +23,7 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public List<BlazorProperty> BlazorItemProperties { get; set; } = new List<BlazorProperty>();
         public List<BlazorDateType> BlazorDateTypes { get; set; } = new List<BlazorDateType>();
 
-        [BlazorItemToUpdateValidation()]
+        [BlazorItemToUpdateValidation]
         public List<BlazorItemPropertyValue> BlazorItemPropertyValues { get; set; } = new List<BlazorItemPropertyValue>();
 
         [NotMapped]
