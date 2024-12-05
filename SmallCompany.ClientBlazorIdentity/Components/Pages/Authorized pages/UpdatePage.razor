@@ -1,0 +1,29 @@
+﻿@page "/updatePage"
+@inject NavigationManager navigationManager
+@inject NavigationDataService navigationDataService
+@rendermode InteractiveServer
+
+
+<h3>Úprava skladové položky</h3>
+<h5>Zde můžete upravit záznam skladové položky.</h5>
+
+@if (ItemData != null)
+{
+	@* <pre>@System.Text.Json.JsonSerializer.Serialize(ItemData)</pre> *@
+	<p>@ItemData</p>
+}
+
+
+
+@code {
+	[Parameter]
+	public string? EncodedItem { get; set; }
+	public BlazorItemNew? ItemData { get; set; }
+
+
+	protected override void OnInitialized()
+	{
+		ItemData = navigationDataService.SharedBlazorItem; 
+	}
+
+}

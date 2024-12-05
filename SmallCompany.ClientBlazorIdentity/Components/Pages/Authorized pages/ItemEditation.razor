@@ -9,6 +9,7 @@
 @inject IItemService itemService;
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
+@inject NavigationDataService navigationDataService;
 @rendermode InteractiveServer
 
 
@@ -105,7 +106,7 @@
 			propertyName = BlazorPropertiesInDb.Find(x => x.Id == ipv.BlazorPropertyId).Name;
 			properties += $"{propertyName}: {ipv.Value}, ";
 		}
-		<button class="btn btn-outline-primary" @onclick="()=>PrepareUpdateForm(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
+		<button class="btn btn-outline-primary" @onclick="()=>NavigateToUpdatePage(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
 	}
 }
 
@@ -308,6 +309,12 @@
 	private void PrepareUpdateForm(BlazorItemNew blazorItem)
 	{
 		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(blazorItem);
+	}
+
+	private void NavigateToUpdatePage(BlazorItemNew blazorItem)
+	{
+		navigationDataService.SharedBlazorItem = blazorItem;
+		navigationManager.NavigateTo("/updatePage");
 	}
 
 
