@@ -20,7 +20,7 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 
             foreach (var ipv in listOfIpv)
             {
-                if (FindPropertyValueWithValueTypeOfNumber(ipv, blazorItemToUpdate) && float.TryParse(ipv.Value, out _))
+                if (FindPropertyValueWithValueTypeOfNumber(ipv.BlazorProperty) && !float.TryParse(ipv.Value, out _))
                 {
                     blazorItemToUpdate!.BlazorItemUpdateValidationMessage = "Zde vyplňte číslo.";
                     return new ValidationResult("");
@@ -28,22 +28,20 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
             }
 
 
-
             return ValidationResult.Success;
         }
 
-        private bool FindPropertyValueWithValueTypeOfNumber(BlazorItemPropertyValue blazorItemPropertyValue, BlazorItemToUpdate blazorItemToUpdate)
+        private bool FindPropertyValueWithValueTypeOfNumber(BlazorProperty blazorProperty)
         {
-            bool isNumerType = false;
-            int dateTypeOfNumberId = blazorItemToUpdate.BlazorDateTypes.Find(dt => dt.Name == "number").Id;
+            bool isNumberType = false;
 
-            if (blazorItemPropertyValue.BlazorPropertyId == blazorItemToUpdate.BlazorItemProperties.Find(prop => prop.BlazorDateTypeId == dateTypeOfNumberId).Id)
+            if (blazorProperty.BlazorDateType.Name == "number")
             {
-                isNumerType = true;
+                isNumberType = true;
             }
 
 
-            return isNumerType;
+            return isNumberType;
         }
     }
 }

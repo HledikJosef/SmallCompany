@@ -14,6 +14,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             item.UnitId = blazorItemToUpdate.UnitId;
             item.TypeOfItemId = blazorItemToUpdate.TypeOfItemId;
             item.IsActive = blazorItemToUpdate.IsActive;
+            item.ItemPropertyValues = blazorItemToUpdate.BlazorItemPropertyValues.Select(ipv => ItemPropertyValueMapper.MapItemPropValue(ipv)).ToList();
 
             return item;
         }
