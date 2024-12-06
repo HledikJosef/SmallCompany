@@ -7,7 +7,7 @@ namespace SmallCompany.ClientBlazorIdentity.Services
         public BlazorItemNew? SharedBlazorItem { get; set; }
 
         public List<BlazorUnit> BlazorUnitsInDb = new();
-        public List<BlazorProperty> BlazorPropertiesInDb = new();
+        //public List<BlazorProperty> BlazorPropertiesInDb = new();
         public List<BlazorTypeOfItem> BlazorTypesOfItemInDb = new();
 
 

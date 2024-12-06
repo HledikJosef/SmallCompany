@@ -10,11 +10,6 @@
 <h3>Úprava skladové položky</h3>
 <h5>Zde můžete upravit záznam skladové položky.</h5>
 
-@if (BlazorItemToUpdate != null)
-{
-	@* <pre>@System.Text.Json.JsonSerializer.Serialize(ItemData)</pre> *@
-	<p>@BlazorItemToUpdate</p>
-}
 
 @if (SharedBlazorItem.Id != 0)
 {
@@ -22,11 +17,29 @@
 	string properties = "";
 	@foreach (var ipv in SharedBlazorItem.BlazorItemPropertyValues)
 	{
-		propertyName = BlazorPropertiesInDb.Find(x => x.Id == ipv.BlazorPropertyId).Name;
+		propertyName = ipv.BlazorProperty.Name;
 		properties += $"{propertyName}: {ipv.Value}, ";
 	}
 	<button class="btn btn-outline-primary">@SharedBlazorItem.Id, @SharedBlazorItem.BlazorTypeOfItem.Name, @SharedBlazorItem.Name, @SharedBlazorItem.BlazorUnit.Name, Aktivní:@SharedBlazorItem.IsActive, @properties</button>
-	
+
+}
+
+@if (!string.IsNullOrWhiteSpace(notification))
+{
+	if (!string.IsNullOrWhiteSpace(exceptionMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			@notification <br>@exceptionMessage
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-success" role="alert">
+			@notification
+		</div>
+	}
+
 }
 
 @if (BlazorItemToUpdate.Id > 0)
@@ -63,8 +76,7 @@
 				</div>
 			}
 
-			@if (BlazorPropertiesInDb.Count > 0)
-			{
+			
 				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
 				{
 					<p>
@@ -72,7 +84,7 @@
 						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
 					</p>
 				}
-			}
+			
 
 			<label class="form-check-label" for="isActive">Aktivní</label>
 			<InputCheckbox class="form-check-inline" id="isActive" @bind-Value="BlazorItemToUpdate.IsActive"></InputCheckbox>
@@ -93,8 +105,8 @@
 	public BlazorItemNew SharedBlazorItem { get; set; } = new();
 	[Parameter]
 	public List<BlazorUnit> BlazorUnitsInDb { get; set; } = new();
-	[Parameter]
-	public List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new();
+	// [Parameter]
+	// public List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new();
 	[Parameter]
 	public List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new();
 
@@ -117,7 +129,7 @@
 		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(SharedBlazorItem);
 
 		BlazorUnitsInDb = navigationDataService.BlazorUnitsInDb;
-		BlazorPropertiesInDb = navigationDataService.BlazorPropertiesInDb;
+		// BlazorPropertiesInDb = navigationDataService.BlazorPropertiesInDb;
 		BlazorTypesOfItemInDb = navigationDataService.BlazorTypesOfItemInDb;
 	}
 
@@ -133,7 +145,7 @@
 		{
 			Item itemToUpdate = ItemToUpdateMapper.MapItemToUpdate(BlazorItemToUpdate);
 
-			// await CheckItemDuplicityAsync(itemToUpdate);
+			await CheckItemDuplicityAsync(itemToUpdate);
 
 			if (existingBlazorItem.Id == 0)
 			{
@@ -156,6 +168,23 @@
 			exceptionMessage = ex.Message;
 		}
 
+
+	}
+
+
+	private async Task CheckItemDuplicityAsync(Item item)
+	{
+		Item? existingItem = await ItemService.CheckItemDuplicityAsync(item);
+
+		notification = "";
+
+		if (existingItem != null)
+		{
+			existingBlazorItem = ItemMapper.MapItem(existingItem);
+
+			notification = $"Tento záznam již existuje: {existingBlazorItem.Id}.. {existingBlazorItem.Name}";
+			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
+		}
 
 	}
 
