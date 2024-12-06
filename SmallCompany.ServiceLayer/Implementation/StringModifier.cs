@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using SmallCompany.Models;
 
 namespace SmallCompany.ServiceLayer.Implementation
 {
@@ -6,17 +6,22 @@ namespace SmallCompany.ServiceLayer.Implementation
     {
         public static string ModifyString(string value)
         {
-            string valueToLower = value.ToLower();
+            string valueToLower = value.ToLower().Trim();
             value = valueToLower;
-
-            if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float parsedFloatValue))
-            {
-                string modifiedNr = value.Replace('.', ',');
-                value = modifiedNr;
-            }
 
             return value;
 
+        }
+
+        public static string ModifyString(ItemPropertyValue ipv)
+        {
+            if (ipv.Property.DateType.Name == "number")
+            {
+                string modifiedNr = ipv.Value.Replace('.', ',');
+                ipv.Value = modifiedNr;
+            }
+
+            return ipv.Value;
         }
     }
 }

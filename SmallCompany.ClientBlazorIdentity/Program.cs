@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmallCompany.ClientBlazorIdentity.Components;
 using SmallCompany.ClientBlazorIdentity.Components.Account;
-using SmallCompany.ClientBlazorIdentity.Services;
 using SmallCompany.CompositionRoot;
 using SmallCompany.Models.Data;
 
@@ -73,8 +72,6 @@ namespace SmallCompany.ClientBlazorIdentity
                 //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-
-            builder.Services.AddSingleton<NavigationDataService>();
 
             var app = builder.Build();
 

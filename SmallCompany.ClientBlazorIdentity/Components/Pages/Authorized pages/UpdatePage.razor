@@ -1,7 +1,6 @@
 ﻿@page "/updatePage"
 
 @inject NavigationManager navigationManager
-@inject NavigationDataService navigationDataService
 @inject IItemService ItemService
 
 @rendermode InteractiveServer
@@ -11,16 +10,22 @@
 <h5>Zde můžete upravit záznam skladové položky.</h5>
 
 
-@if (SharedBlazorItem.Id != 0)
+@if (NavigationDataModel.SharedBlazorItem.Id != 0)
 {
 	string propertyName = "";
 	string properties = "";
-	@foreach (var ipv in SharedBlazorItem.BlazorItemPropertyValues)
+	@foreach (var ipv in NavigationDataModel.SharedBlazorItem.BlazorItemPropertyValues)
 	{
 		propertyName = ipv.BlazorProperty.Name;
 		properties += $"{propertyName}: {ipv.Value}, ";
 	}
-	<button class="btn btn-outline-primary">@SharedBlazorItem.Id, @SharedBlazorItem.BlazorTypeOfItem.Name, @SharedBlazorItem.Name, @SharedBlazorItem.BlazorUnit.Name, Aktivní:@SharedBlazorItem.IsActive, @properties</button>
+	<button class="btn btn-outline-primary">@NavigationDataModel.SharedBlazorItem.Id, 
+		@NavigationDataModel.SharedBlazorItem.BlazorTypeOfItem.Name,
+		@NavigationDataModel.SharedBlazorItem.Name,
+		@NavigationDataModel.SharedBlazorItem.BlazorUnit.Name, 
+		Aktivní:@NavigationDataModel.SharedBlazorItem.IsActive, 
+		@properties
+	</button>
 
 }
 
@@ -49,7 +54,7 @@
 			<DataAnnotationsValidator />
 			<InputSelect class="form-select form-check-inline" style="width: 30%" id="typeOfItem" @bind-Value="BlazorItemToUpdate.TypeOfItemId">
 				<option disabled selected value="0">Vyber druh položky</option>
-				@foreach (var type in BlazorTypesOfItemInDb)
+				@foreach (var type in NavigationDataModel.BlazorTypesOfItemInDb)
 				{
 					<option value="@type.Id">@type.Name</option>
 				}
@@ -62,7 +67,7 @@
 			<InputSelect class="form-select form-check-inline" style="width: 30%" id="itemUnit" @bind-Value="BlazorItemToUpdate.UnitId">
 				<option disabled selected value="0">Vyber měrnou jednotku</option>
 
-				@foreach (var unit in BlazorUnitsInDb)
+				@foreach (var unit in NavigationDataModel.BlazorUnitsInDb)
 				{
 					<option value="@unit.Id">@unit.Name</option>
 				}
@@ -76,20 +81,21 @@
 				</div>
 			}
 
-			
-				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
-				{
-					<p>
-						<label for="itemProperty">@ipv.BlazorProperty.Name</label>
-						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
-					</p>
-				}
-			
+
+			@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
+			{
+				<p>
+					<label for="itemProperty">@ipv.BlazorProperty.Name</label>
+					<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
+				</p>
+			}
+
 
 			<label class="form-check-label" for="isActive">Aktivní</label>
 			<InputCheckbox class="form-check-inline" id="isActive" @bind-Value="BlazorItemToUpdate.IsActive"></InputCheckbox>
 
 			<button type="submit" class="btn btn-warning">Uprav záznam</button>
+			<button type="button" class="btn btn-outline-secondary" @onclick="RefreshPage" >Zpět</button>
 
 		</EditForm>
 
@@ -102,37 +108,20 @@
 
 @code {
 	[Parameter]
-	public BlazorItemNew SharedBlazorItem { get; set; } = new();
-	[Parameter]
-	public List<BlazorUnit> BlazorUnitsInDb { get; set; } = new();
-	// [Parameter]
-	// public List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new();
-	[Parameter]
-	public List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new();
+	public NavigationDataModel? NavigationDataModel { get; set; }
 
 	[SupplyParameterFromForm]
 	private BlazorItemToUpdate BlazorItemToUpdate { get; set; } = new BlazorItemToUpdate();
 
-	private BlazorItemNew existingBlazorItem = new();
+	private BlazorItemNew? existingUpdateItem;
 
 	string? notification;
 	string? exceptionMessage;
 
-
-
-
-
-
 	protected override void OnInitialized()
 	{
-		SharedBlazorItem = navigationDataService.SharedBlazorItem;
-		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(SharedBlazorItem);
-
-		BlazorUnitsInDb = navigationDataService.BlazorUnitsInDb;
-		// BlazorPropertiesInDb = navigationDataService.BlazorPropertiesInDb;
-		BlazorTypesOfItemInDb = navigationDataService.BlazorTypesOfItemInDb;
+		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(NavigationDataModel.SharedBlazorItem);
 	}
-
 
 	private async Task UpdateItemAsync()
 	{
@@ -143,11 +132,13 @@
 
 		try
 		{
+			existingUpdateItem = new();
+
 			Item itemToUpdate = ItemToUpdateMapper.MapItemToUpdate(BlazorItemToUpdate);
 
 			await CheckItemDuplicityAsync(itemToUpdate);
 
-			if (existingBlazorItem.Id == 0)
+			if (existingUpdateItem.Id == 0)
 			{
 				await ItemService.UpdateItemAsync(itemToUpdate);
 
@@ -180,9 +171,9 @@
 
 		if (existingItem != null)
 		{
-			existingBlazorItem = ItemMapper.MapItem(existingItem);
+			existingUpdateItem = ItemMapper.MapItem(existingItem);
 
-			notification = $"Tento záznam již existuje: {existingBlazorItem.Id}.. {existingBlazorItem.Name}";
+			notification = $"Tento záznam již existuje: {existingUpdateItem.Id}.. {existingUpdateItem.Name}";
 			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
 		}
 

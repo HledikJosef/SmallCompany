@@ -9,117 +9,117 @@
 @inject IItemService itemService;
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
-@inject NavigationDataService navigationDataService;
 @rendermode InteractiveServer
 
+@if (!UpdateMode){
+	<PageTitle>Item editation</PageTitle>
 
-<PageTitle>Item editation</PageTitle>
-
-<h1>Vytvoř skladovou položku</h1>
-<h5>Zvol skupinu a vyplň požadované vlastnosti. Všechny vlastnosti jsou volitelné. </h5>
+	<h1>Vytvoř skladovou položku</h1>
+	<h5>Zvol skupinu a vyplň požadované vlastnosti. Všechny vlastnosti jsou volitelné. </h5>
 
 
-@if (!string.IsNullOrWhiteSpace(notification))
-{
-	if (!string.IsNullOrWhiteSpace(exceptionMessage))
+	@if (!string.IsNullOrWhiteSpace(notification))
 	{
-		<div class="alert alert-danger" role="alert">
-			@notification <br>@exceptionMessage
-		</div>
-
-	}
-	else
-	{
-		<div class="alert alert-success" role="alert">
-			@notification
-		</div>
-	}
-
-}
-
-<div>
-	<EditForm Model="NewBlazorItem" OnValidSubmit="AddItemAsync" FormName="itemEditation">
-		<DataAnnotationsValidator />
-		<table class="table">
-			<tr>
-				<td>
-					<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId">
-						<option disabled selected value="0">Vyber druh položky</option>
-						@foreach (var type in BlazorTypesOfItemInDb)
-						{
-							<option value="@type.Id">@type.Name</option>
-						}
-					</InputSelect>
-					<ValidationMessage For="@( () => NewBlazorItem.TypeOfItemId)" />
-				</td>
-				<td>
-					<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Název položky" />
-					<ValidationMessage For="@( () => NewBlazorItem.Name)" />
-				</td>
-				<td>
-					<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId">
-						<option disabled selected value="0">Vyber měrnou jednotku</option>
-
-						@foreach (var unit in BlazorUnitsInDb)
-						{
-							<option value="@unit.Id">@unit.Name</option>
-						}
-					</InputSelect>
-					<ValidationMessage For="@( () => NewBlazorItem.UnitId)" />
-				</td>
-			</tr>
-		</table>
-
-		@if (!string.IsNullOrWhiteSpace(NewBlazorItem.BlazorItemPropertiesValidationMessage))
+		if (!string.IsNullOrWhiteSpace(exceptionMessage))
 		{
-			<div class="text-danger">
-				@NewBlazorItem.BlazorItemPropertiesValidationMessage
+			<div class="alert alert-danger" role="alert">
+				@notification <br>@exceptionMessage
+			</div>
+
+		}
+		else
+		{
+			<div class="alert alert-success" role="alert">
+				@notification
 			</div>
 		}
 
+	}
 
-		@if (NewBlazorItem.BlazorItemProperties.Count != 0)
-		{
-			@foreach (var prop in NewBlazorItem.BlazorItemProperties)
+	<div>
+		<EditForm Model="NewBlazorItem" OnValidSubmit="AddItemAsync" FormName="itemEditation">
+			<DataAnnotationsValidator />
+			<table class="table">
+				<tr>
+					<td>
+						<InputSelect class="form-select" id="typeOfItem" @bind-Value="NewBlazorItem.TypeOfItemId">
+							<option disabled selected value="0">Vyber druh položky</option>
+							@foreach (var type in BlazorTypesOfItemInDb)
+							{
+								<option value="@type.Id">@type.Name</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@( () => NewBlazorItem.TypeOfItemId)" />
+					</td>
+					<td>
+						<InputText class="form-control" id="itemName" @bind-Value="NewBlazorItem.Name" placeholder="Název položky" />
+						<ValidationMessage For="@( () => NewBlazorItem.Name)" />
+					</td>
+					<td>
+						<InputSelect class="form-select" id="itemUnit" @bind-Value="NewBlazorItem.UnitId">
+							<option disabled selected value="0">Vyber měrnou jednotku</option>
+
+							@foreach (var unit in BlazorUnitsInDb)
+							{
+								<option value="@unit.Id">@unit.Name</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@( () => NewBlazorItem.UnitId)" />
+					</td>
+				</tr>
+			</table>
+
+			@if (!string.IsNullOrWhiteSpace(NewBlazorItem.BlazorItemPropertiesValidationMessage))
 			{
-				<p>
-					<label for="itemProperty">@prop.Name</label>
-					<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>					
-
-				</p>
+				<div class="text-danger">
+					@NewBlazorItem.BlazorItemPropertiesValidationMessage
+				</div>
 			}
-		}
-		<button Type="submit" class="btn btn-primary">Ulož záznam</button>
-	</EditForm>
-</div>
+
+
+			@if (NewBlazorItem.BlazorItemProperties.Count != 0)
+			{
+				@foreach (var prop in NewBlazorItem.BlazorItemProperties)
+				{
+					<p>
+						<label for="itemProperty">@prop.Name</label>
+						<InputText class="form-control" id="itemProperty" @bind-Value="prop.Value"></InputText>					
+
+					</p>
+				}
+			}
+			<button Type="submit" class="btn btn-primary">Ulož záznam</button>
+		</EditForm>
+	</div>
 
 
 
-@if (BlazorItemsInDb.Count != 0) 
-{
-
-	@foreach (var it in BlazorItemsInDb) 
+	@if (BlazorItemsInDb.Count != 0) 
 	{
-		string propertyName="";
-		string properties = "";
-		@foreach (var ipv in it.BlazorItemPropertyValues)
+
+		@foreach (var it in BlazorItemsInDb) 
 		{
-			propertyName = ipv.BlazorProperty.Name;
-			properties += $"{propertyName}: {ipv.Value}, ";
+			string propertyName="";
+			string properties = "";
+			@foreach (var ipv in it.BlazorItemPropertyValues)
+			{
+				propertyName = ipv.BlazorProperty.Name;
+				properties += $"{propertyName}: {ipv.Value}, ";
+			}
+			<button class="btn btn-outline-primary" @onclick="()=>NavigateToUpdatePage(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
 		}
-		<button class="btn btn-outline-primary" @onclick="()=>NavigateToUpdatePage(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
 	}
 }
-
-
-
-
-
-
-
-
+@if (UpdateMode) 
+{
+	<UpdatePage NavigationDataModel="NavigationDataModel" />
+}
 
 @code {
+	//TODO - Stránka není Editací, ale vytvářením nové položky. Popřípadě, Vytvořením NEBO editací, protože 
+	//součástí této komponenty je i editační komponenta UpdatePage.
+	//NavigationDataModel je také adept na přejmenování, jedná se o položkový model.
+
 
 	[SupplyParameterFromForm]
 	private BlazorItemNew NewBlazorItem { get; set; } = new BlazorItemNew();
@@ -130,6 +130,9 @@
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
 
 	private List<BlazorItemNew> BlazorItemsInDb { get; set; } = new List<BlazorItemNew>();
+
+	private NavigationDataModel NavigationDataModel { get; set; } = new();
+	public bool UpdateMode { get; set; } = false;
 
 	BlazorItemNew existingBlazorItem = new BlazorItemNew();
 
@@ -214,12 +217,11 @@
 
 	private void NavigateToUpdatePage(BlazorItemNew blazorItem)
 	{
-		navigationDataService.SharedBlazorItem = blazorItem;
-		// navigationDataService.BlazorPropertiesInDb = BlazorPropertiesInDb;
-		navigationDataService.BlazorUnitsInDb = BlazorUnitsInDb;
-		navigationDataService.BlazorTypesOfItemInDb = BlazorTypesOfItemInDb;
+		NavigationDataModel.SharedBlazorItem = blazorItem;
+		NavigationDataModel.BlazorUnitsInDb = BlazorUnitsInDb;
+		NavigationDataModel.BlazorTypesOfItemInDb = BlazorTypesOfItemInDb;
 
-		navigationManager.NavigateTo("/updatePage");
+		UpdateMode = true;
 	}
 
 

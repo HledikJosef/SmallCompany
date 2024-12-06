@@ -32,8 +32,7 @@ namespace SmallCompany.ServiceLayer.Implementation
 
             foreach (var ipv in item.ItemPropertyValues)
             {
-                string ipvValue = StringModifier.ModifyString(ipv.Value);
-                ipv.Value = ipvValue;
+                ipv.Value = StringModifier.ModifyString(ipv);
             }
 
             Item? existingItemFromDb = await itemDao.CheckExistingItemAsync(item);

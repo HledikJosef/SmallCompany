@@ -19,7 +19,8 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor.Validations
 
             foreach (var ipv in listOfIpv)
             {
-                if (FindPropertyValueWithValueTypeOfNumber(ipv.BlazorProperty) && !float.TryParse(ipv.Value, out _))
+                string normalizedNr = ipv.Value.Replace(".", ",");
+                if (FindPropertyValueWithValueTypeOfNumber(ipv.BlazorProperty) && !float.TryParse(normalizedNr, out _))
                 {
                     blazorItemToUpdate!.BlazorItemUpdateValidationMessage = "Zde vyplňte číslo.";
                     return new ValidationResult("");
