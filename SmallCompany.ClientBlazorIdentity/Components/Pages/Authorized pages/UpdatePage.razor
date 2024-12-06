@@ -1,29 +1,167 @@
 ﻿@page "/updatePage"
+
 @inject NavigationManager navigationManager
 @inject NavigationDataService navigationDataService
+@inject IItemService ItemService
+
 @rendermode InteractiveServer
 
 
 <h3>Úprava skladové položky</h3>
 <h5>Zde můžete upravit záznam skladové položky.</h5>
 
-@if (ItemData != null)
+@if (BlazorItemToUpdate != null)
 {
 	@* <pre>@System.Text.Json.JsonSerializer.Serialize(ItemData)</pre> *@
-	<p>@ItemData</p>
+	<p>@BlazorItemToUpdate</p>
+}
+
+@if (SharedBlazorItem.Id != 0)
+{
+	string propertyName = "";
+	string properties = "";
+	@foreach (var ipv in SharedBlazorItem.BlazorItemPropertyValues)
+	{
+		propertyName = BlazorPropertiesInDb.Find(x => x.Id == ipv.BlazorPropertyId).Name;
+		properties += $"{propertyName}: {ipv.Value}, ";
+	}
+	<button class="btn btn-outline-primary">@SharedBlazorItem.Id, @SharedBlazorItem.BlazorTypeOfItem.Name, @SharedBlazorItem.Name, @SharedBlazorItem.BlazorUnit.Name, Aktivní:@SharedBlazorItem.IsActive, @properties</button>
+	
+}
+
+@if (BlazorItemToUpdate.Id > 0)
+{
+	<div>
+		<EditForm class="form-control" Model="BlazorItemToUpdate" OnValidSubmit="UpdateItemAsync" FormName="itemUpdate">
+			<DataAnnotationsValidator />
+			<InputSelect class="form-select form-check-inline" style="width: 30%" id="typeOfItem" @bind-Value="BlazorItemToUpdate.TypeOfItemId">
+				<option disabled selected value="0">Vyber druh položky</option>
+				@foreach (var type in BlazorTypesOfItemInDb)
+				{
+					<option value="@type.Id">@type.Name</option>
+				}
+			</InputSelect>
+			<ValidationMessage For="@( () => BlazorItemToUpdate.TypeOfItemId)" />
+
+			<InputText class="form-control form-check-inline" style="width: 30%" id="itemName" @bind-Value="BlazorItemToUpdate.Name" placeholder="Název položky" />
+			<ValidationMessage For="@( () => BlazorItemToUpdate.Name)" />
+
+			<InputSelect class="form-select form-check-inline" style="width: 30%" id="itemUnit" @bind-Value="BlazorItemToUpdate.UnitId">
+				<option disabled selected value="0">Vyber měrnou jednotku</option>
+
+				@foreach (var unit in BlazorUnitsInDb)
+				{
+					<option value="@unit.Id">@unit.Name</option>
+				}
+			</InputSelect>
+			<ValidationMessage For="@( () => BlazorItemToUpdate.UnitId)" />
+
+			@if (!string.IsNullOrWhiteSpace(BlazorItemToUpdate.BlazorItemUpdateValidationMessage))
+			{
+				<div class="text-danger">
+					@BlazorItemToUpdate.BlazorItemUpdateValidationMessage
+				</div>
+			}
+
+			@if (BlazorPropertiesInDb.Count > 0)
+			{
+				@foreach (var ipv in BlazorItemToUpdate.BlazorItemPropertyValues)
+				{
+					<p>
+						<label for="itemProperty">@ipv.BlazorProperty.Name</label>
+						<InputText class="form-control" style="width: 30%" id="itemProperty" @bind-Value="ipv.Value"></InputText>
+					</p>
+				}
+			}
+
+			<label class="form-check-label" for="isActive">Aktivní</label>
+			<InputCheckbox class="form-check-inline" id="isActive" @bind-Value="BlazorItemToUpdate.IsActive"></InputCheckbox>
+
+			<button type="submit" class="btn btn-warning">Uprav záznam</button>
+
+		</EditForm>
+
+	</div>
+
+
 }
 
 
 
 @code {
 	[Parameter]
-	public string? EncodedItem { get; set; }
-	public BlazorItemNew? ItemData { get; set; }
+	public BlazorItemNew SharedBlazorItem { get; set; } = new();
+	[Parameter]
+	public List<BlazorUnit> BlazorUnitsInDb { get; set; } = new();
+	[Parameter]
+	public List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new();
+	[Parameter]
+	public List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new();
+
+	[SupplyParameterFromForm]
+	private BlazorItemToUpdate BlazorItemToUpdate { get; set; } = new BlazorItemToUpdate();
+
+	private BlazorItemNew existingBlazorItem = new();
+
+	string? notification;
+	string? exceptionMessage;
+
+
+
+
 
 
 	protected override void OnInitialized()
 	{
-		ItemData = navigationDataService.SharedBlazorItem; 
+		SharedBlazorItem = navigationDataService.SharedBlazorItem;
+		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(SharedBlazorItem);
+
+		BlazorUnitsInDb = navigationDataService.BlazorUnitsInDb;
+		BlazorPropertiesInDb = navigationDataService.BlazorPropertiesInDb;
+		BlazorTypesOfItemInDb = navigationDataService.BlazorTypesOfItemInDb;
+	}
+
+
+	private async Task UpdateItemAsync()
+	{
+		if (string.IsNullOrEmpty(BlazorItemToUpdate.Name))
+		{
+			return;
+		}
+
+		try
+		{
+			Item itemToUpdate = ItemToUpdateMapper.MapItemToUpdate(BlazorItemToUpdate);
+
+			// await CheckItemDuplicityAsync(itemToUpdate);
+
+			if (existingBlazorItem.Id == 0)
+			{
+				await ItemService.UpdateItemAsync(itemToUpdate);
+
+				notification = "Záznam byl upraven";
+				StateHasChanged();
+				await Task.Delay(1300);
+
+
+				navigationManager.NavigateTo("/itemEditation");
+
+			}
+
+
+		}
+		catch (Exception ex)
+		{
+			notification = "Záznam se nepodařilo upravit.";
+			exceptionMessage = ex.Message;
+		}
+
+
+	}
+
+	private void RefreshPage()
+	{
+		navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);
 	}
 
 }

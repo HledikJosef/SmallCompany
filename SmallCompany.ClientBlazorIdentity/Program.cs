@@ -74,7 +74,7 @@ namespace SmallCompany.ClientBlazorIdentity
                 options.SlidingExpiration = true;
             });
 
-            builder.Services.AddScoped<NavigationDataService>();
+            builder.Services.AddSingleton<NavigationDataService>();
 
             var app = builder.Build();
 

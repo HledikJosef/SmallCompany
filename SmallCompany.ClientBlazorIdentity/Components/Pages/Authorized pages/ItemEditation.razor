@@ -314,6 +314,10 @@
 	private void NavigateToUpdatePage(BlazorItemNew blazorItem)
 	{
 		navigationDataService.SharedBlazorItem = blazorItem;
+		navigationDataService.BlazorPropertiesInDb = BlazorPropertiesInDb;
+		navigationDataService.BlazorUnitsInDb = BlazorUnitsInDb;
+		navigationDataService.BlazorTypesOfItemInDb = BlazorTypesOfItemInDb;
+
 		navigationManager.NavigateTo("/updatePage");
 	}
 
