@@ -65,7 +65,14 @@ namespace SmallCompany.DataLayer.Implementation
             Item? itemToUpdate = (Item?)await context.FindAsync(typeof(Item), item.Id)
                 ?? throw new InvalidOperationException();
 
+
             context.Entry(itemToUpdate).CurrentValues.SetValues(item);
+
+            foreach (var ipv in itemToUpdate.ItemPropertyValues)
+            {
+                ipv.Value = item.ItemPropertyValues.FirstOrDefault(i => i.PropertyId == ipv.PropertyId).Value;
+            }
+
 
             await context.SaveChangesAsync();
         }

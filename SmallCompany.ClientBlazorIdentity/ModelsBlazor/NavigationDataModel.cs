@@ -2,7 +2,7 @@
 {
     public class NavigationDataModel
     {
-        public BlazorItemNew? SharedBlazorItem { get; set; }
+        public BlazorItemToUpdate? SharedBlazorItem { get; set; }
 
         /// <summary>
         /// Číselník

@@ -120,7 +120,7 @@
 
 	protected override void OnInitialized()
 	{
-		BlazorItemToUpdate = ItemToUpdateMapper.MapItemToUpdate(NavigationDataModel.SharedBlazorItem);
+		BlazorItemToUpdate = NavigationDataModel.SharedBlazorItem;
 	}
 
 	private async Task UpdateItemAsync()

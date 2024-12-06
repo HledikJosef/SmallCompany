@@ -19,17 +19,34 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
             return item;
         }
 
-        public static BlazorItemToUpdate MapItemToUpdate(BlazorItemNew blazorItem)
+        public static BlazorItemToUpdate MapItemToUpdate(Item item)
         {
-            BlazorItemToUpdate blazorItemtoUpdate = new();
+            BlazorItemToUpdate itemToUpdate = new BlazorItemToUpdate();
+            itemToUpdate.Id = item.Id;
+            itemToUpdate.Name = item.Name;
+            itemToUpdate.UnitId = item.UnitId;
+            itemToUpdate.TypeOfItemId = item.TypeOfItemId;
+            itemToUpdate.IsActive = item.IsActive;
+            itemToUpdate.BlazorItemPropertyValues = item.ItemPropertyValues.Select(ipv => ItemPropertyValueMapper.MapItemPropValue(ipv)).ToList();
+            itemToUpdate.BlazorTypeOfItem = TypeOfItemMapper.MapTypeOfItem(item.TypeOfItem);
+            itemToUpdate.BlazorUnit = UnitMapper.MapUnit(item.Unit);
 
-            blazorItemtoUpdate.Id = blazorItem.Id;
-            blazorItemtoUpdate.Name = blazorItem.Name;
-            blazorItemtoUpdate.UnitId = blazorItem.UnitId;
-            blazorItemtoUpdate.TypeOfItemId = blazorItem.TypeOfItemId;
-            blazorItemtoUpdate.IsActive = blazorItem.IsActive;
-            blazorItemtoUpdate.BlazorItemPropertyValues = blazorItem.BlazorItemPropertyValues;
-            return blazorItemtoUpdate;
+            return itemToUpdate;
         }
+
+
+        //public static BlazorItemToUpdate MapItemToUpdate(BlazorItemNew blazorItem)
+        //{
+        //    BlazorItemToUpdate blazorItemtoUpdate = new();
+
+        //    blazorItemtoUpdate.Id = blazorItem.Id;
+        //    blazorItemtoUpdate.Name = blazorItem.Name;
+        //    blazorItemtoUpdate.UnitId = blazorItem.UnitId;
+        //    blazorItemtoUpdate.TypeOfItemId = blazorItem.TypeOfItemId;
+        //    blazorItemtoUpdate.IsActive = blazorItem.IsActive;
+        //    blazorItemtoUpdate.BlazorItemPropertyValues = blazorItem.BlazorItemPropertyValues;
+
+        //    return blazorItemtoUpdate;
+        //}
     }
 }

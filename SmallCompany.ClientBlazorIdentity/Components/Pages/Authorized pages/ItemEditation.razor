@@ -129,7 +129,7 @@
 	private List<BlazorTypeOfItem> BlazorTypesOfItemInDb { get; set; } = new List<BlazorTypeOfItem>();
 	private List<BlazorProperty> BlazorPropertiesInDb { get; set; } = new List<BlazorProperty>();
 
-	private List<BlazorItemNew> BlazorItemsInDb { get; set; } = new List<BlazorItemNew>();
+	private List<BlazorItemToUpdate> BlazorItemsInDb { get; set; } = new List<BlazorItemToUpdate>();
 
 	private NavigationDataModel NavigationDataModel { get; set; } = new();
 	public bool UpdateMode { get; set; } = false;
@@ -159,7 +159,7 @@
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 
 			itemsInDb = await itemService.GetItemsFromDaoAsync();
-			BlazorItemsInDb = itemsInDb.Select(i => ItemMapper.MapItem(i)).ToList();
+			BlazorItemsInDb = itemsInDb.Select(i => ItemToUpdateMapper.MapItemToUpdate(i)).ToList();
 
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
 			BlazorPropertiesInDb = propertiesInDb.Select(prop => PropertyMapper.MapProperty(prop)).OrderBy(prop=>prop.Name).ToList();
@@ -187,7 +187,7 @@
 
 			Item newItem = new Item();
 			newItem = ItemMapper.MapItem(NewBlazorItem);
-			newItem.ItemPropertyValues = NewBlazorItem.BlazorItemProperties.Select( prop => ItemPropertyValueMapper.MapItemPropValue(prop)).ToList();
+			
 
 			await CheckItemDuplicityAsync(newItem);
 
@@ -215,7 +215,7 @@
 	}
 
 
-	private void NavigateToUpdatePage(BlazorItemNew blazorItem)
+	private void NavigateToUpdatePage(BlazorItemToUpdate blazorItem)
 	{
 		NavigationDataModel.SharedBlazorItem = blazorItem;
 		NavigationDataModel.BlazorUnitsInDb = BlazorUnitsInDb;
