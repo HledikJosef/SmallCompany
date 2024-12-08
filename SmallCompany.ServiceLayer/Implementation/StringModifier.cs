@@ -20,6 +20,7 @@ namespace SmallCompany.ServiceLayer.Implementation
                 string modifiedNr = ipv.Value.Replace('.', ',');
                 ipv.Value = modifiedNr;
             }
+            else ipv.Value = ModifyString(ipv.Value);
 
             return ipv.Value;
         }

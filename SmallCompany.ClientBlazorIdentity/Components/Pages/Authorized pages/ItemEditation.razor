@@ -6,31 +6,33 @@
 @inject IUnitService unitService;	
 @inject IStockService stockService;
 @inject IPropertyService propertyService;
-@inject IItemService itemService;
+@inject IItemService ItemService;
 @inject IDateTypeService dateTypeService;
 @inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
-@if (!UpdateMode){
+
+
+@* @if (!UpdateMode){ *@
 	<PageTitle>Item editation</PageTitle>
 
 	<h1>Vytvoř skladovou položku</h1>
 	<h5>Zvol skupinu a vyplň požadované vlastnosti. Všechny vlastnosti jsou volitelné. </h5>
 
 
-	@if (!string.IsNullOrWhiteSpace(notification))
+	@if (!string.IsNullOrWhiteSpace(newItemNotification))
 	{
-		if (!string.IsNullOrWhiteSpace(exceptionMessage))
+		if (!string.IsNullOrWhiteSpace(newItemExceptionMsg))
 		{
 			<div class="alert alert-danger" role="alert">
-				@notification <br>@exceptionMessage
+				@newItemNotification <br>@newItemExceptionMsg
 			</div>
 
 		}
 		else
 		{
 			<div class="alert alert-success" role="alert">
-				@notification
+				@newItemNotification
 			</div>
 		}
 
@@ -106,23 +108,108 @@
 				propertyName = ipv.BlazorProperty.Name;
 				properties += $"{propertyName}: {ipv.Value}, ";
 			}
-			<button class="btn btn-outline-primary" @onclick="()=>NavigateToUpdatePage(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</button>	
+			<div>
+			<a href="#" class="btn-link" style="text-decoration: none; color: inherit" data-bs-toggle="modal" data-bs-target="#updateModal" 
+			@onclick="()=>FillUpdateModal(it)">@it.Id, @it.BlazorTypeOfItem.Name, @it.Name, @it.BlazorUnit.Name, Aktivní:@it.IsActive, @properties</a>
+			</div>
+			
+
 		}
 	}
-}
-@if (UpdateMode) 
+ @* } *@ 
+
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Úprava objektu: @ItemToUpdate.Id, @ItemToUpdate.Name</h5>
+				<button type="button" class="btn-close" @onclick="CloseUpdateModal" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+			</div>
+			<div class="modal-body">
+				<EditForm Model="ItemToUpdate" OnValidSubmit="UpdateItemAsync" FormName="itemUpdate">
+					<DataAnnotationsValidator />
+					<ValidationSummary />
+
+					<InputSelect class="form-select form-check-inline" id="typeOfItem" @bind-Value="ItemToUpdate.TypeOfItemId">
+						@foreach (var type in BlazorTypesOfItemInDb)
+						{
+							<option value="@type.Id">@type.Name</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@( () => ItemToUpdate.TypeOfItemId)" />
+
+					<InputText class="form-control form-check-inline" id="itemName" @bind-Value="ItemToUpdate.Name" placeholder="Název položky" />
+					<ValidationMessage For="@( () => ItemToUpdate.Name)" />
+
+					<InputSelect class="form-select form-check-inline" id="itemUnit" @bind-Value="ItemToUpdate.UnitId">
+
+						@foreach (var unit in BlazorUnitsInDb)
+						{
+							<option value="@unit.Id">@unit.Name</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@( () => ItemToUpdate.UnitId)" />
+
+					@if (!string.IsNullOrWhiteSpace(ItemToUpdate.BlazorItemUpdateValidationMessage))
+					{
+						<div class="text-danger">
+							@ItemToUpdate.BlazorItemUpdateValidationMessage
+						</div>
+					}
+
+					@foreach (var ipv in ItemToUpdate.BlazorItemPropertyValues)
+					{
+						<p>
+							<label for="itemProperty">@ipv.BlazorProperty.Name</label>
+							<InputText class="form-control" id="itemProperty" @bind-Value="ipv.Value"></InputText>
+						</p>
+					}
+
+					<label class="form-check-label" for="isActive">Aktivní</label>
+					<InputCheckbox class="form-check-inline" id="isActive" @bind-Value="ItemToUpdate.IsActive"></InputCheckbox>
+
+
+					<button type="submit" class="btn btn-primary" @onclick="UpdateItemAsync">Uložit</button>
+					<button type="button" class="btn btn-secondary" @onclick="CloseUpdateModal" data-bs-dismiss="modal">Zavřít</button>
+				</EditForm>
+
+				@if (!string.IsNullOrWhiteSpace(updateNotification))
+				{
+					if (!string.IsNullOrWhiteSpace(updateExceptionMsg))
+					{
+						<div class="alert alert-danger" role="alert">
+							@updateNotification <br>@updateExceptionMsg
+						</div>
+
+					}
+					else
+					{
+						<div class="alert alert-success" role="alert">
+							@updateNotification
+						</div>
+					}
+
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+@* @if (UpdateMode) 
 {
 	<UpdatePage NavigationDataModel="NavigationDataModel" />
-}
+} *@
 
 @code {
 	//TODO - Stránka není Editací, ale vytvářením nové položky. Popřípadě, Vytvořením NEBO editací, protože 
 	//součástí této komponenty je i editační komponenta UpdatePage.
 	//NavigationDataModel je také adept na přejmenování, jedná se o položkový model.
 
-
-	[SupplyParameterFromForm]
+	[SupplyParameterFromForm(Name = "itemEditation")]
 	private BlazorItemNew NewBlazorItem { get; set; } = new BlazorItemNew();
+
+	[SupplyParameterFromForm(Name = "itemUpdate")]
+	private BlazorItemToUpdate ItemToUpdate { get; set; } = new BlazorItemToUpdate();
 
 	private List<BlazorDateType> BlazorDateTypesIndDb { get; set; } = new List<BlazorDateType>();
 	private List<BlazorUnit> BlazorUnitsInDb { get; set; } = new List<BlazorUnit>();
@@ -131,13 +218,19 @@
 
 	private List<BlazorItemToUpdate> BlazorItemsInDb { get; set; } = new List<BlazorItemToUpdate>();
 
-	private NavigationDataModel NavigationDataModel { get; set; } = new();
-	public bool UpdateMode { get; set; } = false;
+	// private NavigationDataModel NavigationDataModel { get; set; } = new();
+	// public bool UpdateMode { get; set; } = false;
 
 	BlazorItemNew existingBlazorItem = new BlazorItemNew();
 
 	private string? notification;
 	private string? exceptionMessage;
+
+	private string? newItemNotification;
+	private string? newItemExceptionMsg;
+
+	private string? updateNotification;
+	private string? updateExceptionMsg;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -158,7 +251,7 @@
 			unitsInDb = await unitService.GetUnitsFromDaoAsync();
 			BlazorUnitsInDb = unitsInDb.Select(unit => UnitMapper.MapUnit(unit)).OrderBy(unit => unit.Name).ToList();
 
-			itemsInDb = await itemService.GetItemsFromDaoAsync();
+			itemsInDb = await ItemService.GetItemsFromDaoAsync();
 			BlazorItemsInDb = itemsInDb.Select(i => ItemToUpdateMapper.MapItemToUpdate(i)).ToList();
 
 			propertiesInDb = await propertyService.GetPropertiesFromDaoAsync();
@@ -168,8 +261,8 @@
 		}
 		catch(Exception ex)
 		{
-			exceptionMessage = ex.Message;
-			notification = "Nepodařilo se načíst podklady z databáze. ";
+			newItemExceptionMsg = ex.Message;
+			newItemNotification = "Nepodařilo se načíst podklady z databáze. ";
 		}
 
 	}
@@ -187,16 +280,19 @@
 
 			Item newItem = new Item();
 			newItem = ItemMapper.MapItem(NewBlazorItem);
-			
+
 
 			await CheckItemDuplicityAsync(newItem);
 
+			newItemNotification = notification;
+			newItemExceptionMsg = exceptionMessage;
+
 			if (existingBlazorItem.Id == 0)
 			{
-				await itemService.AddItemWithPropertiesAsync(newItem);
+				await ItemService.AddItemWithPropertiesAsync(newItem);
 
 
-				notification = "Vloženo.";
+				newItemNotification = "Vloženo.";
 				StateHasChanged();
 				await Task.Delay(1300);
 
@@ -207,27 +303,81 @@
 		}
 		catch (Exception ex)
 		{
-			exceptionMessage = ex.Message;
-			notification = "Záznam se nepodařilo uložit ";
+			newItemExceptionMsg = ex.Message;
+			newItemNotification = "Záznam se nepodařilo uložit ";
 			StateHasChanged();
 		}
 
 	}
 
-
-	private void NavigateToUpdatePage(BlazorItemToUpdate blazorItem)
+	private async Task UpdateItemAsync()
 	{
-		NavigationDataModel.SharedBlazorItem = blazorItem;
-		NavigationDataModel.BlazorUnitsInDb = BlazorUnitsInDb;
-		NavigationDataModel.BlazorTypesOfItemInDb = BlazorTypesOfItemInDb;
+		if (string.IsNullOrEmpty(ItemToUpdate.Name))
+		{
+			return;
+		}
 
-		UpdateMode = true;
+		try
+		{
+			notification = "";
+			exceptionMessage = "";
+			existingBlazorItem = new();
+
+			Item itemToUpdate = ItemToUpdateMapper.MapItemToUpdate(ItemToUpdate);
+
+			await CheckItemDuplicityAsync(itemToUpdate);
+
+			updateNotification = notification;
+			updateExceptionMsg = exceptionMessage;
+
+			if (existingBlazorItem.Id == 0)
+			{
+				await ItemService.UpdateItemAsync(itemToUpdate);
+
+				updateNotification = "Záznam byl upraven";
+
+				StateHasChanged();
+				await Task.Delay(1300);
+
+
+				RefreshPage();
+
+			}
+
+		}
+		catch (Exception ex)
+		{
+			updateNotification = "Záznam se nepodařilo upravit.";
+			updateExceptionMsg = ex.Message;
+		}
+
+
+	}
+
+
+	// private void NavigateToUpdatePage(BlazorItemToUpdate blazorItem)
+	// {
+	// 	NavigationDataModel.SharedBlazorItem = blazorItem;
+	// 	NavigationDataModel.BlazorUnitsInDb = BlazorUnitsInDb;
+	// 	NavigationDataModel.BlazorTypesOfItemInDb = BlazorTypesOfItemInDb;
+
+	// 	UpdateMode = true;
+	// }
+
+	private void FillUpdateModal(BlazorItemToUpdate blazorItem)
+	{
+		ItemToUpdate = ObjectDeepCoppier.MakeDeepCopy(blazorItem);
+	}
+
+	private void CloseUpdateModal()
+	{
+		ItemToUpdate = new();
 	}
 
 
 	private async Task CheckItemDuplicityAsync(Item item)
 	{
-		Item? existingItem = await itemService.CheckItemDuplicityAsync(item);
+		Item? existingItem = await ItemService.CheckItemDuplicityAsync(item);
 
 		notification = "";
 
@@ -235,12 +385,12 @@
 		{
 			existingBlazorItem = ItemMapper.MapItem(existingItem);
 
-			notification = $"Tento záznam již existuje: {existingBlazorItem.Id}.. {existingBlazorItem.Name}";
+			notification = $"Tento záznam již existuje: Id {existingBlazorItem.Id}.. Název {existingBlazorItem.Name}";
 			exceptionMessage = "Parametry můžete upravit a opět zkusit uložit .";
 		}
 	}
-	
 
+	
 	private void RefreshPage()
 	{
 		navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true);

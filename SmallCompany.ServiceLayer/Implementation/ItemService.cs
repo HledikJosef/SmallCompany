@@ -27,13 +27,13 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public async Task<Item?> CheckItemDuplicityAsync(Item item)
         {
-            //item.Name = StringModifier.ModifyString(item.Name);
+            item.Name = StringModifier.ModifyString(item.Name);
             item.ItemPropertyValues.RemoveAll(ipv => string.IsNullOrWhiteSpace(ipv.Value));
 
-            //foreach (var ipv in item.ItemPropertyValues)
-            //{
-            //    ipv.Value = StringModifier.ModifyString(ipv);
-            //}
+            foreach (var ipv in item.ItemPropertyValues)
+            {
+                ipv.Value = StringModifier.ModifyString(ipv);
+            }
 
             Item? existingItemFromDb = await itemDao.CheckExistingItemAsync(item);
 
@@ -43,14 +43,14 @@ namespace SmallCompany.ServiceLayer.Implementation
 
         public Task UpdateItemAsync(Item item)
         {
-            //item.Name = StringModifier.ModifyString(item.Name);
+            item.Name = StringModifier.ModifyString(item.Name);
             item.ItemPropertyValues.RemoveAll(ipv => string.IsNullOrWhiteSpace(ipv.Value));
 
-            //foreach (var ipv in item.ItemPropertyValues)
-            //{
-            //    string ipvValue = StringModifier.ModifyString(ipv.Value);
-            //    ipv.Value = ipvValue;
-            //}
+            foreach (var ipv in item.ItemPropertyValues)
+            {
+                ipv.Value = StringModifier.ModifyString(ipv);
+                //ipv.Value = ipvValue;
+            }
 
             return itemDao.UpdateItemInDbAsync(item);
         }

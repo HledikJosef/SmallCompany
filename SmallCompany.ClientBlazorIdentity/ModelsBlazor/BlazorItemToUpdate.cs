@@ -30,5 +30,9 @@ namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
         public string? BlazorItemUpdateValidationMessage { get; set; }
 
 
+
+
+
+
     }
 }

@@ -34,4 +34,8 @@
     <ProjectReference Include="..\SmallCompany.ServiceLayer\SmallCompany.ServiceLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
 </Project>

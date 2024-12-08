@@ -20,6 +20,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
         {
             ItemPropertyValue itemPropertyValue = new ItemPropertyValue();
 
+            itemPropertyValue.Id = blazorItemPropertyValue.Id;
             itemPropertyValue.Value = blazorItemPropertyValue.Value;
             itemPropertyValue.ItemId = blazorItemPropertyValue.BlazorItemId;
             itemPropertyValue.PropertyId = blazorItemPropertyValue.BlazorPropertyId;
@@ -31,6 +32,7 @@ namespace SmallCompany.ClientBlazorIdentity.Mappers
         public static BlazorItemPropertyValue MapItemPropValue(ItemPropertyValue itemPropertyValue)
         {
             BlazorItemPropertyValue blazorItemPropertyValue = new BlazorItemPropertyValue();
+            blazorItemPropertyValue.Id = itemPropertyValue.Id;
             blazorItemPropertyValue.Value = itemPropertyValue.Value;
             blazorItemPropertyValue.BlazorItemId = itemPropertyValue.ItemId;
             blazorItemPropertyValue.BlazorPropertyId = itemPropertyValue.PropertyId;
