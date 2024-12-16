@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SmallCompany.Models.Api\SmallCompany.Models.Api.csproj" />
     <ProjectReference Include="..\SmallCompany.Models\SmallCompany.Models.csproj" />
   </ItemGroup>
 

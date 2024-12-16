@@ -1,0 +1,57 @@
+﻿@page "/supplierAddEdit"
+
+@attribute [Authorize]
+
+@inject IApiSubjectService apiSubjectService;
+@inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
+<PageTitle>Supplier Add and Edit</PageTitle>
+
+<h1>Vložení a editace dodavatele.</h1>
+<h5>Údaje lze vyplnit ručně nebo stáhnout z webové služby Ares pomocí ičo.</h5>
+
+<EditForm Model="Ico" FormName="IcoForAres" OnValidSubmit="GetSubjectAsync">
+	<DataAnnotationsValidator/>
+	<div>
+		<InputText class="form-control" type="number" @bind-Value="Ico.Ico" id="icoForApi" placeholder="Vyplňte Ičo"/>
+		<ValidationMessage For="@(() => Ico.Ico)" />
+
+		<button class= "btn btn-secondary btn-sm" type="submit">Vyhledej subjek v Ares</button>
+	</div>
+
+</EditForm>
+
+@code {
+
+	[SupplyParameterFromForm]
+	IcoForApi Ico { get; set; } = new IcoForApi();
+
+	EkonomickySubjekt ekonomickySubjekt { get; set; } = new EkonomickySubjekt();
+
+	string ? notification;
+	string? exceptionMessage;
+
+	private async Task GetSubjectAsync()
+	{
+		if(string.IsNullOrWhiteSpace(Ico.Ico))
+		{
+			return;
+		}
+		try
+		{
+			string ico = Ico.Ico;
+			ekonomickySubjekt = await apiSubjectService.GetOneSubjectAsync(ico);
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+		}
+		
+	}
+
+
+
+
+
+}
