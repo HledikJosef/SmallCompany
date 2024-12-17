@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ModelsBlazor\ApiModels\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
 

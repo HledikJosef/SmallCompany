@@ -34,7 +34,7 @@ namespace SmallCompany.DataLayer.Api.Implementation
         }
 
 
-        public async Task<string> GetListOfSubjects(EkonomickeSubjektyKomplexFiltr komplexFiltr)
+        public async Task<EkonomickeSubjektySeznam> GetListOfSubjects(EkonomickeSubjektyKomplexFiltr komplexFiltr)
         {
             HttpClient client = new HttpClient();
 
@@ -55,7 +55,10 @@ namespace SmallCompany.DataLayer.Api.Implementation
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            return responseBody;
+            EkonomickeSubjektySeznam? ekonomickeSubjektySeznam = new EkonomickeSubjektySeznam();
+            ekonomickeSubjektySeznam = JsonSerializer.Deserialize<EkonomickeSubjektySeznam>(responseBody, deserializierOptions);
+
+            return ekonomickeSubjektySeznam;
 
         }
     }

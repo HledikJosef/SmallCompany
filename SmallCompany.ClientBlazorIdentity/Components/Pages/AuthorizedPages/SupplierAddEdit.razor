@@ -11,21 +11,24 @@
 <h1>Vložení a editace dodavatele.</h1>
 <h5>Údaje lze vyplnit ručně nebo stáhnout z webové služby Ares pomocí ičo.</h5>
 
-<EditForm Model="Ico" FormName="IcoForAres" OnValidSubmit="GetSubjectAsync">
+<EditForm Model="IcoForApi" FormName="icoForAres" OnValidSubmit="GetSubjectAsync">
 	<DataAnnotationsValidator/>
 	<div>
-		<InputText class="form-control" type="number" @bind-Value="Ico.Ico" id="icoForApi" placeholder="Vyplňte Ičo"/>
-		<ValidationMessage For="@(() => Ico.Ico)" />
+		<InputText class="form-control" type="number" @bind-Value="IcoForApi.Ico" id="icoForApi" placeholder="Vyplňte Ičo"/>
+		<ValidationMessage For="@(() => IcoForApi.Ico)" />
 
-		<button class= "btn btn-secondary btn-sm" type="submit">Vyhledej subjek v Ares</button>
+		<button class= "btn btn-secondary btn-sm mt-1" type="submit">Vyhledej subjek v Ares</button>
 	</div>
 
 </EditForm>
+<hr>
 
 @code {
 
-	[SupplyParameterFromForm]
-	IcoForApi Ico { get; set; } = new IcoForApi();
+	[SupplyParameterFromForm(Name ="icoForAres")]
+	IcoForApi IcoForApi { get; set; } = new IcoForApi();
+
+
 
 	EkonomickySubjekt ekonomickySubjekt { get; set; } = new EkonomickySubjekt();
 
@@ -34,13 +37,13 @@
 
 	private async Task GetSubjectAsync()
 	{
-		if(string.IsNullOrWhiteSpace(Ico.Ico))
+		if(string.IsNullOrWhiteSpace(IcoForApi.Ico))
 		{
 			return;
 		}
 		try
 		{
-			string ico = Ico.Ico;
+			string ico = IcoForApi.Ico;
 			ekonomickySubjekt = await apiSubjectService.GetOneSubjectAsync(ico);
 		}
 		catch(Exception ex)
