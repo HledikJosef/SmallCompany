@@ -2,9 +2,9 @@
 {
     public class ObchodniJmenoAres
     {
-        public string? PlatnostOd { get; set; }
-        public string? PlatnostDo { get; set; }
-        public string? ObchodniJmeno { get; set; }
+        public string PlatnostOd { get; set; } = string.Empty;
+        public string PlatnostDo { get; set; } = string.Empty;
+        public string ObchodniJmeno { get; set; } = string.Empty;
         public bool PrimarniZaznam { get; set; }
     }
 }

@@ -1,0 +1,202 @@
+﻿@page "/partnerAddEdit"
+
+@attribute [Authorize]
+
+@inject IApiSubjectService apiSubjectService;
+@inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
+<PageTitle>Supplier Add and Edit</PageTitle>
+
+<h1>Vložení a editace obchodního partnera.</h1>
+<h5>Údaje lze vyplnit ručně nebo stáhnout z webové služby Ares pomocí IČ.</h5>
+
+@if (!string.IsNullOrWhiteSpace(notification))
+{
+	if (!string.IsNullOrWhiteSpace(exceptionMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			@notification: <br>@exceptionMessage
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-success" role="alert">
+			@notification
+		</div>
+	}
+
+}
+
+
+
+	
+<EditForm Model="IcoForApi" FormName="icoForAres" OnValidSubmit="GetSubjectAsync">
+	<DataAnnotationsValidator/>
+	<ValidationMessage For="@(() => IcoForApi.Ico)" />
+		<div class="d-flex">
+			<div class="flex-fill mx-1">
+				<InputText class="form-control" type="number" @bind-Value="IcoForApi.Ico" id="icoForApi" placeholder="Vyplňte Ičo" />
+			</div>
+				
+			<div class="flex-fill">
+				<button class="btn btn-secondary" type="submit">Vyhledej subjek v Ares</button>
+				<button class="btn btn-outline-warning" type="button" @onclick="CleareIcoForApiForm">Vymazat formulář</button>
+			</div>
+				
+			
+		</div>
+</EditForm>
+		
+				
+	
+
+
+<hr>
+
+<EditForm Model="NewPartner" FormName="newPartner">
+	<DataAnnotationsValidator />
+
+	<div class="d-flex mb-2">
+		<div class="flex-fill mx-1">
+			<label for="partnerName">Název partnera</label>
+			<InputText class="form-control" id="partnerName" @bind-Value="NewPartner.Name" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="partnerIco">IČ</label>
+			<InputText class="form-control" id="partnerIco" @bind-Value="NewPartner.Ico" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="partnerDic">DIČ</label>
+			<InputText class="form-control" id="partnerDic" @bind-Value="NewPartner.Dic" ></InputText>
+		</div>
+
+	</div>
+
+	<h5>Adresa sídla</h5>
+
+	<div class="d-flex mb-1">
+		<div class="flex-fill mx-1">
+			<label for="street">Ulice</label>
+			<InputText class="form-control" id="street" @bind-Value="NewPartner.Address.Street" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="houseNr">Číslo popisné</label>
+			<InputNumber class="form-control" id="houseNr" @bind-Value="NewPartner.Address.HouseNr" ></InputNumber>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="orientationNr">Číslo orientační</label>
+			<InputNumber class="form-control" id="orientationNr" @bind-Value="NewPartner.Address.OrientationNr" ></InputNumber>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="orientationNrLtt">Č.orientační-písmeno</label>
+			<InputText class="form-control" id="orientationNrLtt" @bind-Value="NewPartner.Address.OrientationNrLetter" ></InputText>
+		</div>
+
+	</div>
+
+	<div class="d-flex mb-2">
+		<div class="flex-fill mx-1">
+			<label for="psc">PSČ</label>
+			<InputText class="form-control" id="psc" @bind-Value="NewPartner.Address.PscTxt" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="city">Obce</label>
+			<InputText class="form-control" id="city" @bind-Value="NewPartner.Address.City" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="cityPart">Číslo orientační</label>
+			<InputText class="form-control" id="cityPart" @bind-Value="NewPartner.Address.CityPart" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="state">Stát</label>
+			<InputText class="form-control" id="state" @bind-Value="NewPartner.Address.State.Name" ></InputText>
+		</div>
+
+	</div>
+
+	<h5>Doručovací adresa</h5>
+
+	<div class="d-flex mb-2">
+		<div class="flex-fill mx-1">
+			<label for="deliveryRow1">Řádek 1</label>
+			<InputText class="form-control" id="deliveryRow1" @bind-Value="NewPartner.DeliveryAddress.AddressRow1" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="deliveryRow2">Řádek 2</label>
+			<InputText class="form-control" id="deliveryRow2" @bind-Value="NewPartner.DeliveryAddress.AddressRow2" ></InputText>
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label for="deliveryRow3">Řádek 3</label>
+			<InputText class="form-control" id="deliveryRow3" @bind-Value="NewPartner.DeliveryAddress.AddressRow3" ></InputText>
+		</div>
+
+	</div>
+
+
+</EditForm>
+
+@code {
+
+	[SupplyParameterFromForm(Name ="icoForAres")]
+	IcoForApi IcoForApi { get; set; } = new IcoForApi();
+
+	[SupplyParameterFromForm(Name = "newPartner")]
+	BlazorPartner NewPartner { get; set; } = new BlazorPartner();
+
+	EkonomickySubjekt ekonomickySubjekt { get; set; } = new EkonomickySubjekt();
+
+	string? notification;
+	string? exceptionMessage;
+
+	private async Task GetSubjectAsync()
+	{
+		if(string.IsNullOrWhiteSpace(IcoForApi.Ico))
+		{
+			return;
+		}
+		try
+		{
+			notification = "";
+			exceptionMessage = "";
+			NewPartner = new();
+
+			ekonomickySubjekt = await apiSubjectService.GetOneSubjectAsync(IcoForApi.Ico);
+
+			if(string.IsNullOrWhiteSpace(ekonomickySubjekt.Ico))
+			{
+				notification = "Subjekt nenalezen.";
+				exceptionMessage = "Zkontrolujte zadané IČ";
+
+				return;
+			}
+			NewPartner = PartnerMapper.MapPartner(ekonomickySubjekt);
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+		}
+
+	}
+
+	private void CleareIcoForApiForm()
+	{
+		NewPartner = new();
+	}
+
+
+
+
+
+}

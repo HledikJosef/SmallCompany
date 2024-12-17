@@ -1,22 +1,20 @@
-﻿using SmallCompany.Models;
-
-namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
+﻿namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 {
-    public class Address
+    public class BlazorAddress
     {
         public int Id { get; set; }
-        public State State { get; set; } = null!;
+        public BlazorState State { get; set; } = new BlazorState();
         public string City { get; set; } = string.Empty;
-        public string? CityPart { get; set; } = string.Empty;
+        public string CityPart { get; set; } = string.Empty;
         public string Street { get; set; } = string.Empty;
         /// <summary>
         /// číslo popisné
         /// </summary>
-        public int HouseNr { get; set; }
+        public int? HouseNr { get; set; }
         /// <summary>
         /// číslo orientační
         /// </summary>
-        public int OrientationNr { get; set; }
+        public int? OrientationNr { get; set; }
         /// <summary>
         /// číslo orientační-písmeno
         /// </summary>

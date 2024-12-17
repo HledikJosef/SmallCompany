@@ -22,7 +22,6 @@ namespace SmallCompany.DataLayer.Api.Implementation
             string requestUrl = $"{apiUrlOneSubject}/{ico}";
 
             HttpResponseMessage response = await client.GetAsync(requestUrl);
-            response.EnsureSuccessStatusCode();
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -51,7 +50,6 @@ namespace SmallCompany.DataLayer.Api.Implementation
             StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PostAsync(apiUrlKomplexFiltr, content);
-            response.EnsureSuccessStatusCode();
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
