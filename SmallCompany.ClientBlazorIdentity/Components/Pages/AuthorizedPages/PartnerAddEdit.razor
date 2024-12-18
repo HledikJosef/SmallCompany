@@ -3,6 +3,7 @@
 @attribute [Authorize]
 
 @inject IApiSubjectService apiSubjectService;
+@inject ICurrencyService currencyService;
 @inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
@@ -31,27 +32,23 @@
 
 
 
-	
+
 <EditForm Model="IcoForApi" FormName="icoForAres" OnValidSubmit="GetSubjectAsync">
 	<DataAnnotationsValidator/>
 	<ValidationMessage For="@(() => IcoForApi.Ico)" />
-		<div class="d-flex">
-			<div class="flex-fill mx-1">
-				<InputText class="form-control" type="number" @bind-Value="IcoForApi.Ico" id="icoForApi" placeholder="Vyplňte Ičo" />
-			</div>
-				
-			<div class="flex-fill">
-				<button class="btn btn-secondary" type="submit">Vyhledej subjek v Ares</button>
-				<button class="btn btn-outline-warning" type="button" @onclick="CleareIcoForApiForm">Vymazat formulář</button>
-			</div>
-				
-			
+	<div class="d-flex">
+		<div class="flex-fill mx-1">
+			<InputText class="form-control" type="number" @bind-Value="IcoForApi.Ico" id="icoForApi" placeholder="Vyplňte Ičo" />
 		</div>
-</EditForm>
-		
-				
-	
 
+		<div class="flex-fill">
+			<button class="btn btn-secondary" type="submit">Vyhledej subjek v Ares</button>
+			<button class="btn btn-outline-warning" type="button" @onclick="CleareIcoForm">Vymazat formulář</button>
+		</div>
+
+
+	</div>
+</EditForm>
 
 <hr>
 
@@ -144,6 +141,30 @@
 
 	</div>
 
+	<h5>Systémové záznamy</h5>
+
+	<div class="d-flex mb-2">
+		<div class="flex-fill mx-1">
+			<label class="form-check-label" for="isPurchaser">Je odběratel</label>
+			<InputCheckbox class="form-check-input" id="isPurchaser" @bind-Value = "NewPartner.IsPurchaser">Je odběratel.</InputCheckbox>
+
+			<label class="form-check-label" for="isSupplier">Je dodavatel</label>
+			<InputCheckbox class="form-check-input" id="isSupplier" @bind-Value="NewPartner.IsSupplier">Je dodavatel.</InputCheckbox>
+
+		</div>
+
+		<div class="flex-fill mx-1">
+			<label class="form-check-label" for="dafaultCurrency">Výchozí měna</label>
+			<InputSelect class="form-select" id="defaultCurrency" @bind-Value="NewPartner.Currency.Id">
+				@foreach(var currency in currencies)
+				{
+					<option value="@currency.Id">@currency.Code .. @currency.Name</option>
+				}
+			</InputSelect>
+
+		</div>
+	</div>
+
 
 </EditForm>
 
@@ -155,10 +176,28 @@
 	[SupplyParameterFromForm(Name = "newPartner")]
 	BlazorPartner NewPartner { get; set; } = new BlazorPartner();
 
+	List<BlazorCurrency> currencies = new();
+
 	EkonomickySubjekt ekonomickySubjekt { get; set; } = new EkonomickySubjekt();
 
 	string? notification;
 	string? exceptionMessage;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try 
+		{
+			List<Currency> currenciesInDb = await currencyService.GetCurrenciesFromDaoAsync();
+			currencies = currenciesInDb.Select(c => CurrencyMapper.MapCurrency(c)).ToList();
+		}
+		catch(Exception ex)
+		{
+			exceptionMessage = ex.Message;
+			notification = "Nepodařilo se načíst podklady z databáze. ";
+		}
+	
+
+	}
 
 	private async Task GetSubjectAsync()
 	{
@@ -168,11 +207,16 @@
 		}
 		try
 		{
+			string normalizedIco = "";
+			if(IcoForApi.Ico.Length < 8 )
+			{
+				normalizedIco = IcoForApi.Ico.PadLeft(8, '0');
+			}
 			notification = "";
 			exceptionMessage = "";
 			NewPartner = new();
 
-			ekonomickySubjekt = await apiSubjectService.GetOneSubjectAsync(IcoForApi.Ico);
+			ekonomickySubjekt = await apiSubjectService.GetOneSubjectAsync(normalizedIco);
 
 			if(string.IsNullOrWhiteSpace(ekonomickySubjekt.Ico))
 			{
@@ -190,9 +234,12 @@
 
 	}
 
-	private void CleareIcoForApiForm()
+	private void CleareIcoForm()
 	{
 		NewPartner = new();
+		IcoForApi.Ico = "";
+		notification = "";
+		exceptionMessage = "";
 	}
 
 

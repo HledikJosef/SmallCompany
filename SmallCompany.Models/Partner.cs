@@ -11,7 +11,7 @@
         public bool IsPurchaser { get; set; }
         public Address Address { get; set; } = null!;
         public Address? DeliveryAddress { get; set; } = null!;
-        public ContactPerson? ContactPerson { get; set; } = null!;
+        public List<ContactPerson>? ContactPersons { get; set; } = new();
         public Currency Currency { get; set; } = null!;
         public int PaymentCondition { get; set; }
         public PriceGroup PriceGroup { get; set; } = null!;

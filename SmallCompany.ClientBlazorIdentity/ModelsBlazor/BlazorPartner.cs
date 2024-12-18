@@ -1,4 +1,6 @@
-﻿namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
+﻿using SmallCompany.Models;
+
+namespace SmallCompany.ClientBlazorIdentity.ModelsBlazor
 {
     public class BlazorPartner
     {
@@ -11,7 +13,7 @@
         public bool IsPurchaser { get; set; }
         public BlazorAddress Address { get; set; } = new BlazorAddress();
         public BlazorDeliveryAddress DeliveryAddress { get; set; } = new BlazorDeliveryAddress();
-        public BlazorContactPerson ContactPerson { get; set; } = new BlazorContactPerson();
+        public List<ContactPerson>? ContactPersons { get; set; } = new();
         public BlazorCurrency Currency { get; set; } = new BlazorCurrency();
         public int PaymentCondition { get; set; }
         public BlazorPriceGroup PriceGroup { get; set; } = new BlazorPriceGroup();

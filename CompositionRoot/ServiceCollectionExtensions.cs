@@ -23,6 +23,7 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IStockReaderDao, StockDao>();
             services.AddTransient<IStockWriterDao, StockDao>();
             services.AddTransient<IEkonomickeSubjektyDao, EkonomickeSubjektyDao>();
+            services.AddTransient<ICurrencyDao, CurrencyDao>();
 
             //ServiceLayer
             services.AddTransient<IUnitService, UnitService>();
@@ -32,6 +33,7 @@ namespace SmallCompany.CompositionRoot
             services.AddTransient<IPropertyService, PropertyService>();
             services.AddTransient<IItemService, ItemService>();
             services.AddTransient<IApiSubjectService, ApiSubjectService>();
+            services.AddTransient<ICurrencyService, CurrencyService>();
 
         }
     }
