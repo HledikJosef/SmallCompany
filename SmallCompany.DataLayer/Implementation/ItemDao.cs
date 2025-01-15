@@ -7,12 +7,10 @@ namespace SmallCompany.DataLayer.Implementation
     public class ItemDao : IItemDao
     {
         private readonly ApplicationDbContext context;
-        private readonly string connectionString;
 
         public ItemDao(ApplicationDbContext context)
         {
             this.context = context;
-            connectionString = context.Database.GetDbConnection().ConnectionString;
         }
 
         public async Task<List<Item>> GetItemsFromSqlAsync()

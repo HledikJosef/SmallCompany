@@ -10,7 +10,7 @@ namespace SmallCompany.CompositionRoot
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddServices(this IServiceCollection services, string connectionString)
+        public static void AddServices(this IServiceCollection services)
         {
 
             //DataLayer

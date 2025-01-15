@@ -10,7 +10,7 @@ namespace SmallCompany.DataLayer.Api.Implementation
         private const string apiUrlKomplexFiltr = "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/vyhledat";
         private const string apiUrlOneSubject = "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty";
 
-        public async Task<EkonomickySubjekt> GetOneSubjectAsync(string ico)
+        public async Task<EkonomickySubjekt?> GetOneSubjectAsync(string ico)
         {
             HttpClient client = new HttpClient();
 
@@ -33,7 +33,7 @@ namespace SmallCompany.DataLayer.Api.Implementation
         }
 
 
-        public async Task<EkonomickeSubjektySeznam> GetListOfSubjects(EkonomickeSubjektyKomplexFiltr komplexFiltr)
+        public async Task<EkonomickeSubjektySeznam?> GetListOfSubjects(EkonomickeSubjektyKomplexFiltr komplexFiltr)
         {
             HttpClient client = new HttpClient();
 
